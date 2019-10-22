@@ -1,0 +1,302 @@
+{
+  "luis_schema_version": "2.2.0",
+  "versionId": "0.1",
+  "name": "IntentClassification-AskUbuntuCorpus",
+  "desc": "Intent Recognition App",
+  "culture": "en-us",
+  "tokenizerVersion": "1.0.0",
+  "intents": [
+    {
+      "name": "MakeUpdate"
+    },
+    {
+      "name": "SetupPrinter"
+    },
+    {
+      "name": "ShutdownComputer"
+    },
+    {
+      "name": "SoftwareRecommendation"
+    },
+    {
+      "name": "None"
+    }
+  ],
+  "entities": [],
+  "composites": [],
+  "closedLists": [],
+  "patternAnyEntities": [],
+  "regex_entities": [],
+  "prebuiltEntities": [],
+  "model_features": [],
+  "regex_features": [],
+  "patterns": [],
+  "utterances": [
+    {
+      "text": "How can I install a Pantum 2502W laser printer on Ubuntu",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "How to record my screen?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "What graphical utility can I use for Ubuntu auto shutdown?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "How can I enable shutdown verbosity?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "How to shutdown the computer after Xsession ends?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "What new games are available for Ubuntu in 2011?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "Can you recommend a password generator?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "What screenshot tools are available?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "How do I install drivers for a Konica Minolta 200?",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "How to setup HP printer/scanner on ubuntu?",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "How To Install Canon LBP2900B printer in 14.04 LTS ? I tried the method for LBP2900 but it didnt work",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "Upgrade 12.04 to 12.10 using startup disk",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "How can I highlight or annotate PDFs?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "Extracting embedded images from a PDF",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "Install Canon MP560 Ubuntu 15.04",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "Upgrade to 12.04 64 bit",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "Any command line calculator for Ubuntu?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "What to use to quickly cut Audio/Video",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "How do I setup my HP C4140 printer wirelessly?",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "How to upgrade Ubuntu 9.10 to 12.10 via terminal?",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "What is a good MongoDB GUI client?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "How do I fix a shutdown problem?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "Is there an application for reading mobi files?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "How to install a Brother MFC-5890CN network printer?",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "Upgrading from Ubuntu 14.04 to 15.04",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "Shutdown problem in Ubuntu 16.04",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "shut down without extra question",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "What IRC clients are available?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "How can I automatically shutdown the system after a specific time?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "Are there any Keyboard Shortcuts to Shutdown?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "Is it worth upgrading from 12.04 LTS to 13.04",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "Torrent client for the command-line?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "MySQL GUI Tools",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "How do I install drivers for the Panasonic MB1900CX All-in-One Printer/Scanner?",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "How can one shutdown a PC using the keyboard?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "Update 11.04 to 12.04 with LiveCD",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "How to upgrade from Ubuntu 10.10 to 11.04?",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "how to upgrade from ubuntu 15.04 to 15.10?",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "What scientific plotting software is available?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "Which programs can I use to edit PDF files?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "What developer text editors are available for Ubuntu?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "How to Upgrade from 11.10 to 12.04 when you've got a problem?",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "How to setup wireless printing from a printer connected via usb on Ubuntu Server 12.10?",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "How to shutdown computer when users are logged on?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "Shutdown after a certain time",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "What is the proper terminal-way to shutdown?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "What tools do you use to monitor a web server?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "Password Management Applications?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "UPNP / DLNA (client) player recommendations?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    },
+    {
+      "text": "No matter what I do Ubuntu 15.04 does not recognize HP LaserJet 1020",
+      "intent": "SetupPrinter",
+      "entities": []
+    },
+    {
+      "text": "How to upgrade Ubuntu 14.04.1 to 14.04.2?",
+      "intent": "MakeUpdate",
+      "entities": []
+    },
+    {
+      "text": "Hotkey to shut down from login screen?",
+      "intent": "ShutdownComputer",
+      "entities": []
+    },
+    {
+      "text": "Is there a lightweight tool to crop images quickly?",
+      "intent": "SoftwareRecommendation",
+      "entities": []
+    }
+  ],
+  "settings": []
+}

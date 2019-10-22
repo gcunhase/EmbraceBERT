@@ -1,0 +1,196 @@
+{
+  "luis_schema_version": "2.2.0",
+  "versionId": "0.1",
+  "name": "IntentClassification-WebApplicationsCorpus",
+  "desc": "Intent Recognition App",
+  "culture": "en-us",
+  "tokenizerVersion": "1.0.0",
+  "intents": [
+    {
+      "name": "ChangePassword"
+    },
+    {
+      "name": "DeleteAccount"
+    },
+    {
+      "name": "DownloadVideo"
+    },
+    {
+      "name": "ExportData"
+    },
+    {
+      "name": "FilterSpam"
+    },
+    {
+      "name": "FindAlternative"
+    },
+    {
+      "name": "SyncAccounts"
+    },
+    {
+      "name": "None"
+    }
+  ],
+  "entities": [],
+  "composites": [],
+  "closedLists": [],
+  "patternAnyEntities": [],
+  "regex_entities": [],
+  "prebuiltEntities": [],
+  "model_features": [],
+  "regex_features": [],
+  "patterns": [],
+  "utterances": [
+    {
+      "text": "Mint alternatives for Canada",
+      "intent": "FindAlternative",
+      "entities": []
+    },
+    {
+      "text": "How can I sync my Yahoo! Calendar with Google Calendar?",
+      "intent": "SyncAccounts",
+      "entities": []
+    },
+    {
+      "text": "How do I delete my Experts Exchange account?",
+      "intent": "DeleteAccount",
+      "entities": []
+    },
+    {
+      "text": "Alternatives to Google Groups with more features?",
+      "intent": "FindAlternative",
+      "entities": []
+    },
+    {
+      "text": "Email Google Form daily?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "How can I export track.scrobble data from last.fm?",
+      "intent": "ExportData",
+      "entities": []
+    },
+    {
+      "text": "Does using Gmail's \"Never send it to Spam\" filter mean I can't train their spam filter?",
+      "intent": "FilterSpam",
+      "entities": []
+    },
+    {
+      "text": "Discarding spam mail faster in Gmail",
+      "intent": "FilterSpam",
+      "entities": []
+    },
+    {
+      "text": "Are there any good Veoh or Youtube alternatives?",
+      "intent": "FindAlternative",
+      "entities": []
+    },
+    {
+      "text": "Alternatives to Twitter",
+      "intent": "FindAlternative",
+      "entities": []
+    },
+    {
+      "text": "How do I download a YouTube video?",
+      "intent": "DownloadVideo",
+      "entities": []
+    },
+    {
+      "text": "Stopping spam emails in Gmail by pattern",
+      "intent": "FilterSpam",
+      "entities": []
+    },
+    {
+      "text": "How can I permanently delete my MySpace account?",
+      "intent": "DeleteAccount",
+      "entities": []
+    },
+    {
+      "text": "How to disable/delete a Harvest account?",
+      "intent": "DeleteAccount",
+      "entities": []
+    },
+    {
+      "text": "Why can't I change my password and login with Skype?",
+      "intent": "ChangePassword",
+      "entities": []
+    },
+    {
+      "text": "Alternatives for Google Reader (with Android synchronizing)",
+      "intent": "FindAlternative",
+      "entities": []
+    },
+    {
+      "text": "How do I delete my Ohloh profile?",
+      "intent": "DeleteAccount",
+      "entities": []
+    },
+    {
+      "text": "How can I delete my Twitter account?",
+      "intent": "DeleteAccount",
+      "entities": []
+    },
+    {
+      "text": "Correctly Identifying Spam Messages",
+      "intent": "FilterSpam",
+      "entities": []
+    },
+    {
+      "text": "How do I delete my Gmail account?",
+      "intent": "DeleteAccount",
+      "entities": []
+    },
+    {
+      "text": "Totally Blocking Spam To Gmail Account",
+      "intent": "FilterSpam",
+      "entities": []
+    },
+    {
+      "text": "Twitter and Echofon spam",
+      "intent": "FilterSpam",
+      "entities": []
+    },
+    {
+      "text": "How do I change my password on TV Tropes?",
+      "intent": "ChangePassword",
+      "entities": []
+    },
+    {
+      "text": "Google Bookmarks and Chrome Bookmark Sync -- Different?",
+      "intent": "SyncAccounts",
+      "entities": []
+    },
+    {
+      "text": "Bugmenot (registration bypasser) alternative that doesn't suck?",
+      "intent": "FindAlternative",
+      "entities": []
+    },
+    {
+      "text": "How do I sync my RunKeeper workout schedule with Google Calender?",
+      "intent": "SyncAccounts",
+      "entities": []
+    },
+    {
+      "text": "Change subject line in new Gmail compose window",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "How do I delete my LinkedIn account?",
+      "intent": "DeleteAccount",
+      "entities": []
+    },
+    {
+      "text": "How can I backup my wordpress.com hosted blog?",
+      "intent": "ExportData",
+      "entities": []
+    },
+    {
+      "text": "Google search engine alternatives",
+      "intent": "FindAlternative",
+      "entities": []
+    }
+  ],
+  "settings": []
+}

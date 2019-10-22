@@ -1,0 +1,297 @@
+[
+  {
+    "text": "How to retrieve a stolen Yahoo account's password?",
+    "intent": "ChangePassword",
+    "entities": []
+  },
+  {
+    "text": "Evernote alternative",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "How do I sync Google Calendar with my Outlook Calendar?",
+    "intent": "SyncAccounts",
+    "entities": []
+  },
+  {
+    "text": "Any good alternative to Google Alerts?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "How can I delete my Hunch account?",
+    "intent": "DeleteAccount",
+    "entities": []
+  },
+  {
+    "text": "How can I auto-delete some spam from Gmail?",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "Gmail user set up through Google Apps can't change their password",
+    "intent": "ChangePassword",
+    "entities": []
+  },
+  {
+    "text": "Alternatives to discontinued Google Calendar Appointment Slots",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Is there a free and privacy-aware alternative to Google?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "How do I sync Facebook Twitter & Foursquare?",
+    "intent": "SyncAccounts",
+    "entities": []
+  },
+  {
+    "text": "Can I Share/Sync My Picasa Web Albums Automatically to My Facebook Account?",
+    "intent": "SyncAccounts",
+    "entities": []
+  },
+  {
+    "text": "How to remove spam filter for Google Apps email",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "How to retrieve forgotten Wordpress Admin password",
+    "intent": "ChangePassword",
+    "entities": []
+  },
+  {
+    "text": "How can I permanently delete my Yahoo mail account?",
+    "intent": "DeleteAccount",
+    "entities": []
+  },
+  {
+    "text": "Gmail's filter for SPAM folder and/or keywords in multiple fields",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "How do I transfer my photos from Flickr to Picasa?",
+    "intent": "ExportData",
+    "entities": []
+  },
+  {
+    "text": "Is there a HTML alternative to Prezi?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Photo Sharing Site (alternative to flickr) supporting OpenID sign in?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Does marking an email as spam in Gmail affect the filter for everyone?",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "Mark large numbers of messages as \"not spam\"",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "How to change my Uber password or delete the account?",
+    "intent": "DeleteAccount",
+    "entities": []
+  },
+  {
+    "text": "How do I delete my Facebook account?",
+    "intent": "DeleteAccount",
+    "entities": []
+  },
+  {
+    "text": "How to delete my imgur account?",
+    "intent": "DeleteAccount",
+    "entities": []
+  },
+  {
+    "text": "How to check your Gmail spam label for good emails",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "How to send messages to spam in Gmail filter?",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "How can I get OkCupid search to show only matches within 5 miles of me?",
+    "intent": "None",
+    "entities": []
+  },
+  {
+    "text": "Is there a catch to PayPal's Premier account type?",
+    "intent": "None",
+    "entities": []
+  },
+  {
+    "text": "Users can't reset their passwords anymore on Google Apps?",
+    "intent": "ChangePassword",
+    "entities": []
+  },
+  {
+    "text": "Does moving a mail to the IMAP spam folder trains Gmail's spam filter?",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "What are the alternatives to Facebook/Meetup for Event Planning",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Sync not export Facebook events with Google Apps calendar",
+    "intent": "SyncAccounts",
+    "entities": []
+  },
+  {
+    "text": "Q&A Platform similar to Stack Exchange model?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "When I move spam to my inbox it goes back into the spam again",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "How to permanently delete a 37signals ID",
+    "intent": "DeleteAccount",
+    "entities": []
+  },
+  {
+    "text": "Is there an online alternative to iGoogle",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Archive/export all the blog entries from a RSS feed in Google Reader",
+    "intent": "ExportData",
+    "entities": []
+  },
+  {
+    "text": "Good wireframing apps?",
+    "intent": "None",
+    "entities": []
+  },
+  {
+    "text": "Alternative to Facebook",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Embedding stop time in a YouTube video link",
+    "intent": "None",
+    "entities": []
+  },
+  {
+    "text": "Are there any good Pandora alternatives with general availability outside the US?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Zencoder alternatives?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Alternatives to LibraryThing",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Is it possible to export my data from Trello to back it up?",
+    "intent": "ExportData",
+    "entities": []
+  },
+  {
+    "text": "How can I remove myself from a Trello organization?",
+    "intent": "DeleteAccount",
+    "entities": []
+  },
+  {
+    "text": "How can I delete my 160by2 account?",
+    "intent": "DeleteAccount",
+    "entities": []
+  },
+  {
+    "text": "Do emails auto-forwarded from one Gmail account to another stop if marked as spam?",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "Google Calendar not syncing calendars that have been added by URL with Windows 10 Calendar",
+    "intent": "SyncAccounts",
+    "entities": []
+  },
+  {
+    "text": "Any alternatives to Google Streetview?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "Any alternatives to Google Apps for your domain?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "How do I change my password on ebay?",
+    "intent": "ChangePassword",
+    "entities": []
+  },
+  {
+    "text": "Deleting an account(website) from Google Analytics?",
+    "intent": "DeleteAccount",
+    "entities": []
+  },
+  {
+    "text": "Get rid of Russian junk from my Gmail",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "What are alternatives to Postini for spam filtering?",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "Gmail recover password while logged in Iphone",
+    "intent": "ChangePassword",
+    "entities": []
+  },
+  {
+    "text": "Google Contact Synchronization on the iPhone 3G",
+    "intent": "SyncAccounts",
+    "entities": []
+  },
+  {
+    "text": "How do I disable the spam filter in Gmail?",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "How can I prevent/lessen event spam on Facebook?",
+    "intent": "FilterSpam",
+    "entities": []
+  },
+  {
+    "text": "What alternatives to Google Product Search exist?",
+    "intent": "FindAlternative",
+    "entities": []
+  },
+  {
+    "text": "How to delete a Sify Mail account",
+    "intent": "DeleteAccount",
+    "entities": []
+  }
+]

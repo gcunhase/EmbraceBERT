@@ -1,0 +1,115 @@
+sentence	label
+garche perlach ?	1
+bus garche moosach 5 ?	1
+bus leave romanplatz ?	0
+quiddestraße boltzmannstraße ?	1
+connection garche forschungszentrum odeonsplatz ?	1
+train start sendlinger tor ?	0
+come train	0
+garche milbertshofen ?	1
+need hauptbahnhof 1 pm , search connection garche forschungszentrum ?	1
+train leave garche	0
+bus odeonsplatz hauptbahnhof 3 pm ?	1
+bus mariahilfplatz ?	0
+bus leave garche forschungszentrum ?	0
+fast connection brudermühlstraße alte heide ?	1
+find short way moosfeld milbertshofen ?	1
+train leave ?	0
+find connection olympiazentrum lehel 2 pm ?	1
+quiddestraße ?	1
+need garche 9	1
+bus leave romanplatz ?	0
+bus quiddestraße ?	0
+train depart quiddestraße ?	0
+u6 ?	0
+untere straussäcker ?	1
+milbertshofen garche ?	1
+tram start hauptbahnhof ?	0
+train leave garche forschungszentrum	0
+short way hauptbahnhof odeonsplatz ?	1
+u6 ?	0
+boltzmannstraße quiddestraße ?	1
+cheap connection quiddestraße hauptbahnhof ?	1
+bus garche !	0
+bus leave of absence garche ?	0
+train come garche forschungszentrum	0
+adrian subway leave garche forschungszentrum ?	0
+train münchner freiheit ?	0
+train	0
+subway departe odeonsplatz ?	0
+garche garche ?	1
+bus quiddestraße ?	0
+bus röblingweg start ?	0
+rocket leave garche forschungszentrum ?	0
+olympiazentrum hauptbahnhof ?	1
+subway leave garche ?	0
+bus garche forschungszentrum	0
+tell cheap way garche forschungszentrum quiddestraße ?	1
+train neuperlach zentrum garche 3 pm ?	1
+train garching , forschungszentrum leave ?	0
+tram karlsplatz lehel ?	1
+autobus michaelibad .	0
+train nordfriedhof ?	0
+connection garche odeonsplatz ?	1
+train farewell garche ?	0
+train leave ?	0
+train garching leave ?	0
+hey bot , bus start garche ?	0
+connection untere straßäcker 21 kieferngarten	1
+moosach garche forschungszentrum ?	1
+train garche forschungszentrum leave ?	0
+untere strassäcker 21 frötmane	1
+bus garche !	0
+train garche	0
+train leave odeonsplatz ?	0
+olympia einkaufszentrum hauptbahnhof ?	1
+mossach garche forschungszentrum ?	1
+want travel garche odeonsplatz ?	1
+bus quiddestraße hauptbahnhof ?	1
+train nordfriedhof garche forschungszentrum	1
+train leave garche forschungszentrum	0
+bus leave garche ?	0
+train untere straßaecker 21 kieferngarten	1
+train leave quiddestraße ?	0
+garche marienplatz	1
+u6 leave garche ?	0
+kurt - eisner - straße garche ?	1
+garche studentenstadt	1
+coach farewell garche forschungszentrum ?	0
+untere strassaecker 21 frötmane	1
+connection hauptbahnhof odeonsplatz ?	1
+garche forschungszentrum odeonsplatz ?	1
+neuperlach süd garche forschungszentrum ?	1
+garchingto garche ?	1
+garche hauptbahnhof ?	1
+string garche	0
+need connection harras karl - preis - platz 8 .	1
+garche forschungszentrum kurt - eisner - straße ?	1
+train leave garche ?	0
+marienplatz zu garching	1
+sendlinger tor ?	1
+u - bahn depart garche forschungszentrum ?	0
+garche odeonsplatz ?	1
+bus leave hauptbahnhof ?	0
+garche sendlinger tor ?	1
+train leave garche	0
+train nordfriedhof	0
+train garche	0
+garche , forschungszentrum odeonsplatz ?	1
+bus leave hauptbahnhof ?	0
+s - bahn leave hauptbahnhof ?	0
+short connection quiddestraße odeonsplatz ?	1
+bus michaelibad .	0
+bus leave garche ?	0
+garche münchner freiheit fast possible ?	1
+neuperlach zentrum karlsplatz fast possible ?	1
+cheap way neuperlach süd lehel ?	1
+bus leave garche ?	0
+train untere straßaecker 21 , garche kieferngarten	1
+subway leave garche ?	0
+bonnerplatz freimann	1
+garche perlach	1
+train garche	1
+bus quiddestraße ?	0
+subway departe odeonsplatz ?	0
+find bus quiddestraße lehel ?	1

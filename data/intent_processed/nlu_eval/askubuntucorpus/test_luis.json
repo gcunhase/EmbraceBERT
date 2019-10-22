@@ -1,0 +1,547 @@
+[
+  {
+    "text": "How do I shut down without the confirmation prompt?",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "Wubi Device /dev/loop0 full. How to get more space?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Is there a Linux file manager with a proper drop-down tree view? (like finder in OS X)",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Which is the best PDF metadata viewer for Ubuntu?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Upgrading from 11.10 to 12.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Is there an SSH connection manager?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Is there a project management software for Ubuntu like Microsoft Project?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "My system doesn't go shutdown",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "Can you recommend a good modern GUI download manager (wget wrapper?)",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Which PDF Viewer would you recommend?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Using 12.04 can I compile packages with gcc for 10.04?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Removing Recently used items in 12.04",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Which application do you recommend for watching TV (DVB)?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Any app that tells me to take regular breaks from working?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "How to Install a Canon MF8040Cn Printer on Ubuntu 12.04",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "How to upgrade from 16.04 LTS to 16.04.1 LTS",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "How to Install Brother DCP-8110DN Laser Printer on Ubuntu?",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "Please recommend a hex editor for shell",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Doubts regarding the 15.04 upgrade (is it inevitable and unavoidable?)",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "What Is The Best HDR Software?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Upgrading 16.04 to 16.04.1",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Recommendation for Regex editor?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "How to add a network printer on Ubuntu 15.10?",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "Upgrading from 10.04 to 11.10",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "update-manager: upgrade to 15.04 rather than 16.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "What are some good PHP editors?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Problems upgrading from 12.04 to 14.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "shutdown 5:30pm every day",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "Problems upgrading Ubuntu 12.10 to 13.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Security enhancements prevent mounting /dev/sdb1",
+    "intent": "None",
+    "entities": []
+  },
+  {
+    "text": "Is there software that can view .dwg files?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Force upgrade 12.10 to 13.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Is it necessary to upgrade to 15.10 from 14.04?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "How is rm command different from the delete button?",
+    "intent": "None",
+    "entities": []
+  },
+  {
+    "text": "shutdown in specific way if no-one uses computer",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "What IDEs are available for Ubuntu?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Cannot setup HP All in one DJ3630",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "Ubuntu upgrade failed",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Install printer Lexmark X4690 (ubuntu 12.04)",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "What are some good GUI binary viewers/editors?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Problem upgrading Ubuntu 9.10",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Ubuntu Shut down app",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "How to partially upgrade Ubuntu 11.10 from Ubuntu 11.04?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Is there any recovery software available for ext4?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "How do I install Dell 2150cdn printer",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "Is there a Document scanning and archiving software?",
+    "intent": "None",
+    "entities": []
+  },
+  {
+    "text": "How can I shutdown the computer when a certain process ends?",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "Software to create a video slideshow?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "How can I make shutdown not require admin password?",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "How to upgrade from 12.10 to 14.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Cannot install printer driver epson l210",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "Do I need to reinstall everything to upgrade from 13.10 to 14.10?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Software to read a QR code?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Is there a software utility to adjust screen gamma/brightness/contrast?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "How do I install the HP F4280 printer?",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "Is there LAN topology mapping software available in Ubuntu?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "What do you use to edit Microsoft Word documents (docx)?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Ho do I update to 13.04 from the beta?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "In Unity how do I see the details of a given launcher?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Applications to replace iTunes for iPod synchronization?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Upgrading from 12.04 to 13.10 ( Unanswered questions )",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "How to provide user permission to read and write on /dev/sdax? What is the syntax?",
+    "intent": "None",
+    "entities": []
+  },
+  {
+    "text": "What are some good ASCII art generators?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Upgrading From 11.04 (32bit) to 12.04 (64bit)",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Are there any hardware diagnostic tools?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "PDF to word conversion software?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "How to troubleshoot slow shutdown?",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "upgrading to Ubuntu 13.10 from Ubuntu 13.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "How can i upgrade to Ubuntu 14.04 final from 14.04 Beta correctly?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Is it recommended to upgrade to Lubuntu 15.04?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Upgrade from 9.10 to 11.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "What is the command to open the shutdown dialog?",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "No action when shutdown pressed",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "How to install Canon LBP330 in Lts 16.04",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "What software can I use to view epub documents?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "What's the best Mind Mapping Software?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Is there any software that will do face recognition in photos?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "On really old Ubuntu 6.06 - How to upgrade",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "A light alternative to gnome-system-monitor?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "What's a simple \"colour picker\" app for GNOME?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Upgrading Ubuntu Server 9.10 to 10.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "How to install a Lexmark z600 series printer?",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "How to upgrade from 14.04 LTS or 15.10 to 16.04 from terminal",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "what is the right way to shutdown ubuntu using the command line?",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "Installing Epson XP-424 wireless printer",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "How Do I Install Canon MF8000C Printer in Ubuntu 15.10?",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "Upgrade from 12.04 to 12.10 without losing files?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "How do I show grub when resuming from suspend?",
+    "intent": "None",
+    "entities": []
+  },
+  {
+    "text": "Why did the upgrade from 11.10 to 12.04 ruin my system?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Keyboard shortcut to shutdown?",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "Is there an upgrade procedure from 12.04 LTS to 14.04 LTS",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Tool for recovering deleted data from a flash drive",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "How to upgrade Ubuntu 12.04 to 14.04 if I have dual boot with windows 7?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Do I need to backup my 12.04 system to upgrade to 12.04.1?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "What's the best Wireframing tool?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Do I need to uninstall 10.04 to upgrade to 12.04?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Installing EPSON L355 on Ubuntu 14.04",
+    "intent": "SetupPrinter",
+    "entities": []
+  },
+  {
+    "text": "Is there a tool like wifi analyzer for ubuntu?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Is any offline upgrade from 13.10 to 14.04 possible?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "How do I update Xubuntu 11.10 to Xubuntu 12.04 LTS?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Upgrading from ubuntu 12.04 to 13.10",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Cannot upgrade from 12.04LTS to 14.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Upgrade 10.10 to 11.04",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "What blog editor software are available?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "Upgrading from 10.10 to 11.04 how much space is needed?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "Is there any program for fuzzy string matching which provides a match score?",
+    "intent": "SoftwareRecommendation",
+    "entities": []
+  },
+  {
+    "text": "How do I upgrade to the release version of 16.04 if I am running Beta?",
+    "intent": "MakeUpdate",
+    "entities": []
+  },
+  {
+    "text": "How to Shut down Ubuntu by using keyboard?",
+    "intent": "ShutdownComputer",
+    "entities": []
+  },
+  {
+    "text": "What does my computer do when I click 'Shut Down'?",
+    "intent": "ShutdownComputer",
+    "entities": []
+  }
+]

@@ -1,0 +1,532 @@
+[
+  {
+    "text": "when is the next bus from garching forschungzentrum",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how do i get from oez to hbf?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how i can get from marienplatz to garching",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from feldmoching to garching forschungszentrum?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "i want to go marienplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from münchner freiheit to odeonsplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from garching to odeonsplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "next train from muenchen freicheit",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "what is the next train from münchner freiheit",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how can i get from hauptbahnhof to odeonsplatz?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "can you find a connection from kurt-eisner-straße to garching forschungszentrum?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how i can get from marienplatz to garching?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when does the next train leaves at garching?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "next train from garching",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "when is the next subway from garching forschungszentrum",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how do i get from garching forschungszentrum to pasing",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when is the next s-bahn leaving at garching?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "when does the next subway departs at garching",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "when is the next train in garching?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how can i get from moosach to odeonsplatz?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "depart in garching, i assume",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "when is the next train leaving in garching forschungszentrum",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "connection from garching to hauptbahnhof?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from garching forschungszentrum to prinzregentenplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "what's the shortest way from quiddestraße to odeonsplatz?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how to get from bonner platz to freimann?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when is the next rocket from winterstraße 12 to kieferngarte",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get to glockenbachviertel from garching forschungszentrum?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "prinzregentenplatz to rotkreuzplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from hauptbahnhof to odeonsplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "can you find a connection from garching to hauptbahnhof?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "i want to go to garching from marienplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "connection from boltzmannstraße to kieferngarten",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "take me to the airport",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how to get from alte heide to marienplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when does the next bus starts from garching?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "next subway from garching forschungszentrum",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how can i get from klinkum to marienplatz?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how i can get from garching to neuperlach sued",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "next bus from garching, please.",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how can i get from mangfallplatz to garching",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when does the train leaving in garching forschungszentrum",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "next bus from central station",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "from marienplatz to petershausen",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from mangfallplatz to garching",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from moosach to quiddestraße?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "from quiddestraße to garching?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get to hohenlindenerstraße",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when does the next u-bahn leaves from garching forschungszentrum?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "or depart from garching",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "when is the next train from winterstraße 12 to kieferngarten",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get to glockenbachviertel from garching forschungszentrum?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "start: neufahrn end:garching",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "from garching to hauptbahnhof",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get to hohenlindenerstr",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when does the next bus departs from garching?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how do i get from spitzingplatz to poccistraße?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "neufahrn to garching",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "theresienstraße to assling",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "from harthaus to hackerbrücke",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when is the next train in alte heide?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how can i get from kurt-eisner-straße to garching forschungszentrum?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from moosach to poccistraße?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from neufahrn to garching",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when does the next u-bahn departs at garching forschungszentrum?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how i can get from munchner freiheit to nordfriedhof?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "find connection from hauptbahnhof to odeonsplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when is the next train in munchner freiheit?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "when does the next u6 leave from garching forschungszentrum",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how can i get from studentenstadt to garching",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when is the next bus from ostbahnhof",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "next bus from garching.",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "from garching foschungszentrum to odeonsplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "from garching to klinikum",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "i want to go garching from marienplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "from garching to marienplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "can you find a connection from quiddestraße to garching forschungszentrum?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how to get from münchner freiheit to garching ?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how i can get from marienplatz to garching?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when is the train from garching",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how can i get from theresienstraße to munich east?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how to get from untere strassäcker 21 to fröttmaning",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when is the train from garching to marienplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i get from moosach to quiddestraße?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when is the next train in muncher freiheit?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "hello munich city bot! how do i get from münchner freiheit to scheidplatz?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how to get from winterstrasse 12 to fröttmaning",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "implerstraße to ostbahnhof",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "when does the next bus starts at garching?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how can i get from theresienstrasse to garching forschungszentrum",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "take me from hauptbahnhof to odeonsplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "harthaus to hackerbrücke",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "from olympia einkaufszentrum to hauptbahnhof",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how can i go from garching forschungszentrum to prinzregentenplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "tell me the next bus from garching",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "the next bus from garching forschungzentrum",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "from prinzregentenplatz to rotkreuzplatz",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "next bus in garching",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "when is the next bus from garching",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how do i get from poccistraße to laim",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "from hauptbahnhof to garching?",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "how i can get from garching to nordfriedhof",
+    "intent": "FindConnection",
+    "entities": []
+  },
+  {
+    "text": "next bus from garching",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "when does the next u-bahn departs at garching?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "when does the next u-bahn depart at garching?",
+    "intent": "DepartureTime",
+    "entities": []
+  },
+  {
+    "text": "how can i get from garching forschungszentrum to marienplatz",
+    "intent": "FindConnection",
+    "entities": []
+  }
+]
