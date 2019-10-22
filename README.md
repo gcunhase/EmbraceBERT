@@ -1,2 +1,52 @@
-# EmbraceBERT
-BERT with ideas from EmbraceNet to improve classification accuracy in noisy data
+## About
+* *EmbraceBERT*: BERT with ideas from [EmbraceNet](https://arxiv.org/abs/1904.09078) to improve classification accuracy in noisy data
+    * *Docking layer* not needed: modality features all have the same size
+    * Output of BERT has shape (batch_size, sequence_length, embedding_size) = `(bs, 128, 768)`
+    * *Embracement layer*: used on the output of BERT to select important features from sequence
+    * *Attention layer* added: attention is applied to the `[CLS]` token and `embraced token` (both have same shape of `(bs, 768)`), to obtain a single feature vector of same size
+    * Obtained feature vector is used as input to a feedforward layer for improved classification 
+* *Dataset*: Open-source NLU benchmarks (SNIPS, Chatbot, Ask Ubuntu and Web Applications Corpora)
+* *Baseline*: [BERT/RoBERTa](https://github.com/gcunhase/IntentClassifier-RoBERTa) and [NLU Services](https://github.com/gcunhase/IntentClassifier) 
+> More info on baseline and datasets in the [IntentClassifier repository](https://github.com/gcunhase/IntentClassifier-RoBERTa)
+
+## Contents
+[Requirements](#requirements) • [How to Use](#how-to-use) • [EmbraceBERT/RoBERTa Results](#results) • [How to Cite](#acknowledgement)
+
+## Requirements
+Tested with Python 3.6.8, PyTorch 1.0.1.post2, CUDA 10.1
+```
+pip install -r requirements.txt
+python -m spacy download en
+```
+> pytorch-transformers version from September 6th 2019
+
+## How to Use
+### 1. Dataset 
+Available in `data` directory ([more info](https://github.com/gcunhase/IntentClassifier-RoBERTa/data/README.md)) 
+
+### 2. Train Model
+* Debug
+    ```bash
+    CUDA_VISIBLE_DEVICES=0 python run_classifier.py --task_name askubuntu_intent --model_type embracebert --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/embracebert_debug/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/embracebert_debug
+    ```
+* EmbraceBERT fine-tuned with Intention Classification Dataset
+    ```
+    CUDA_VISIBLE_DEVICES=0 ./scripts/run_embracebert_classifier_askubuntu_complete_seeds.sh
+    ```
+    > For EmbraceRoBERTa, change `--model_type` to `embraceroberta`
+
+    > `CUDA_VISIBLE_DEVICES=0 python run_embracebert_classifier.py --seed 1 --task_name askubuntu_intent --model_type embracebert --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/embracebert/askubuntu_complete_ep3_bs4_seed1/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/embracebert/askubuntu_complete_ep3_bs4_seed1`
+
+### 3. Output    
+| File | Description |
+| ---- | ----------- |
+| `checkpoint-best-${EPOCH_NUMBER}` | Directory with saved model |
+| `eval_results.json` | JSONified train/eval information |
+| `eval_results.txt` | Train/eval information: eval accuracy and loss, global_step and train loss |
+
+## Results
+### Complete data
+[AskUbuntu](./results_notes/askubuntu.md)
+
+## Acknowledgement
+In case you wish to use this code, please credit this repository or send me an email at `gwena.cs@gmail.com` with any requests or questions.
