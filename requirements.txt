@@ -1,0 +1,21 @@
+# PyTorch
+torch>=0.4.1
+pytorch-nlp
+# Progress bars in model download and training scripts
+tqdm
+# Accessing files from S3 directly.
+boto3
+# Used for downloading models over HTTP
+requests
+# Numpy
+numpy
+# Confusion matrix + F1 score
+scikit-learn
+matplotlib
+# Pre-processing
+spacy
+# WordNet for synonym dictionary
+nltk
+# BERT and RoBERTa
+pytorch-transformers
+tensorboardX
