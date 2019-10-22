@@ -1,8 +1,8 @@
 ## About
-*EmbraceBERT*: BERT with ideas from [EmbraceNet](https://arxiv.org/abs/1904.09078) to improve classification accuracy in noisy data
+*EmbraceBERT*: BERT with ideas from [EmbraceNet](https://arxiv.org/abs/1904.09078) to improve robustness and thus classification accuracy in noisy data.
 
 ## Contents
-[Requirements](#requirements) • [EmbraceBERT](#embracebert) • [How to Use](#how-to-use) • [EmbraceBERT/RoBERTa Results](#results) • [How to Cite](#acknowledgement)
+[Requirements](#requirements) • [EmbraceBERT](#embracebert) • [How to Use](#how-to-use) • [Results](#results) • [How to Cite](#acknowledgement)
 
 ## Requirements
 Tested with Python 3.6.8, PyTorch 1.0.1.post2, CUDA 10.1
@@ -10,7 +10,7 @@ Tested with Python 3.6.8, PyTorch 1.0.1.post2, CUDA 10.1
 pip install -r requirements.txt
 python -m spacy download en
 ```
-> pytorch-transformers version from September 6th 2019
+> [pytorch-transformers](https://github.com/huggingface/transformers) version from September 6th 2019
 
 ## EmbraceBERT
 1. Docking layer **not needed**: modality features all have the same size
@@ -54,3 +54,5 @@ python -m spacy download en
 
 ## Acknowledgement
 In case you wish to use this code, please credit this repository or send me an email at `gwena.cs@gmail.com` with any requests or questions.
+
+Code based on [HuggingFace's repository](https://github.com/huggingface/transformers).
