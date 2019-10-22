@@ -1,16 +1,8 @@
 ## About
-* *EmbraceBERT*: BERT with ideas from [EmbraceNet](https://arxiv.org/abs/1904.09078) to improve classification accuracy in noisy data
-    * *Docking layer* not needed: modality features all have the same size
-    * Output of BERT has shape (batch_size, sequence_length, embedding_size) = `(bs, 128, 768)`
-    * *Embracement layer*: used on the output of BERT to select important features from sequence
-    * *Attention layer* added: attention is applied to the `[CLS]` token and `embraced token` (both have same shape of `(bs, 768)`), to obtain a single feature vector of same size
-    * Obtained feature vector is used as input to a feedforward layer for improved classification 
-* *Dataset*: Open-source NLU benchmarks (SNIPS, Chatbot, Ask Ubuntu and Web Applications Corpora)
-* *Baseline*: [BERT/RoBERTa](https://github.com/gcunhase/IntentClassifier-RoBERTa) and [NLU Services](https://github.com/gcunhase/IntentClassifier) 
-> More info on baseline and datasets in the [IntentClassifier repository](https://github.com/gcunhase/IntentClassifier-RoBERTa)
+*EmbraceBERT*: BERT with ideas from [EmbraceNet](https://arxiv.org/abs/1904.09078) to improve classification accuracy in noisy data
 
 ## Contents
-[Requirements](#requirements) • [How to Use](#how-to-use) • [EmbraceBERT/RoBERTa Results](#results) • [How to Cite](#acknowledgement)
+[Requirements](#requirements) • [EmbraceBERT](#embracebert) • [How to Use](#how-to-use) • [EmbraceBERT/RoBERTa Results](#results) • [How to Cite](#acknowledgement)
 
 ## Requirements
 Tested with Python 3.6.8, PyTorch 1.0.1.post2, CUDA 10.1
@@ -20,9 +12,19 @@ python -m spacy download en
 ```
 > pytorch-transformers version from September 6th 2019
 
+## EmbraceBERT
+1. Docking layer **not needed**: modality features all have the same size
+2. Embracement layer:
+    * Used on the output of BERT to select important features from sequence
+    * Output of BERT has shape (batch_size, sequence_length, embedding_size) = `(bs, 128, 768)`
+3. Attention layer **added**:
+    * Attention is applied to the `[CLS]` token and `embraced token` (both have same shape of `(bs, 768)`), to obtain a single feature vector of same size
+    * Obtained feature vector is used as input to a feedforward layer for improved classification 
+
 ## How to Use
-### 1. Dataset 
-Available in `data` directory ([more info](https://github.com/gcunhase/IntentClassifier-RoBERTa/data/README.md)) 
+### 1. Dataset
+* Open-source NLU benchmarks (SNIPS, Chatbot, Ask Ubuntu and Web Applications Corpora)
+* Available in `data` directory [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa/data/README.md)] 
 
 ### 2. Train Model
 * Debug
@@ -45,6 +47,8 @@ Available in `data` directory ([more info](https://github.com/gcunhase/IntentCla
 | `eval_results.txt` | Train/eval information: eval accuracy and loss, global_step and train loss |
 
 ## Results
+*Baseline*: [BERT/RoBERTa](https://github.com/gcunhase/IntentClassifier-RoBERTa) and [NLU Services](https://github.com/gcunhase/IntentClassifier) [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa)]
+
 ### Complete data
 [AskUbuntu](./results_notes/askubuntu.md)
 
