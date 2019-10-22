@@ -1,0 +1,14 @@
+
+# Large directories
+venv*/*
+runs/*
+results/*
+
+# Cached data after training model
+data/*/*/*/cached*
+data/*/*/cached*
+
+# Others
+.idea/*
+*.pyc
+.DS_Store
