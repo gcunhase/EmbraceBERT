@@ -5,8 +5,7 @@ from pytorch_transformers.modeling_bert import BertEmbeddings
 from torch.nn import CrossEntropyLoss, MSELoss
 from torch.nn.modules.normalization import LayerNorm
 import numpy as np
-from torchnlp.nn.attention import Attention
-# torchnlp.Attention: https://pytorchnlp.readthedocs.io/en/latest/_modules/torchnlp/nn/attention.html
+from models.EmbracementLayer import EmbracementLayer
 
 
 class BertLayerNorm(nn.Module):
@@ -90,7 +89,7 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.embrace_attention = Attention(self.hidden_size)
+        self.embracement_layer = EmbracementLayer(self.hidden_size)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
         # Freeze BERT's weights
@@ -107,34 +106,9 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
                                 attention_mask=attention_mask, head_mask=head_mask)
 
         # pooled_enc_output = bs x 768
-        output_tokens_from_bert = bert_output[0]
-        cls_output = bert_output[1]  # CLS
-        # pooled_output = self.dropout(cls_output)
-
-        # Docking layer not needed given that all features have the same size
-        # Embracement layer with all outputs (except CLS)
-        tokens_to_embrace = output_tokens_from_bert[:, 1:, :]  # (8, 128, 768) = (bs, sequence_length (where the first index is CLS), embedding_size)
-        [bs, seq_len, emb_size] = tokens_to_embrace.size()
-        tokens_to_embrace = tokens_to_embrace.cpu().detach().numpy()
-        # Consider each token in the sequence of 128 as one modality.
-        # 1. Multinomial distribution: randomly chose features from all 128 with same probability for each index feature
-        probability = torch.tensor(np.ones(seq_len), dtype=torch.float)
-        embraced_features_index = torch.multinomial(probability, emb_size, replacement=True)
-        embraced_features_index = embraced_features_index.cpu().detach().numpy()
-        # 2. Add features into one of size (bs, embedding_size)
-        embraced_features_token = []
-        for i_bs in range(bs):
-            embraced_features_token_bs = []
-            for i_emb, e in enumerate(embraced_features_index):
-                embraced_features_token_bs.append(tokens_to_embrace[i_bs, e, i_emb])
-            embraced_features_token.append(embraced_features_token_bs)
-        embraced_features_token = torch.tensor(embraced_features_token, dtype=torch.float)
-
-        # Apply attention layer to CLS and embraced_features_token
-        query = torch.unsqueeze(cls_output, 1).cuda()  # query = torch.randn(5, 1, 256)
-        context = torch.unsqueeze(embraced_features_token, 1).cuda()  # context = torch.randn(5, 5, 256)
-        embrace_output, weights = self.embrace_attention(query, context)
-        embrace_output = embrace_output.squeeze()
+        # output_tokens_from_bert = bert_output[0]
+        # cls_output = bert_output[1]  # CLS
+        embrace_output = self.embracement_layer(bert_output)
 
         # No need because the embrace layer function as a dropout mechanism?
         if apply_dropout:
