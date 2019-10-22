@@ -142,7 +142,10 @@ def train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval_dat
                       'attention_mask': batch[1],
                       'token_type_ids': batch[2] if args.model_type in ['embracebert', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
                       'labels':         batch[3]}
-            outputs = model(**inputs, apply_dropout=args.apply_dropout)
+            if args.model_type in ['embracebert', 'embraceroberta']:
+                outputs = model(**inputs, apply_dropout=args.apply_dropout)
+            else:
+                outputs = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
 
             if args.n_gpu > 1:
@@ -273,12 +276,16 @@ def evaluate(args, model, tokenizer, prefix=""):
                 eval_loss += tmp_eval_loss.mean().item()
             nb_eval_steps += 1
             if preds is None:
-                preds = [logits.detach().cpu().numpy()]
-                preds2 = logits.detach().cpu().numpy()
+                if args.model_type in ['embracebert']:
+                    preds = [logits.detach().cpu().numpy()]
+                else:  # Why doesn't this work with EmbraceBERT? This is the original line in the code.
+                    preds = logits.detach().cpu().numpy()
                 out_label_ids = inputs['labels'].detach().cpu().numpy()
             else:
-                preds.append(logits.detach().cpu().numpy())
-                preds2 = np.append(preds2, logits.detach().cpu().numpy(), axis=0)
+                if args.model_type in ['embracebert']:
+                    preds.append(logits.detach().cpu().numpy())
+                else:
+                    preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
                 out_label_ids = np.append(out_label_ids, inputs['labels'].detach().cpu().numpy(), axis=0)
 
         eval_loss = eval_loss / nb_eval_steps
