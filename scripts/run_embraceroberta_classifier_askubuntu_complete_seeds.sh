@@ -4,7 +4,7 @@ MODEL_TYPE=embraceroberta
 OUTPUT_DIR="../results/${MODEL_TYPE}/"
 RUN_DIR="../runs/${MODEL_TYPE}/"
 
-BS_TRAIN=4
+BS_TRAIN=16
 BS_EVAL=1
 for DATASET in askubuntu; do  # chatbot askubuntu; do
     echo $DATASET
