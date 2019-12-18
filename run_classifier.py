@@ -38,16 +38,14 @@ from torch.utils.data.distributed import DistributedSampler
 from tensorboardX import SummaryWriter
 from tqdm import tqdm, trange
 
-from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
-                                  BertForSequenceClassification, BertTokenizer,
-                                  RobertaConfig,
-                                  RobertaForSequenceClassification,
-                                  RobertaTokenizer,
-                                  XLMConfig, XLMForSequenceClassification,
-                                  XLMTokenizer, XLNetConfig,
-                                  XLNetForSequenceClassification,
-                                  XLNetTokenizer)
+from pytorch_transformers import (WEIGHTS_NAME,
+                                  BertConfig, BertTokenizer,
+                                  RobertaConfig, RobertaTokenizer,
+                                  XLMConfig, XLMForSequenceClassification, XLMTokenizer,
+                                  XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer)
 
+from models.BERT_Dropout import BertForSequenceClassification
+from models.RoBERTa_Dropout import RobertaForSequenceClassification
 from models.EmbraceBERT import EmbraceBertForSequenceClassification
 from models.EmbraceRoBERTa import EmbraceRobertaForSequenceClassification
 
@@ -142,7 +140,7 @@ def train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval_dat
                       'attention_mask': batch[1],
                       'token_type_ids': batch[2] if args.model_type in ['embracebert', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
                       'labels':         batch[3]}
-            if args.model_type in ['embracebert', 'embraceroberta']:
+            if args.model_type in ['embracebert', 'embraceroberta', 'bert', 'roberta']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout)
             else:
                 outputs = model(**inputs)
@@ -372,6 +370,10 @@ def main():
                         help="The input data dir. Should contain the .tsv files (or other data files) for the task.")
     parser.add_argument("--model_type", default=None, type=str, required=True,
                         help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
+    parser.add_argument('--is_condensed', action='store_true',
+                        help="In the Embracement Layer, indicates whether to consider all tokens (False)"
+                             "or only the ones between tokens CLS and SEP (True)."
+                             "Only for EmbraceBERT and EmbraceRoBERTa.")
     parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
                         help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(ALL_MODELS))
     parser.add_argument("--task_name", default=None, type=str, required=True,
@@ -439,7 +441,9 @@ def main():
                         help="random seed for initialization")
 
     parser.add_argument('--apply_dropout', action='store_true',
-                        help="Whether to apply dropout after Embrace Layer (only for EmbraceBERT).")
+                        help="Whether to apply dropout after Embrace Layer (only for EmbraceBERT and EmbraceRoBERTa).")
+    parser.add_argument('--dropout_prob', type=float, default=0.1,
+                        help="Dropout probability in BERT, RoBERTa, EmbraceBERT/RoBERTa.")
     parser.add_argument('--fp16', action='store_true',
                         help="Whether to use 16-bit (mixed) precision (through NVIDIA apex) instead of 32-bit")
     parser.add_argument('--fp16_opt_level', type=str, default='O1',
@@ -502,7 +506,15 @@ def main():
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path, num_labels=num_labels, finetuning_task=args.task_name)
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path, do_lower_case=args.do_lower_case)
-    model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path), config=config)  #, args=args)
+    if args.model_type in ['bert', 'roberta']:  # with args
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob)
+    elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed)
+    else:
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config)
 
     if args.local_rank == 0:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
@@ -541,7 +553,12 @@ def main():
             torch.save(args, os.path.join(output_dir, 'training_args.bin'))
 
             # Load a trained model and vocabulary that you have fine-tuned
-            model = model_class.from_pretrained(output_dir)
+            if args.model_type in ['bert', 'roberta']:  # with args
+                model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
+            elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
+                model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed)
+            else:
+                model = model_class.from_pretrained(output_dir)
             tokenizer = tokenizer_class.from_pretrained(output_dir)
             model.to(args.device)
 
@@ -567,7 +584,12 @@ def main():
         # for checkpoint in checkpoints:
         global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
         # Load a trained model and vocabulary that you have fine-tuned
-        model = model_class.from_pretrained(output_dir)
+        if args.model_type in ['bert', 'roberta']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
+        elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed)
+        else:
+            model = model_class.from_pretrained(output_dir)
         tokenizer = tokenizer_class.from_pretrained(output_dir)
         model.to(args.device)
         result = evaluate(args, model, tokenizer, prefix=global_step)
