@@ -31,6 +31,7 @@ python -m spacy download en
     ```bash
     CUDA_VISIBLE_DEVICES=0 python run_classifier.py --seed 1 --task_name askubuntu_intent --model_type embracebert --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/embracebert_debug_ep3_bs4_seed1/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/embracebert_debug_ep3_bs4_seed1
     CUDA_VISIBLE_DEVICES=0 python run_classifier.py --seed 1 --task_name askubuntu_intent --model_type embraceroberta --model_name_or_path roberta-base --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/embraceroberta_debug/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/embraceroberta_debug
+    CUDA_VISIBLE_DEVICES=0 python run_classifier.py --seed 1 --is_condensed --task_name askubuntu_intent --model_type embraceroberta --model_name_or_path roberta-base --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/condensed_embraceroberta_debug/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/condensed_embraceroberta_debug
     ```
 * EmbraceBERT fine-tuned with Intention Classification Dataset
     ```
@@ -40,6 +41,14 @@ python -m spacy download en
 
     > `CUDA_VISIBLE_DEVICES=0 python run_embracebert_classifier.py --seed 1 --task_name askubuntu_intent --model_type embracebert --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/embracebert/askubuntu_complete_ep3_bs4_seed1/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/embracebert/askubuntu_complete_ep3_bs4_seed1`
 
+* Condensed EmbraceBERT fine-tuned with Intention Classification Dataset: add `--is_condensed` to run
+    * In this version, the embracement layer doesn't consider all the tokens, only those referring to tokens in the original sentence. Previously, if the max length of the sequence was 128, all 128 tokens would be considered even if the sentence only had 10 tokens in it.
+    
+* Frozen EBERT: freeze BERT weights and to end-to-end finetuning after embrace layer with classifier loss is saturated for a few steps
+    * EmbraceBERT
+    * Condensed EmbraceBERT
+
+
 ### 3. Output    
 | File | Description |
 | ---- | ----------- |
@@ -48,10 +57,11 @@ python -m spacy download en
 | `eval_results.txt` | Train/eval information: eval accuracy and loss, global_step and train loss |
 
 ## Results
-*Baseline*: [BERT/RoBERTa](https://github.com/gcunhase/IntentClassifier-RoBERTa) and [NLU Services](https://github.com/gcunhase/IntentClassifier) [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa)]
+### Baseline
+[BERT/RoBERTa](https://github.com/gcunhase/IntentClassifier-RoBERTa) and [NLU Services](https://github.com/gcunhase/IntentClassifier) [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa)]
 
-### Complete data
-[AskUbuntu](./results_notes/askubuntu.md)
+### F1-scores
+[AskUbuntu](./results_notes/askubuntu.md) • [Chatbot]() • [WebApplications]() • [Snips]()
 
 ## Acknowledgement
 In case you wish to use this code, please credit this repository or send me an email at `gwena.cs@gmail.com` with any requests or questions.
