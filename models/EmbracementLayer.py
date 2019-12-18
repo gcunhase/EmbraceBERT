@@ -18,16 +18,17 @@ class EmbracementLayer(nn.Module):
         output_tokens_from_bert = bert_output[0]
         cls_output = bert_output[1]  # CLS
 
-        # Docking layer not needed given that all features have the same size
-        # Embracement layer with all outputs (except CLS)
+        # Note: Docking layer not needed given that all features have the same size
         tokens_to_embrace = output_tokens_from_bert[:, 1:, :]  # (8, 128, 768) = (bs, sequence_length (where the first index is CLS), embedding_size)
         [bs, seq_len, emb_size] = tokens_to_embrace.size()
         tokens_to_embrace = tokens_to_embrace.cpu().detach().numpy()
-        # Consider each token in the sequence of 128 as one modality.
+
+        # Note: Consider each token in the sequence of 128 as one modality.
         # 1. Multinomial distribution: randomly chose features from all 128 with same probability for each index feature
         probability = torch.tensor(np.ones(seq_len), dtype=torch.float)
         embraced_features_index = torch.multinomial(probability, emb_size, replacement=True)
         embraced_features_index = embraced_features_index.cpu().detach().numpy()
+
         # 2. Add features into one of size (bs, embedding_size)
         embraced_features_token = []
         for i_bs in range(bs):
