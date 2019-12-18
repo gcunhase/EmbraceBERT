@@ -6,6 +6,7 @@ from torch.nn import CrossEntropyLoss, MSELoss
 from torch.nn.modules.normalization import LayerNorm
 import numpy as np
 from models.EmbracementLayer import EmbracementLayer
+from models.CondensedEmbracementLayer import CondensedEmbracementLayer
 
 
 class BertLayerNorm(nn.Module):
@@ -80,16 +81,20 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         >>> outputs = model(input_ids, labels=labels)
         >>> loss, logits = outputs[:2]
     """
-    def __init__(self, config):
+    def __init__(self, config, dropout_prob, is_condensed=False):
         super(EmbraceBertForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.vocab_size = config.vocab_size
         self.hidden_size = config.hidden_size  # 768
+        self.is_condensed = is_condensed
         # self.args = args
 
         self.bert = BertModel(config)
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.embracement_layer = EmbracementLayer(self.hidden_size)
+        self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
+        if not self.is_condensed:
+            self.embracement_layer = EmbracementLayer(self.hidden_size)
+        else:
+            self.embracement_layer = CondensedEmbracementLayer(self.hidden_size)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
         # Freeze BERT's weights
@@ -108,7 +113,10 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         # pooled_enc_output = bs x 768
         # output_tokens_from_bert = bert_output[0]
         # cls_output = bert_output[1]  # CLS
-        embrace_output = self.embracement_layer(bert_output)
+        if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only
+            embrace_output = self.embracement_layer(bert_output, attention_mask)
+        else:  # Embracement layer with all outputs (except CLS)
+            embrace_output = self.embracement_layer(bert_output)
 
         # No need because the embrace layer function as a dropout mechanism?
         if apply_dropout:

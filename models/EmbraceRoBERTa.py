@@ -31,6 +31,7 @@ from pytorch_transformers.modeling_bert import (BertConfig, BertEmbeddings,
 
 from pytorch_transformers.modeling_utils import add_start_docstrings
 from models.EmbracementLayer import EmbracementLayer
+from models.CondensedEmbracementLayer import CondensedEmbracementLayer
 
 logger = logging.getLogger(__name__)
 
@@ -312,15 +313,19 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
     pretrained_model_archive_map = ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP
     base_model_prefix = "roberta"
 
-    def __init__(self, config):
+    def __init__(self, config, dropout_prob, is_condensed=False):
         super(EmbraceRobertaForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.vocab_size = config.vocab_size
         self.hidden_size = config.hidden_size  # 768
+        self.is_condensed = is_condensed
 
         self.roberta = RobertaModel(config)
-        self.embracement_layer = EmbracementLayer(self.hidden_size)
-        self.classifier = RobertaClassificationHead(config)
+        if not self.is_condensed:
+            self.embracement_layer = EmbracementLayer(self.hidden_size)
+        else:
+            self.embracement_layer = CondensedEmbracementLayer(self.hidden_size)
+        self.classifier = RobertaClassificationHead(config, dropout_prob)
         # self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None,
@@ -330,13 +335,16 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
 
         # Embracement layer with attention and no docking
         # sequence_output = outputs[0]
-        embrace_output = self.embracement_layer(outputs)
+        if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only
+            embrace_output = self.embracement_layer(outputs, attention_mask)
+        else:  # Embracement layer with all outputs (except CLS)
+            embrace_output = self.embracement_layer(outputs)
 
         if len(embrace_output.shape) == 1:  # Last batch might have only 1 sample
             embrace_output = embrace_output.unsqueeze(0)
         embrace_output = embrace_output.unsqueeze(1)
 
-        logits = self.classifier(embrace_output)
+        logits = self.classifier(embrace_output, apply_dropout)
 
         outputs = (logits,) + outputs[2:]
         if labels is not None:
@@ -355,17 +363,19 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
 class RobertaClassificationHead(nn.Module):
     """Head for sentence-level classification tasks."""
 
-    def __init__(self, config):
+    def __init__(self, config, dropout_prob):
         super(RobertaClassificationHead, self).__init__()
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
+        self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
         self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
 
-    def forward(self, features, **kwargs):
+    def forward(self, features, apply_dropout, **kwargs):
         x = features[:, 0, :]  # take <s> token (equiv. to [CLS])
-        x = self.dropout(x)
+        if apply_dropout:
+            x = self.dropout(x)
         x = self.dense(x)
         x = torch.tanh(x)
-        x = self.dropout(x)
+        if apply_dropout:
+            x = self.dropout(x)
         x = self.out_proj(x)
         return x
