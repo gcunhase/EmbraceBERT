@@ -4,13 +4,13 @@ MODEL_TYPE=embraceroberta
 OUTPUT_DIR="../results/${MODEL_TYPE}/"
 RUN_DIR="../runs/${MODEL_TYPE}/"
 
-BS_TRAIN=4
+BS_TRAIN=16
 BS_EVAL=1
-for DATASET in askubuntu; do  # chatbot askubuntu; do
+for DATASET in snips; do
     echo $DATASET
-    for TTS in "gtts" "macsay"; do
+    for TTS in "gtts"; do
         for STT in "google" "sphinx" "witai"; do
-            for EPOCH in 30 100; do
+            for EPOCH in 3; do  # 30 100; do
                 echo "Training ${DATASET} dataset with ${TTS}-${STT} for ${EPOCH} epochs"
 
                 DATA_DIR="../data/intent_stterror_data/${DATASET}/${TTS}_${STT}/"
