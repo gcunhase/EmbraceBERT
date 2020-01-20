@@ -61,7 +61,7 @@ python -m spacy download en
 [BERT/RoBERTa](https://github.com/gcunhase/IntentClassifier-RoBERTa) and [NLU Services](https://github.com/gcunhase/IntentClassifier) [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa)]
 
 ### F1-scores
-[AskUbuntu](./results_notes/askubuntu.md) • [Chatbot]() • [WebApplications]() • [Snips]()
+[AskUbuntu](./results_notes/askubuntu.md) • [Chatbot](./results_notes/chatbot.md) • [WebApplications](./results_notes/webapplications.md) • [Snips](./results_notes/snips.md)
 
 ## Acknowledgement
 In case you wish to use this code, please credit this repository or send me an email at `gwena.cs@gmail.com` with any requests or questions.
