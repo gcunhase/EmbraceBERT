@@ -105,7 +105,13 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         # self.init_weights()
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None,
-                position_ids=None, head_mask=None, apply_dropout=False):
+                position_ids=None, head_mask=None, apply_dropout=False, freeze_bert_weights=False):
+
+        # Fine-tune with
+        if freeze_bert_weights:
+            # self.bert.requires_grad = not freeze_bert_weights
+            self.bert.training = not freeze_bert_weights
+
         # encoder_output = bs x 128 x 768
         bert_output = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                                 attention_mask=attention_mask, head_mask=head_mask)

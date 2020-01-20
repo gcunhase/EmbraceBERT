@@ -103,7 +103,12 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.apply(self.init_weights)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None,
-                position_ids=None, head_mask=None, apply_dropout=False):
+                position_ids=None, head_mask=None, apply_dropout=False, freeze_bert_weights=False):
+
+        # Fine-tune with
+        if freeze_bert_weights:
+            self.bert.requires_grad = not freeze_bert_weights
+
         outputs = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                             attention_mask=attention_mask, head_mask=head_mask)
         pooled_output = outputs[1]
