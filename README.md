@@ -45,8 +45,8 @@ python -m spacy download en
     * In this version, the embracement layer doesn't consider all the tokens, only those referring to tokens in the original sentence. Previously, if the max length of the sequence was 128, all 128 tokens would be considered even if the sentence only had 10 tokens in it.
     
 * Frozen EBERT: freeze BERT weights and to end-to-end finetuning after embrace layer with classifier loss is saturated for a few steps
-    * EmbraceBERT
-    * Condensed EmbraceBERT
+    * add `--freeze_bert_weights --num_train_epochs_frozen_bert 100.0` to run
+    ```--seed 1 --is_condensed --task_name askubuntu_intent --model_type embraceroberta --model_name_or_path roberta-base --freeze_bert_weights --num_train_epochs_frozen_bert 100.0 --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/condensed_embraceroberta_debug/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/condensed_embraceroberta_debug```
 
 
 ### 3. Output    
