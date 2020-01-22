@@ -3,7 +3,7 @@
 MODEL_TYPE=embracebert
 # MODEL_TYPE=embraceroberta
 
-if [ $MODEL_TYPE == "embracebert" ]; then
+if [[ $MODEL_TYPE == *"bert"* ]]; then
   MODEL_NAME_OR_PATH="bert-base-uncased"
 else
   MODEL_NAME_OR_PATH="roberta-base"
