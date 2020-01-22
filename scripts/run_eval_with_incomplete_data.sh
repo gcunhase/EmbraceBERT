@@ -26,10 +26,10 @@ mkdir $EVAL_DIR
 RUN_DIR="../runs/${MODEL_NAME}/"
 
 # shellcheck disable=SC2004
-if [[ $MODEL_TYPE == *"bert"* ]]; then
-  MODEL_NAME_OR_PATH="bert-base-uncased"
-else
+if [[ $MODEL_TYPE == *"roberta"* ]]; then
   MODEL_NAME_OR_PATH="roberta-base"
+else
+  MODEL_NAME_OR_PATH="bert-base-uncased"
 fi
 echo $MODEL_NAME_OR_PATH
 
