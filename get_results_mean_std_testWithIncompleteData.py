@@ -13,7 +13,7 @@ if root_name == './':
 MODEL = ["bert", "embracebert", "embracebert_condensed", "bert_frozen", "embracebert_frozenbert",
          "roberta", "embraceroberta", "embraceroberta_condensed", "roberta_frozen", "embraceroberta_frozenbert"]
 MODEL_NAME = {"bert": " BERT-bs{}                ",
-              "embracebert": " EmbraceBERT-bs{}}         ",
+              "embracebert": " EmbraceBERT-bs{}         ",
               "embracebert_condensed": " CondensedEmbraceBERT-bs{}",
               "bert_frozen": " FrozenBERT-bs{}-ep100    ",
               "embracebert_frozenbert": " FrozenEBERT-bs{}-ep100   ",
@@ -24,15 +24,22 @@ MODEL_NAME = {"bert": " BERT-bs{}                ",
               "embraceroberta_frozenbert": " FrozenERoBERTa-bs{}-ep100   "
               }
 
-for dataname in ["askubuntu"]:  #, "chatbot", "webapplications"]:
-    for epoch in [100]:
+for dataname in ["snips"]:  #, "askubuntu", "chatbot", "webapplications", "snips"]:
+    if dataname == "snips":
+        bs_array = [16, 32]
+        epoch_array = [3]
+    else:
+        bs_array = [4, 16]
+        epoch_array = [100]
+
+    for epoch in epoch_array:
         print("- {} - ep{}".format(dataname.upper(), epoch))
         for tts in ["gtts", "macsay"]:
             for stt in ["google", "sphinx", "witai"]:
                 tts_stt_type = tts + "_" + stt
                 print(tts_stt_type)
 
-                for bs in [4, 16]:
+                for bs in bs_array:
                     print("-----------------------------------------")
                     for model in MODEL:
                         model_name = MODEL_NAME[model]
@@ -46,9 +53,9 @@ for dataname in ["askubuntu"]:  #, "chatbot", "webapplications"]:
                         for perc in [0.1]:
                             f1_micro_arr = []
                             if bs == 4:
-                                f1_micro_str_all += "| {} ".format(model_name.format(bs))
+                                f1_micro_str_all += "|{} ".format(model_name.format(bs))
                             else:
-                                f1_micro_str_all += "| {}".format(model_name.format(bs))
+                                f1_micro_str_all += "|{}".format(model_name.format(bs))
                             for i in range(1, 10 + 1):
                                 tmp_dir = "{}seed{}/".format(root_dir, i)
                                 tmp_dir += "eval_results_{}.json".format(tts_stt_type)
