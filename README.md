@@ -34,6 +34,15 @@ python -m spacy download en
     CUDA_VISIBLE_DEVICES=0 python run_classifier.py --seed 1 --is_condensed --task_name askubuntu_intent --model_type embraceroberta --model_name_or_path roberta-base --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/condensed_embraceroberta_debug/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/condensed_embraceroberta_debug
     ```
 * EmbraceBERT fine-tuned with Intention Classification Dataset
+    * REDO EXPERIMENTS WITH JUST EmbraceBERT
+    ```
+    # Wrong:
+    tokens_to_embrace = output_tokens_from_bert[:, 1:, :]  # (8, 128, 768) = (bs, sequence_length (where the first index is CLS), embedding_size)
+    # Corrected to:
+    tokens_to_embrace = output_tokens_from_bert[:, :, :]  # (8, 128, 768) = (bs, sequence_length, embedding_size)
+    ```
+    > This is correct in CondensedEmbraceBERT
+
     ```
     CUDA_VISIBLE_DEVICES=0 ./scripts/run_embracebert_classifier_askubuntu_complete_seeds.sh
     ```

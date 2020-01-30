@@ -1,54 +1,11 @@
 import torch
 import torch.nn as nn
 from pytorch_transformers import *
-from pytorch_transformers.modeling_bert import BertEmbeddings
 from torch.nn import CrossEntropyLoss, MSELoss
-from torch.nn.modules.normalization import LayerNorm
-import numpy as np
 from models.EmbracementLayer import EmbracementLayer
 from models.CondensedEmbracementLayer import CondensedEmbracementLayer
-
-
-class BertLayerNorm(nn.Module):
-    def __init__(self, hidden_size, eps=1e-12):
-        """Construct a layernorm module in the TF style (epsilon inside the square root).
-        """
-        super(BertLayerNorm, self).__init__()
-        self.weight = nn.Parameter(torch.ones(hidden_size))
-        self.bias = nn.Parameter(torch.zeros(hidden_size))
-        self.variance_epsilon = eps
-
-    def forward(self, x):
-        u = x.mean(-1, keepdim=True)
-        s = (x - u).pow(2).mean(-1, keepdim=True)
-        x = (x - u) / torch.sqrt(s + self.variance_epsilon)
-        return self.weight * x + self.bias
-
-
-class BertPreTrainedModel(PreTrainedModel):
-    """ An abstract class to handle weights initialization and
-        a simple interface for dowloading and loading pretrained models.
-    """
-    config_class = BertConfig
-    pretrained_model_archive_map = BERT_PRETRAINED_MODEL_ARCHIVE_MAP
-    load_tf_weights = load_tf_weights_in_bert
-    base_model_prefix = "bert"
-
-    def __init__(self, *inputs, **kwargs):
-        super(BertPreTrainedModel, self).__init__(*inputs, **kwargs)
-
-    def init_weights(self, module):
-        """ Initialize the weights.
-        """
-        if isinstance(module, (nn.Linear, nn.Embedding)):
-            # Slightly different from the TF version which uses truncated_normal for initialization
-            # cf https://github.com/pytorch/pytorch/pull/5617
-            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
-        elif isinstance(module, BertLayerNorm):
-            module.bias.data.zero_()
-            module.weight.data.fill_(1.0)
-        if isinstance(module, nn.Linear) and module.bias is not None:
-            module.bias.data.zero_()
+from models.bert_utils import BertPreTrainedModel
+from models.AttentionLayer import AttentionLayer
 
 
 # class BertForSequenceClassification(BertPreTrainedModel):
@@ -92,9 +49,11 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
         if not self.is_condensed:
-            self.embracement_layer = EmbracementLayer(self.hidden_size)
+            self.embracement_layer = EmbracementLayer()
         else:
-            self.embracement_layer = CondensedEmbracementLayer(self.hidden_size)
+            self.embracement_layer = CondensedEmbracementLayer()
+
+        self.embrace_attention = AttentionLayer(self.hidden_size)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
         # Freeze BERT's weights
@@ -118,11 +77,16 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
 
         # pooled_enc_output = bs x 768
         # output_tokens_from_bert = bert_output[0]
-        # cls_output = bert_output[1]  # CLS
+        cls_output = bert_output[1]  # CLS
+        output_tokens_from_bert = bert_output[0]
+
         if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only
-            embrace_output = self.embracement_layer(bert_output, attention_mask)
+            embraced_features_token = self.embracement_layer(output_tokens_from_bert, attention_mask)
         else:  # Embracement layer with all outputs (except CLS)
-            embrace_output = self.embracement_layer(bert_output)
+            embraced_features_token = self.embracement_layer(output_tokens_from_bert)
+
+        # Last step: Apply attention layer to CLS and embraced_features_token
+        embrace_output = self.embrace_attention(cls_output, embraced_features_token)
 
         # No need because the embrace layer function as a dropout mechanism?
         if apply_dropout:

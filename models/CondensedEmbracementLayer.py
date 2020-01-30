@@ -1,25 +1,22 @@
 import torch
 from torch import nn
 import numpy as np
-from torchnlp.nn.attention import Attention
-# torchnlp.Attention: https://pytorchnlp.readthedocs.io/en/latest/_modules/torchnlp/nn/attention.html
+from models.AttentionLayer import AttentionLayer
 
 __author__ = "Gwena Cunha"
 
 
 class CondensedEmbracementLayer(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self):
         super(CondensedEmbracementLayer, self).__init__()
-        self.hidden_size = hidden_size
-        self.embrace_attention = Attention(self.hidden_size)
 
-    def forward(self, bert_output, attention_mask):
+    def forward(self, output_tokens_from_bert, attention_mask):
         # pooled_enc_output = bs x 768
-        output_tokens_from_bert = bert_output[0]
-        cls_output = bert_output[1]  # CLS
+        # output_tokens_from_bert = bert_output[0]
+        # cls_output = bert_output[1]  # CLS
 
         # Note: Docking layer not needed given that all features have the same size
-        [bs, emb_size] = cls_output.size()
+        [bs, seq_len, emb_size] = output_tokens_from_bert.size()
         embraced_features_token = []
         for i_bs in range(bs):
             # 0. Obtain relevant tokens (Embracement layer with outputs between CLS and SEP only)
@@ -49,10 +46,4 @@ class CondensedEmbracementLayer(nn.Module):
 
         embraced_features_token = torch.tensor(embraced_features_token, dtype=torch.float)
 
-        # 3. Apply attention layer to CLS and embraced_features_token
-        query = torch.unsqueeze(cls_output, 1).cuda()  # query = torch.randn(5, 1, 256)
-        context = torch.unsqueeze(embraced_features_token, 1).cuda()  # context = torch.randn(5, 5, 256)
-        embrace_output, weights = self.embrace_attention(query, context)
-        embrace_output = embrace_output.squeeze()
-
-        return embrace_output
+        return embraced_features_token
