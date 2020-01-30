@@ -74,11 +74,16 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
 
         # pooled_enc_output = bs x 768
         # output_tokens_from_bert = bert_output[0]
-        # cls_output = bert_output[1]  # CLS
+        cls_output = bert_output[1]  # CLS
+        output_tokens_from_bert = bert_output[0]
+
         if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only
-            embrace_output = self.embracement_layer(bert_output, attention_mask)
+            embraced_features_token = self.embracement_layer(output_tokens_from_bert, attention_mask)
         else:  # Embracement layer with all outputs (except CLS)
-            embrace_output = self.embracement_layer(bert_output)
+            embraced_features_token = self.embracement_layer(output_tokens_from_bert)
+
+        # Last step: Apply attention layer to CLS and embraced_features_token
+        embrace_output = self.embrace_attention(cls_output, embraced_features_token)
 
         # No need because the embrace layer function as a dropout mechanism?
         if apply_dropout:

@@ -11,10 +11,10 @@ class EmbracementLayer(nn.Module):
         super(EmbracementLayer, self).__init__()
         self.embrace_attention = AttentionLayer(hidden_size)
 
-    def forward(self, bert_output):
+    def forward(self, output_tokens_from_bert):
         # pooled_enc_output = bs x 768
-        output_tokens_from_bert = bert_output[0]
-        cls_output = bert_output[1]  # CLS
+        # output_tokens_from_bert = bert_output[0]
+        # cls_output = bert_output[1]  # CLS
 
         # Note: Docking layer not needed given that all features have the same size
         tokens_to_embrace = output_tokens_from_bert[:, 1:, :]  # (8, 128, 768) = (bs, sequence_length (where the first index is CLS), embedding_size)
@@ -36,7 +36,4 @@ class EmbracementLayer(nn.Module):
             embraced_features_token.append(embraced_features_token_bs)
         embraced_features_token = torch.tensor(embraced_features_token, dtype=torch.float)
 
-        # 3. Apply attention layer to CLS and embraced_features_token
-        embrace_output = self.embrace_attention(cls_output, embraced_features_token)
-
-        return embrace_output
+        return embraced_features_token
