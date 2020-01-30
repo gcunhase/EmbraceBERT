@@ -17,7 +17,8 @@ class EmbracementLayer(nn.Module):
         # cls_output = bert_output[1]  # CLS
 
         # Note: Docking layer not needed given that all features have the same size
-        tokens_to_embrace = output_tokens_from_bert[:, 1:, :]  # (8, 128, 768) = (bs, sequence_length (where the first index is CLS), embedding_size)
+        # tokens_to_embrace = output_tokens_from_bert[:, 1:, :]  # (8, 128, 768) = (bs, sequence_length (where the first index is CLS), embedding_size)
+        tokens_to_embrace = output_tokens_from_bert[:, :, :]  # (8, 128, 768) = (bs, sequence_length, embedding_size)
         [bs, seq_len, emb_size] = tokens_to_embrace.size()
         tokens_to_embrace = tokens_to_embrace.cpu().detach().numpy()
 
