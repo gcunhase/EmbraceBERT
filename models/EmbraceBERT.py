@@ -5,6 +5,7 @@ from torch.nn import CrossEntropyLoss, MSELoss
 from models.EmbracementLayer import EmbracementLayer
 from models.CondensedEmbracementLayer import CondensedEmbracementLayer
 from models.bert_utils import BertPreTrainedModel
+from models.AttentionLayer import AttentionLayer
 
 
 # class BertForSequenceClassification(BertPreTrainedModel):
@@ -48,9 +49,11 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
         if not self.is_condensed:
-            self.embracement_layer = EmbracementLayer(self.hidden_size)
+            self.embracement_layer = EmbracementLayer()
         else:
-            self.embracement_layer = CondensedEmbracementLayer(self.hidden_size)
+            self.embracement_layer = CondensedEmbracementLayer()
+
+        self.embrace_attention = AttentionLayer(self.hidden_size)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
         # Freeze BERT's weights

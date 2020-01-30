@@ -1,15 +1,13 @@
 import torch
 from torch import nn
 import numpy as np
-from models.AttentionLayer import AttentionLayer
 
 __author__ = "Gwena Cunha"
 
 
 class EmbracementLayer(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self):
         super(EmbracementLayer, self).__init__()
-        self.embrace_attention = AttentionLayer(hidden_size)
 
     def forward(self, output_tokens_from_bert):
         # pooled_enc_output = bs x 768

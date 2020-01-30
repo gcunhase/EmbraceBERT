@@ -7,9 +7,8 @@ __author__ = "Gwena Cunha"
 
 
 class CondensedEmbracementLayer(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self):
         super(CondensedEmbracementLayer, self).__init__()
-        self.embrace_attention = AttentionLayer(hidden_size)
 
     def forward(self, output_tokens_from_bert, attention_mask):
         # pooled_enc_output = bs x 768

@@ -32,6 +32,7 @@ from pytorch_transformers.modeling_bert import (BertConfig, BertEmbeddings,
 from pytorch_transformers.modeling_utils import add_start_docstrings
 from models.EmbracementLayer import EmbracementLayer
 from models.CondensedEmbracementLayer import CondensedEmbracementLayer
+from models.AttentionLayer import AttentionLayer
 
 from models.roberta_utils import (ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP,
                                   ROBERTA_START_DOCSTRING, ROBERTA_INPUTS_DOCSTRING,
@@ -88,9 +89,11 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
 
         self.roberta = RobertaModel(config)
         if not self.is_condensed:
-            self.embracement_layer = EmbracementLayer(self.hidden_size)
+            self.embracement_layer = EmbracementLayer()
         else:
-            self.embracement_layer = CondensedEmbracementLayer(self.hidden_size)
+            self.embracement_layer = CondensedEmbracementLayer()
+
+        self.embrace_attention = AttentionLayer(self.hidden_size)
         self.classifier = RobertaClassificationHead(config, dropout_prob)
         # self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
@@ -103,13 +106,18 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
 
         outputs = self.roberta(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                                attention_mask=attention_mask, head_mask=head_mask)
+        cls_output = outputs[1]  # CLS
+        output_tokens_from_bert = outputs[0]
 
         # Embracement layer with attention and no docking
         # sequence_output = outputs[0]
         if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only
-            embrace_output = self.embracement_layer(outputs, attention_mask)
+            embraced_features_token = self.embracement_layer(output_tokens_from_bert, attention_mask)
         else:  # Embracement layer with all outputs (except CLS)
-            embrace_output = self.embracement_layer(outputs)
+            embraced_features_token = self.embracement_layer(output_tokens_from_bert)
+
+        # Last step: Apply attention layer to CLS and embraced_features_token
+        embrace_output = self.embrace_attention(cls_output, embraced_features_token)
 
         if len(embrace_output.shape) == 1:  # Last batch might have only 1 sample
             embrace_output = embrace_output.unsqueeze(0)
