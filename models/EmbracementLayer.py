@@ -1,8 +1,7 @@
 import torch
 from torch import nn
 import numpy as np
-from torchnlp.nn.attention import Attention
-# torchnlp.Attention: https://pytorchnlp.readthedocs.io/en/latest/_modules/torchnlp/nn/attention.html
+from models.AttentionLayer import AttentionLayer
 
 __author__ = "Gwena Cunha"
 
@@ -10,8 +9,7 @@ __author__ = "Gwena Cunha"
 class EmbracementLayer(nn.Module):
     def __init__(self, hidden_size):
         super(EmbracementLayer, self).__init__()
-        self.hidden_size = hidden_size
-        self.embrace_attention = Attention(self.hidden_size)
+        self.embrace_attention = AttentionLayer(hidden_size)
 
     def forward(self, bert_output):
         # pooled_enc_output = bs x 768
@@ -39,9 +37,6 @@ class EmbracementLayer(nn.Module):
         embraced_features_token = torch.tensor(embraced_features_token, dtype=torch.float)
 
         # 3. Apply attention layer to CLS and embraced_features_token
-        query = torch.unsqueeze(cls_output, 1).cuda()  # query = torch.randn(5, 1, 256)
-        context = torch.unsqueeze(embraced_features_token, 1).cuda()  # context = torch.randn(5, 5, 256)
-        embrace_output, weights = self.embrace_attention(query, context)
-        embrace_output = embrace_output.squeeze()
+        embrace_output = self.embrace_attention(cls_output, embraced_features_token)
 
         return embrace_output
