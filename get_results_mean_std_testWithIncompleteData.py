@@ -46,7 +46,7 @@ for dataname in ["snips"]:  #, "askubuntu", "chatbot", "webapplications", "snips
 
                         # print("{dataname} {model} - ep{epoch} bs{bs}".format(dataname=dataname, model=model, epoch=epoch, bs=bs))
 
-                        root_dir = '{root_name}{model}/{dataname}/{dataname}_ep{epoch}_bs{bs}_'.\
+                        root_dir = '{root_name}{model}/{dataname}/complete/{dataname}_ep{epoch}_bs{bs}_'.\
                             format(root_name=root_name, model=model, dataname=dataname, epoch=epoch, bs=bs)
 
                         f1_micro_str_all = ""
