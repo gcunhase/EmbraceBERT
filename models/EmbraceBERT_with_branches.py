@@ -66,16 +66,16 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
            From original code: "We 'pool' the model by simply taking the hidden state corresponding to the first token." 
         """
         self.num_encoder_layers = config.num_hidden_layers
-        self.pooler_branches = []
-        for layer in range(self.num_encoder_layers):
-            self.pooler_branches.append(modeling_bert.BertPooler(config))
 
         # Check is the branches classifiers have shared weight
         if self.share_branch_classifier_weights:
+            self.pooler_branches = modeling_bert.BertPooler(config)
             self.classifier_branches = nn.Linear(self.hidden_size, self.num_labels)
         else:
+            self.pooler_branches = []
             self.classifier_branches = []
             for layer in range(self.num_encoder_layers):
+                self.pooler_branches.append(modeling_bert.BertPooler(config))
                 self.classifier_branches.append(nn.Linear(self.hidden_size, self.num_labels))
 
         # Classifier performance evaluator is the same for every layer (same functionality as having shared weights)
@@ -114,22 +114,24 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
            3. Classify
            4. Fine-tune ideal H^T_m (exit entropy) for decision making during inference
         """
-        attention_mask_branches = []
         logits_branches = []
         logits_branches_evaluator = []
         labels_branch_evaluator = []
-        pooled_output_cls_with_branches = cls_output.unsqueeze(1)
+        pooled_output_cls_with_branches = []  # cls_output.unsqueeze(1)
         for l in range(1, self.num_encoder_layers+1):
             # Get tokens from hidden_layer 'l'
             hidden_token = hidden_tokens_from_bert[l].detach().cpu()
 
             # Pool first token + fully connected layer (dense layer) + activation (tanh)
-            pooled_output = self.pooler_branches[l-1](hidden_token).cuda()
+            if self.share_branch_classifier_weights:
+                pooled_output = self.pooler_branches(hidden_token.cuda())
+            else:
+                pooled_output = self.pooler_branches[l-1](hidden_token)
 
             # Classify pooled hidden token
             # Check is the branches classifiers have shared weight
             if self.share_branch_classifier_weights:
-                logits_branch = self.classifier_branches(pooled_output)
+                logits_branch = self.classifier_branches(pooled_output.cuda())
             else:
                 logits_branch = self.classifier_branches[l - 1](pooled_output)
             logits_branches.append(logits_branch.cuda())
@@ -148,15 +150,22 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
 
             # This means that ALL samples in the batch should have been correctly classified to be given as token to
             #  the embracement layer. This allows for additional incompleteness/uncertainty
-            if (lab_branch_evaluator.all()):
-                attention_mask_branches.append()
-                pooled_output_cls_with_branches = torch.cat(
-                    (pooled_output_cls_with_branches, pooled_output.unsqueeze(1)), 1)  # .detach().cuda()
+            if lab_branch_evaluator.all():
+                new_pooled_output = pooled_output.unsqueeze(1)
+                if len(pooled_output_cls_with_branches) == 0:  # len(pooled_output_cls_with_branches.size()) == 0:
+                    pooled_output_cls_with_branches = new_pooled_output
+                else:
+                    pooled_output_cls_with_branches = torch.cat(
+                        (pooled_output_cls_with_branches, new_pooled_output), 1)  # .detach().cuda()
 
-        attention_mask_branches = torch.tensor(attention_mask_branches, dtype=torch.int64)
-
+        # attention_mask_branches = torch.tensor(attention_mask_branches, dtype=torch.int64)
+        if len(pooled_output_cls_with_branches) != 0:
+            [bs, seq_len, _] = pooled_output_cls_with_branches.size()
+            attention_mask_branches = torch.ones([bs, seq_len], dtype=torch.int64)
+            attention_mask = torch.cat((attention_mask_branches, attention_mask.detach().cpu()), 1).cuda()
+            output_tokens_from_bert = torch.cat((output_tokens_from_bert, pooled_output_cls_with_branches), 1)
         # New EmbraceLayer with cls_token and pooled_output_branches
-        embraced_cls_with_branches = self.embracement_layer_cls_with_branches(pooled_output_cls_with_branches)
+        # embraced_cls_with_branches = self.embracement_layer_cls_with_branches(pooled_output_cls_with_branches)
         """END MODIFICATION"""
 
         if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only
@@ -165,7 +174,8 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
             embraced_features_token = self.embracement_layer(output_tokens_from_bert)
 
         # Last step: Apply attention layer to CLS and embraced_features_token
-        embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)
+        # embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)
+        embrace_output = self.embrace_attention(cls_output, embraced_features_token)
 
         # No need because the embrace layer function as a dropout mechanism?
         if apply_dropout:
