@@ -571,9 +571,13 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train'):
         # Load a trained model and vocabulary that you have fine-tuned
         if args.model_type in ['bert', 'roberta']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
-        elif args.model_type in ['embracebert', 'embraceroberta', 'embracebert_with_branches']:  # with args
+        elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed)
+        elif args.model_type in ['embracebert_with_branches']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights)
         else:
             model = model_class.from_pretrained(output_dir)
         # tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -608,8 +612,12 @@ def load_model_for_eval(args, model_class, tokenizer_class, train_step_type='tra
     # Load a trained model and vocabulary that you have fine-tuned
     if args.model_type in ['bert', 'roberta']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
-    elif args.model_type in ['embracebert', 'embraceroberta', 'embracebert_with_branches']:  # with args
+    elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed)
+    elif args.model_type in ['embracebert_with_branches']:  # with args
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
+                                            add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights)
     else:
         model = model_class.from_pretrained(output_dir)
     tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -726,6 +734,13 @@ def main():
                         help="NOT CURRENTLY IN USE. Total number steps needed to check for saturated loss in order"
                              " to start end-to-end fine-tuning process.")
 
+    # Add branches
+    parser.add_argument('--add_branches', action='store_true',
+                        help="Whether to add branches in BERT's hidden layers.")
+    parser.add_argument('--share_branch_weights', action='store_true',
+                        help="Whether to share weights in branches pooler and classifiers. Classifier's evaluator is "
+                             "always shared.")
+
     args = parser.parse_args()
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train and not args.overwrite_output_dir:
@@ -788,6 +803,11 @@ def main():
     elif args.model_type in ['embracebert', 'embraceroberta', 'embracebert_with_branches']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed)
+    elif args.model_type in ['embracebert_with_branches']:  # with args
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights)
     else:
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config)
