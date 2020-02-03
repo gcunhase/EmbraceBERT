@@ -8,6 +8,7 @@ from models.EmbracementLayer import EmbracementLayer
 from models.CondensedEmbracementLayer import CondensedEmbracementLayer
 from models.bert_utils import BertPreTrainedModel
 from models.AttentionLayer import AttentionLayer
+from models.BranchesLayer import BranchesLayer, loss_branches_and_evaluator
 
 import numpy as np
 
@@ -42,14 +43,15 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
         >>> outputs = model(input_ids, labels=labels)
         >>> loss, logits = outputs[:2]
     """
-    def __init__(self, config, dropout_prob, is_condensed=False, share_branch_classifier_weights=True):
+    def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False, share_branch_weights=False):
         super(EmbraceBertWithBranchesForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.num_labels_evaluator = 2
         self.vocab_size = config.vocab_size
         self.hidden_size = config.hidden_size  # 768
         self.is_condensed = is_condensed
-        self.share_branch_classifier_weights = share_branch_classifier_weights
+        self.add_branches = add_branches
+        self.share_branch_weights = share_branch_weights
         # self.args = args
 
         self.bert = BertModel(config)
@@ -61,26 +63,9 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
         self.embrace_attention = AttentionLayer(self.hidden_size)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
-        """BEGIN MODIFICATION
-           Vector with classifiers # CHECK HOW MANY
-           From original code: "We 'pool' the model by simply taking the hidden state corresponding to the first token." 
-        """
-        self.num_encoder_layers = config.num_hidden_layers
-
-        # Check is the branches classifiers have shared weight
-        if self.share_branch_classifier_weights:
-            self.pooler_branches = modeling_bert.BertPooler(config)
-            self.classifier_branches = nn.Linear(self.hidden_size, self.num_labels)
-        else:
-            self.pooler_branches = []
-            self.classifier_branches = []
-            for layer in range(self.num_encoder_layers):
-                self.pooler_branches.append(modeling_bert.BertPooler(config))
-                self.classifier_branches.append(nn.Linear(self.hidden_size, self.num_labels))
-
-        # Classifier performance evaluator is the same for every layer (same functionality as having shared weights)
-        self.evaluator_classifier = nn.Linear(self.num_labels, self.num_labels_evaluator)  # classes: good/bad
-        self.embracement_layer_cls_with_branches = EmbracementLayer()
+        """BEGIN MODIFICATION"""
+        if self.add_branches:
+            self.branches_layer = BranchesLayer(config, share_branch_weights, num_labels_evaluator=self.num_labels_evaluator)
         """END MODIFICATION"""
 
         # Freeze BERT's weights
@@ -106,66 +91,11 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
         # output_tokens_from_bert = bert_output[0]
         cls_output = bert_output[1]  # CLS
         output_tokens_from_bert = bert_output[0]
-        hidden_tokens_from_bert = bert_output[2]
 
-        """BEGIN MODIFICATION
-           1. Add branches in hidden layers (BERT_base has 12 encoder layers + embedding layer = 13 layers)
-           2. Pool the first token in each hidden state
-           3. Classify
-           4. Fine-tune ideal H^T_m (exit entropy) for decision making during inference
-        """
-        logits_branches = []
-        logits_branches_evaluator = []
-        labels_branch_evaluator = []
-        pooled_output_cls_with_branches = []  # cls_output.unsqueeze(1)
-        for l in range(1, self.num_encoder_layers+1):
-            # Get tokens from hidden_layer 'l'
-            hidden_token = hidden_tokens_from_bert[l].detach().cpu()
-
-            # Pool first token + fully connected layer (dense layer) + activation (tanh)
-            if self.share_branch_classifier_weights:
-                pooled_output = self.pooler_branches(hidden_token.cuda())
-            else:
-                pooled_output = self.pooler_branches[l-1](hidden_token)
-
-            # Classify pooled hidden token
-            # Check is the branches classifiers have shared weight
-            if self.share_branch_classifier_weights:
-                logits_branch = self.classifier_branches(pooled_output.cuda())
-            else:
-                logits_branch = self.classifier_branches[l - 1](pooled_output)
-            logits_branches.append(logits_branch.cuda())
-
-            # Prediction
-            pred_branch = logits_branch.detach().cpu().numpy()
-            pred_branch = np.argmax(pred_branch, axis=1)
-            lab_branch = labels.detach().cpu().numpy()
-            lab_branch_evaluator = (pred_branch == lab_branch)
-            labels_branch_evaluator.append(torch.tensor(lab_branch_evaluator.astype('uint8'), dtype=torch.long).cuda())
-
-            # Fine-tune evaluator during training (this is to substitute the entropy check, automatic instead of static).
-            #  Allows for better prediction of unseen samples (according to BranchyNet paper).
-            logits_branch_evaluator = self.evaluator_classifier(logits_branch.cuda())
-            logits_branches_evaluator.append(logits_branch_evaluator)
-
-            # This means that ALL samples in the batch should have been correctly classified to be given as token to
-            #  the embracement layer. This allows for additional incompleteness/uncertainty
-            if lab_branch_evaluator.all():
-                new_pooled_output = pooled_output.unsqueeze(1)
-                if len(pooled_output_cls_with_branches) == 0:  # len(pooled_output_cls_with_branches.size()) == 0:
-                    pooled_output_cls_with_branches = new_pooled_output
-                else:
-                    pooled_output_cls_with_branches = torch.cat(
-                        (pooled_output_cls_with_branches, new_pooled_output), 1)  # .detach().cuda()
-
-        # attention_mask_branches = torch.tensor(attention_mask_branches, dtype=torch.int64)
-        if len(pooled_output_cls_with_branches) != 0:
-            [bs, seq_len, _] = pooled_output_cls_with_branches.size()
-            attention_mask_branches = torch.ones([bs, seq_len], dtype=torch.int64)
-            attention_mask = torch.cat((attention_mask_branches, attention_mask.detach().cpu()), 1).cuda()
-            output_tokens_from_bert = torch.cat((output_tokens_from_bert, pooled_output_cls_with_branches), 1)
-        # New EmbraceLayer with cls_token and pooled_output_branches
-        # embraced_cls_with_branches = self.embracement_layer_cls_with_branches(pooled_output_cls_with_branches)
+        """BEGIN MODIFICATION"""
+        if self.add_branches:
+            hidden_tokens_from_bert = bert_output[2]
+            output_tokens_from_bert, attention_mask, logits_branches, logits_branches_evaluator, labels_branch_evaluator = self.branches_layer(hidden_tokens_from_bert, output_tokens_from_bert, attention_mask, labels)
         """END MODIFICATION"""
 
         if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only
@@ -177,7 +107,7 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
         # embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)
         embrace_output = self.embrace_attention(cls_output, embraced_features_token)
 
-        # No need because the embrace layer function as a dropout mechanism?
+        # No need because the embrace layer functions as a dropout mechanism?
         if apply_dropout:
             embrace_output = self.dropout(embrace_output)
 
@@ -196,24 +126,12 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
             else:
                 loss_fct = CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
-                """BEGIN MODIFICATION
-                   Add losses from all branches
+
+                """BEGIN MODIFICATION: Add losses from all branches
                 """
-                loss_branches = 0
-                r_l = 0
-                r_u = 1
-                for l in range(1, self.num_encoder_layers+1):
-                    logits_branch = logits_branches[l-1]
-                    alpha = r_l + (r_u - r_l)/l
-                    loss_branches += alpha*loss_fct(logits_branch.view(-1, self.num_labels), labels.view(-1))
-
-                loss_branches_evaluator = 0
-                for l in range(1, self.num_encoder_layers+1):
-                    logits_branch_evaluator = logits_branches_evaluator[l-1]
-                    label_branch_evaluator = labels_branch_evaluator[l-1]
-                    loss_branches_evaluator += loss_fct(logits_branch_evaluator.view(-1, self.num_labels_evaluator), label_branch_evaluator.view(-1))
-
-                loss += loss_branches + loss_branches_evaluator
+                if self.add_branches:
+                    loss_branches, loss_branches_evaluator = loss_branches_and_evaluator(loss_fct, self.num_labels, self.num_labels_evaluator, self.num_encoder_layers, logits_branches, logits_branches_evaluator, labels, labels_branch_evaluator)
+                    loss += loss_branches + loss_branches_evaluator
                 """END MODIFICATION"""
 
             outputs = (loss,) + outputs  # loss and probability of each class (vector)
