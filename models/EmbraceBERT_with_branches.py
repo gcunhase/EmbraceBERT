@@ -8,7 +8,7 @@ from models.EmbracementLayer import EmbracementLayer
 from models.CondensedEmbracementLayer import CondensedEmbracementLayer
 from models.bert_utils import BertPreTrainedModel
 from models.AttentionLayer import AttentionLayer
-from models.BranchesLayer import BranchesLayer, loss_branches_and_evaluator
+from models.BranchesLayer import BranchesLayer
 
 import numpy as np
 
@@ -130,7 +130,10 @@ class EmbraceBertWithBranchesForSequenceClassification(BertPreTrainedModel):
                 """BEGIN MODIFICATION: Add losses from all branches
                 """
                 if self.add_branches:
-                    loss_branches, loss_branches_evaluator = loss_branches_and_evaluator(loss_fct, self.num_labels, self.num_labels_evaluator, self.num_encoder_layers, logits_branches, logits_branches_evaluator, labels, labels_branch_evaluator)
+                    loss_branches, loss_branches_evaluator = \
+                        self.branches_layer.loss_branches_and_evaluator(loss_fct, logits_branches,
+                                                                        logits_branches_evaluator, labels,
+                                                                        labels_branch_evaluator)
                     loss += loss_branches + loss_branches_evaluator
                 """END MODIFICATION"""
 

@@ -7,25 +7,6 @@ import numpy as np
 __author__ = "Gwena Cunha"
 
 
-def loss_branches_and_evaluator(loss_fct, num_labels, num_labels_evaluator, num_encoder_layers, logits_branches, logits_branches_evaluator, labels, labels_branch_evaluator):
-    loss_branches = 0
-    r_l = 0
-    r_u = 1
-    for l in range(1, num_encoder_layers + 1):
-        logits_branch = logits_branches[l - 1]
-        alpha = r_l + (r_u - r_l) / l
-        loss_branches += alpha * loss_fct(logits_branch.view(-1, num_labels), labels.view(-1))
-
-    loss_branches_evaluator = 0
-    for l in range(1, num_encoder_layers + 1):
-        logits_branch_evaluator = logits_branches_evaluator[l - 1]
-        label_branch_evaluator = labels_branch_evaluator[l - 1]
-        loss_branches_evaluator += loss_fct(logits_branch_evaluator.view(-1, num_labels_evaluator),
-                                            label_branch_evaluator.view(-1))
-
-    return loss_branches, loss_branches_evaluator
-
-
 class BranchesLayer(nn.Module):
     def __init__(self, config, share_branch_weights, num_labels_evaluator=2):
         super(BranchesLayer, self).__init__()
@@ -53,6 +34,25 @@ class BranchesLayer(nn.Module):
         # Classifier performance evaluator is the same for every layer (same functionality as having shared weights)
         self.evaluator_classifier = nn.Linear(self.num_labels, self.num_labels_evaluator)  # classes: good/bad
         # self.embracement_layer_cls_with_branches = EmbracementLayer()
+
+    def loss_branches_and_evaluator(self, loss_fct, logits_branches, logits_branches_evaluator,
+                                    labels, labels_branch_evaluator):
+        loss_branches = 0
+        r_l = 0
+        r_u = 1
+        for l in range(1, self.num_encoder_layers + 1):
+            logits_branch = logits_branches[l - 1]
+            alpha = r_l + (r_u - r_l) / l
+            loss_branches += alpha * loss_fct(logits_branch.view(-1, self.num_labels), labels.view(-1))
+
+        loss_branches_evaluator = 0
+        for l in range(1, self.num_encoder_layers + 1):
+            logits_branch_evaluator = logits_branches_evaluator[l - 1]
+            label_branch_evaluator = labels_branch_evaluator[l - 1]
+            loss_branches_evaluator += loss_fct(logits_branch_evaluator.view(-1, self.num_labels_evaluator),
+                                                label_branch_evaluator.view(-1))
+
+        return loss_branches, loss_branches_evaluator
 
     def forward(self, hidden_tokens_from_bert, output_tokens_from_bert, attention_mask, labels):
         """Description
