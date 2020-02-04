@@ -1,11 +1,16 @@
 import torch
 import torch.nn as nn
-from pytorch_transformers import *
+# from pytorch_transformers import *
+from pytorch_transformers import BertModel, modeling_bert
+
 from torch.nn import CrossEntropyLoss, MSELoss
 from models.EmbracementLayer import EmbracementLayer
 from models.CondensedEmbracementLayer import CondensedEmbracementLayer
 from models.bert_utils import BertPreTrainedModel
 from models.AttentionLayer import AttentionLayer
+from models.BranchesLayer import BranchesLayer
+
+import numpy as np
 
 
 # class BertForSequenceClassification(BertPreTrainedModel):
@@ -38,12 +43,15 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         >>> outputs = model(input_ids, labels=labels)
         >>> loss, logits = outputs[:2]
     """
-    def __init__(self, config, dropout_prob, is_condensed=False):
+    def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False, share_branch_weights=False):
         super(EmbraceBertForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
+        self.num_labels_evaluator = 2
         self.vocab_size = config.vocab_size
         self.hidden_size = config.hidden_size  # 768
         self.is_condensed = is_condensed
+        self.add_branches = add_branches
+        self.share_branch_weights = share_branch_weights
         # self.args = args
 
         self.bert = BertModel(config)
@@ -52,9 +60,13 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
             self.embracement_layer = EmbracementLayer()
         else:
             self.embracement_layer = CondensedEmbracementLayer()
-
         self.embrace_attention = AttentionLayer(self.hidden_size)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
+
+        """EmbraceBERT with branches"""
+        if self.add_branches:
+            self.branches_layer = BranchesLayer(config, share_branch_weights, num_labels_evaluator=self.num_labels_evaluator)
+        """END MODIFICATION"""
 
         # Freeze BERT's weights
         #if freeze_berts_weights:
@@ -80,15 +92,22 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         cls_output = bert_output[1]  # CLS
         output_tokens_from_bert = bert_output[0]
 
+        """EmbraceBERT with branches"""
+        if self.add_branches:
+            hidden_tokens_from_bert = bert_output[2]
+            output_tokens_from_bert, attention_mask, logits_branches, logits_branches_evaluator, labels_branch_evaluator = self.branches_layer(hidden_tokens_from_bert, output_tokens_from_bert, attention_mask, labels)
+        """END MODIFICATION"""
+
         if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only
             embraced_features_token = self.embracement_layer(output_tokens_from_bert, attention_mask)
         else:  # Embracement layer with all outputs (except CLS)
             embraced_features_token = self.embracement_layer(output_tokens_from_bert)
 
         # Last step: Apply attention layer to CLS and embraced_features_token
+        # embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)
         embrace_output = self.embrace_attention(cls_output, embraced_features_token)
 
-        # No need because the embrace layer function as a dropout mechanism?
+        # No need because the embrace layer functions as a dropout mechanism?
         if apply_dropout:
             embrace_output = self.dropout(embrace_output)
 
@@ -107,6 +126,16 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
             else:
                 loss_fct = CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+
+                """EmbraceBERT with branches: Add losses from all branches"""
+                if self.add_branches:
+                    loss_branches, loss_branches_evaluator = \
+                        self.branches_layer.loss_branches_and_evaluator(loss_fct, logits_branches,
+                                                                        logits_branches_evaluator, labels,
+                                                                        labels_branch_evaluator)
+                    loss += loss_branches + loss_branches_evaluator
+                """END MODIFICATION"""
+
             outputs = (loss,) + outputs  # loss and probability of each class (vector)
 
         return outputs  # (loss), logits, (hidden_states), (attentions)
