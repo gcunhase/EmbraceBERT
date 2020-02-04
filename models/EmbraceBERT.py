@@ -43,16 +43,19 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         >>> outputs = model(input_ids, labels=labels)
         >>> loss, logits = outputs[:2]
     """
+    # EmbraceBERT with branches: added 'add_branches' and 'share_branch_weights'
     def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False, share_branch_weights=False):
         super(EmbraceBertForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
-        self.num_labels_evaluator = 2
         self.vocab_size = config.vocab_size
         self.hidden_size = config.hidden_size  # 768
         self.is_condensed = is_condensed
+
+        """EmbraceBERT with branches"""
+        self.num_labels_evaluator = 2
         self.add_branches = add_branches
         self.share_branch_weights = share_branch_weights
-        # self.args = args
+        """END MODIFICATION"""
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
@@ -117,7 +120,6 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         # a_bert_output = bert_output[2:]
         # a_embrace_output = embrace_output
         outputs = (logits,) + bert_output[2:]  # add hidden states and attention if they are here
-
         if labels is not None:
             if self.num_labels == 1:
                 #  We are doing regression
@@ -127,14 +129,14 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
                 loss_fct = CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
 
-                """EmbraceBERT with branches: Add losses from all branches"""
-                if self.add_branches:
-                    loss_branches, loss_branches_evaluator = \
-                        self.branches_layer.loss_branches_and_evaluator(loss_fct, logits_branches,
-                                                                        logits_branches_evaluator, labels,
-                                                                        labels_branch_evaluator)
-                    loss += loss_branches + loss_branches_evaluator
-                """END MODIFICATION"""
+            """EmbraceBERT with branches: Add losses from all branches"""
+            if self.add_branches:
+                loss_branches, loss_branches_evaluator = \
+                    self.branches_layer.loss_branches_and_evaluator(loss_fct, logits_branches,
+                                                                    logits_branches_evaluator, labels,
+                                                                    labels_branch_evaluator)
+                loss += loss_branches + loss_branches_evaluator
+            """END MODIFICATION"""
 
             outputs = (loss,) + outputs  # loss and probability of each class (vector)
 
