@@ -43,7 +43,10 @@ class BranchesLayer(nn.Module):
         for l in range(1, self.num_encoder_layers + 1):
             logits_branch = logits_branches[l - 1]
             alpha = r_l + (r_u - r_l) / l
-            loss_branches += alpha * loss_fct(logits_branch.view(-1, self.num_labels), labels.view(-1))
+            if self.num_labels == 1:
+                loss_branches += alpha * loss_fct(logits_branch.view(-1), labels.view(-1))
+            else:
+                loss_branches += alpha * loss_fct(logits_branch.view(-1, self.num_labels), labels.view(-1))
 
         loss_branches_evaluator = 0
         for l in range(1, self.num_encoder_layers + 1):
