@@ -5,7 +5,7 @@ MODEL_TYPE=embracebert
 OUTPUT_DIR="../results/${MODEL_TYPE}_with_branches_frozenbert_sharedWeightsAll/"
 RUN_DIR="../runs/${MODEL_TYPE}_with_branches_frozenbert_sharedWeightsAll/"
 
-if [ $MODEL_TYPE == "embracebert_with_branches" ]; then
+if [ $MODEL_TYPE == "embracebert" ]; then
   MODEL_NAME_OR_PATH="bert-base-uncased"
 else
   MODEL_NAME_OR_PATH="roberta-base"
