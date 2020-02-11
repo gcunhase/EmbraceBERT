@@ -2,8 +2,8 @@
 
 # MODEL_TYPE=embracebert
 MODEL_TYPE=embraceroberta
-OUTPUT_DIR="../results/${MODEL_TYPE}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout"
-RUN_DIR="../runs/${MODEL_TYPE}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout"
+OUTPUT_DIR_ROOT="../results/${MODEL_TYPE}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout"
+RUN_DIR_ROOT="../runs/${MODEL_TYPE}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout"
 
 if [ $MODEL_TYPE == "embracebert" ]; then
   MODEL_NAME_OR_PATH="bert-base-uncased"
