@@ -6,15 +6,15 @@ import numpy as np
 # Parameters:
 #   is_incomplete_test: True if model was trained with complete data and tested with incomplete
 
-# root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/'
+# root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/models_trained_with_complete_data/'
 root_name = './'
-stt_error, dataname, model, epoch, bs, tts_stt_type = [True, "askubuntu", "embracebert_frozenbert", 30, 4, 'gtts_google']
-# stt_error, dataname, model, epoch, bs, tts_stt_type = [True, "webapplications", "bert_frozen", 100, 4, 'macsay_witai']
+# stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "snips", "embracebert_with_branches_frozenbert_condensed_sharedWeightsAll", 3, 32, 'gtts_google']
+stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "snips", "embracebert_condensed_withDropout0.3", 3, 32, 'macsay_witai']  # _withDropout0.1
 #stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "webapplications", "embraceroberta_condensed_withDropout0.1", 100, 16, 'gtts_google']
 #stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "webapplications", "embracebert_withDropout0.3", 100, 16, 'gtts_google']
 
 if root_name == './':
-    root_name += 'results/'
+    root_name += 'results/backedup/'
 
 if stt_error:
     root_dir = '{root_name}{model}/{dataname}/stterror/{tts_stt_type}/{dataname}_ep{epoch}_bs{bs}_'.\
