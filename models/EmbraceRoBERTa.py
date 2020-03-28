@@ -33,6 +33,7 @@ from pytorch_transformers.modeling_utils import add_start_docstrings
 from models.EmbracementLayer import EmbracementLayer
 from models.CondensedEmbracementLayer import CondensedEmbracementLayer
 from models.AttentionLayer import AttentionLayer
+from models.BranchesLayer import BranchesLayer
 
 from models.roberta_utils import (ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP,
                                   ROBERTA_START_DOCSTRING, ROBERTA_INPUTS_DOCSTRING,
@@ -80,12 +81,18 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
     pretrained_model_archive_map = ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP
     base_model_prefix = "roberta"
 
-    def __init__(self, config, dropout_prob, is_condensed=False):
+    def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False, share_branch_weights=False):
         super(EmbraceRobertaForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.vocab_size = config.vocab_size
         self.hidden_size = config.hidden_size  # 768
         self.is_condensed = is_condensed
+
+        """EmbraceBERT with branches"""
+        self.num_labels_evaluator = 2
+        self.add_branches = add_branches
+        self.share_branch_weights = share_branch_weights
+        """END MODIFICATION"""
 
         self.roberta = RobertaModel(config)
         if not self.is_condensed:
@@ -96,6 +103,12 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
         self.embrace_attention = AttentionLayer(self.hidden_size)
         self.classifier = RobertaClassificationHead(config, dropout_prob)
         # self.classifier = nn.Linear(self.hidden_size, self.num_labels)
+
+        """EmbraceBERT with branches"""
+        if self.add_branches:
+            self.branches_layer = BranchesLayer(config, share_branch_weights,
+                                                num_labels_evaluator=self.num_labels_evaluator)
+        """END MODIFICATION"""
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None,
                 position_ids=None, head_mask=None, apply_dropout=False, freeze_bert_weights=False):
@@ -108,6 +121,13 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
                                attention_mask=attention_mask, head_mask=head_mask)
         cls_output = outputs[1]  # CLS
         output_tokens_from_bert = outputs[0]
+
+        """EmbraceBERT with branches"""
+        if self.add_branches:
+            hidden_tokens_from_bert = outputs[2]
+            output_tokens_from_bert, attention_mask, logits_branches, logits_branches_evaluator, labels_branch_evaluator = self.branches_layer(
+                hidden_tokens_from_bert, output_tokens_from_bert, attention_mask, labels)
+        """END MODIFICATION"""
 
         # Embracement layer with attention and no docking
         # sequence_output = outputs[0]
@@ -123,6 +143,7 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
             embrace_output = embrace_output.unsqueeze(0)
         embrace_output = embrace_output.unsqueeze(1)
 
+        # Classify
         logits = self.classifier(embrace_output, apply_dropout)
 
         outputs = (logits,) + outputs[2:]
@@ -134,6 +155,16 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
             else:
                 loss_fct = CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+
+            """EmbraceBERT with branches: Add losses from all branches"""
+            if self.add_branches:
+                loss_branches, loss_branches_evaluator = \
+                    self.branches_layer.loss_branches_and_evaluator(loss_fct, logits_branches,
+                                                                    logits_branches_evaluator, labels,
+                                                                    labels_branch_evaluator)
+                loss += loss_branches + loss_branches_evaluator
+            """END MODIFICATION"""
+
             outputs = (loss,) + outputs
 
         return outputs  # (loss), logits, (hidden_states), (attentions)

@@ -571,7 +571,8 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train'):
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
         elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
-                                                is_condensed=args.is_condensed)
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights)
         else:
             model = model_class.from_pretrained(output_dir)
         # tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -607,7 +608,9 @@ def load_model_for_eval(args, model_class, tokenizer_class, train_step_type='tra
     if args.model_type in ['bert', 'roberta']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
     elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
-        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed)
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
+                                            add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights)
     else:
         model = model_class.from_pretrained(output_dir)
     tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -724,6 +727,13 @@ def main():
                         help="NOT CURRENTLY IN USE. Total number steps needed to check for saturated loss in order"
                              " to start end-to-end fine-tuning process.")
 
+    # Add branches
+    parser.add_argument('--add_branches', action='store_true',
+                        help="Whether to add branches in BERT's hidden layers.")
+    parser.add_argument('--share_branch_weights', action='store_true',
+                        help="Whether to share weights in branches pooler and classifiers. Classifier's evaluator is "
+                             "always shared.")
+
     args = parser.parse_args()
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train and not args.overwrite_output_dir:
@@ -776,13 +786,18 @@ def main():
     args.model_type = args.model_type.lower()
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path, num_labels=num_labels, finetuning_task=args.task_name)
+    if args.add_branches == True:  # EmbraceBERT with branches
+        config.output_hidden_states = True
+
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path, do_lower_case=args.do_lower_case)
     if args.model_type in ['bert', 'roberta']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob)
     elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
-                                            config=config, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed)
+                                            config=config, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights)
     else:
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config)
