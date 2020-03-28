@@ -60,7 +60,12 @@ python -m spacy download en
 * Add branches (BranchyNet):
     * Add `--add_branches --embracebert_with_branches` to run with branches in hidden BERT-Transformer layers
 
-### 3. Output    
+### 3. Test model with Incomplete data
+```
+./run_eval_with_incomplete_data.sh
+```
+
+### Output    
 | File | Description |
 | ---- | ----------- |
 | `checkpoint-best-${EPOCH_NUMBER}` | Directory with saved model |
