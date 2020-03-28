@@ -28,9 +28,9 @@ fi
 
 OUTPUT_DIR="/media/ceslea/DATA/EmbraceBERT-results-backup/models_trained_with_complete_data/${MODEL_NAME}/"
 #OUTPUT_DIR="/media/ceslea/RESEARCH/PycharmProjects/EmbraceBERT/results/backedup/${MODEL_NAME}/"
-EVAL_DIR="../results/test_with_incomplete_results/${MODEL_NAME}/"
+EVAL_DIR="../../results/test_with_incomplete_results/${MODEL_NAME}/"
 mkdir $EVAL_DIR
-RUN_DIR="../runs/${MODEL_NAME}/"
+RUN_DIR="../../runs/${MODEL_NAME}/"
 
 # shellcheck disable=SC2004
 if [[ $MODEL_TYPE == *"roberta"* ]]; then
@@ -59,7 +59,7 @@ for BS_TRAIN in 4 16; do
 
               for TTS in "gtts" "macsay"; do
                 for STT in "google" "sphinx" "witai"; do
-                  DATA_DIR="../data/intent_stterror_data/${DATASET}/${TTS}_${STT}/"
+                  DATA_DIR="../../data/intent_stterror_data/${DATASET}/${TTS}_${STT}/"
                   EVAL_OUTPUT_FILENAME="eval_results_${TTS}_${STT}"
 
                   # Eval
