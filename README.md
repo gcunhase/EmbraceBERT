@@ -55,11 +55,17 @@ python -m spacy download en
     
 * Frozen EBERT: freeze BERT weights and to end-to-end finetuning after embrace layer with classifier loss is saturated for a few steps
     * Add `--freeze_bert_weights --num_train_epochs_frozen_bert 100.0` to run
-    ```--seed 1 --is_condensed --task_name askubuntu_intent --model_type embraceroberta --model_name_or_path roberta-base --freeze_bert_weights --num_train_epochs_frozen_bert 100.0 --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/condensed_embraceroberta_debug/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/condensed_embraceroberta_debug```
+    ```--seed 1 --is_condensed --task_name askubuntu_intent --model_type embraceroberta --model_name_or_path roberta-base --freeze_bert_weights --num_train_epochs_frozen_bert 100.0 --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/condensed_embraceroberta_debug/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_embracebert_p_selfattention```
 
 * Add branches (BranchyNet):
     * Add `--add_branches --embracebert_with_branches` to run with branches in hidden BERT-Transformer layers
 
+* `p=softmax(selfattention)`:
+    ```--seed 1 --p selfattention --task_name askubuntu_intent --model_type embracebert --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/askubuntucorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=16 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_embracebert_p_selfattention/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_embracebert_p_selfattention```
+
+* EmbraceBERT_BS: when p is 'multinomial', the chosen features are the same in a batch. In EmbraceBERT_BS, these features are again calculated for each sequence in a batch sequence. So if before `bs=4`, all 4 sequences would have the same feature indexes chosen. In this new model, each one of these 4 sequences has different indexes.
+    * Need to run code again to see if the results are better
+    
 ### 3. Test model with Incomplete data
 ```
 ./run_eval_with_incomplete_data.sh

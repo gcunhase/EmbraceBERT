@@ -17,13 +17,14 @@ MODEL_ROOT = [
               #"embrace{}_condensed", "embrace{}_condensed_withDropout0.1", "embrace{}_condensed_withDropout0.3",
               #"embrace{}_frozenbert", "embrace{}_frozenbert_withDropout0.1", "embrace{}_frozenbert_withDropout0.3",
               #"embrace{}_frozenbert_condensed", "embrace{}_frozenbert_condensed_withDropout0.1", "embrace{}_frozenbert_condensed_withDropout0.3",
-              "embrace{}_with_branches_sharedWeightsAll", "embrace{}_with_branches_sharedWeightsAll_withDropout0.1",
-              "embrace{}_with_branches_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_condensed_sharedWeightsAll",
-              "embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.1",
-              "embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.3",
-              "embrace{}_with_branches_frozenbert_sharedWeightsAll", "embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.1",
-              "embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll",
-              "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.1", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.3"
+              #"embrace{}_with_branches_sharedWeightsAll", "embrace{}_with_branches_sharedWeightsAll_withDropout0.1",
+              #"embrace{}_with_branches_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_condensed_sharedWeightsAll",
+              #"embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.1",
+              #"embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.3",
+              #"embrace{}_with_branches_frozenbert_sharedWeightsAll", "embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.1",
+              #"embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll",
+              #"embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.1", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.3",
+              "embrace{}_p_selfattention",
 ]
 
 MODEL_BERT = []
@@ -51,6 +52,7 @@ MODEL_NAME = {"bert":                                               " BERT-bs{} 
               "embracebert_frozenbert_condensed":                   " FrozenCEBERT-bs{}-ep100                ",
               "embracebert_frozenbert_condensed_withDropout0.1":    " FrozenCEBERT-bs{}-ep100+Dropout0.1     ",
               "embracebert_frozenbert_condensed_withDropout0.3":    " FrozenCEBERT-bs{}-ep100+Dropout0.3     ",
+              "embracebert_p_selfattention":                        " EmbraceBERT-bs{}-p_selfatt             ",
               "embracebert_with_branches_sharedWeightsAll":                                      " EmbraceBERT-bs{}+Branches                     ",
               "embracebert_with_branches_sharedWeightsAll_withDropout0.1":                       " EmbraceBERT-bs{}+Branches+Dropout0.1          ",
               "embracebert_with_branches_sharedWeightsAll_withDropout0.3":                       " EmbraceBERT-bs{}+Branches+Dropout0.3          ",
@@ -95,7 +97,7 @@ MODEL_NAME = {"bert":                                               " BERT-bs{} 
               "embraceroberta_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.3": " FrozenCERoBERTa-bs{}+Branches+Dropout0.3         ",
               }
 
-for dataname in ["webapplications"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
+for dataname in ["chatbot"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
     if dataname == "snips":
         bs_array = [16, 32]
         epoch_array = [3]
@@ -113,7 +115,7 @@ for dataname in ["webapplications"]:  #["askubuntu", "chatbot", "webapplications
                 #for bs in bs_array:
                 #    print("-----------------------------------------")
                 #for model_type in [MODEL_BERT, MODEL_ROBERTA]:
-                for model_type in [MODEL_ROBERTA]:
+                for model_type in [MODEL_BERT]:
                     for bs in bs_array:
                         print("| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
                         for model in model_type:

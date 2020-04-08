@@ -572,7 +572,7 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train'):
         elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
-                                                share_branch_weights=args.share_branch_weights)
+                                                share_branch_weights=args.share_branch_weights, p=args.p)
         else:
             model = model_class.from_pretrained(output_dir)
         # tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -610,7 +610,7 @@ def load_model_for_eval(args, model_class, tokenizer_class, train_step_type='tra
     elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
                                             add_branches=args.add_branches,
-                                            share_branch_weights=args.share_branch_weights)
+                                            share_branch_weights=args.share_branch_weights, p=args.p)
     else:
         model = model_class.from_pretrained(output_dir)
     tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -734,6 +734,11 @@ def main():
                         help="Whether to share weights in branches pooler and classifiers. Classifier's evaluator is "
                              "always shared.")
 
+    # Probability type for EmbraceLayer
+    parser.add_argument('--p', type=str, default='multinomial',
+                        help="Choose the probability type for p in EmbraceLayer."
+                             " Options = [multinomial, selfattention].")
+
     args = parser.parse_args()
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train and not args.overwrite_output_dir:
@@ -797,7 +802,7 @@ def main():
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
-                                            share_branch_weights=args.share_branch_weights)
+                                            share_branch_weights=args.share_branch_weights, p=args.p)
     else:
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config)
