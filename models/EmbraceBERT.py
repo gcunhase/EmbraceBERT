@@ -63,7 +63,7 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         if not self.is_condensed:
             self.embracement_layer = EmbracementLayer(self.hidden_size, self.p)
         else:
-            self.embracement_layer = CondensedEmbracementLayer()  # TODO: self.p
+            self.embracement_layer = CondensedEmbracementLayer(self.hidden_size, self.p)
         self.embrace_attention = AttentionLayer(self.hidden_size)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 

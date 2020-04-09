@@ -38,8 +38,7 @@ class EmbracementLayer(nn.Module):
                 embraced_features_index = embraced_features_index.cpu().detach().numpy()  # shape = 768
             else:
                 # B. Self-attention used to choose most important indexes -> p = softmax(mean(self_att))
-                # Self-attention uses attention_mask in the calculation. CondensedEBERT and this might give
-                #   the same results when p="selfattention". 'selfattention_scores' shape -> (bs, 128) -> THIS HAS CHANGED
+                #   'selfattention_scores' shape -> (bs, 128)
                 tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
                 # ADD THE NEXT 2 LINES TO CONDENSED
                 # attention_mask_bs = attention_mask[i_bs, :]
