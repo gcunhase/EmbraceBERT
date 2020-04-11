@@ -44,13 +44,15 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         >>> loss, logits = outputs[:2]
     """
     # EmbraceBERT with branches: added 'add_branches' and 'share_branch_weights'
-    def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False, share_branch_weights=False, p='multinomial'):
+    def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False,
+                 share_branch_weights=False, p='multinomial', max_seq_length=128):
         super(EmbraceBertForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.vocab_size = config.vocab_size
         self.hidden_size = config.hidden_size  # 768
         self.is_condensed = is_condensed
         self.p = p
+        self.max_seq_length = max_seq_length  # 128
 
         """EmbraceBERT with branches"""
         self.num_labels_evaluator = 2
@@ -61,9 +63,11 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
         if not self.is_condensed:
-            self.embracement_layer = EmbracementLayer(self.hidden_size, self.p)
+            self.embracement_layer = EmbracementLayer(config, self.hidden_size, self.p, self.max_seq_length)
         else:
+            #self.embracement_layer = CondensedEmbracementLayer(config, self.hidden_size, self.p)
             self.embracement_layer = CondensedEmbracementLayer(self.hidden_size, self.p)
+
         self.embrace_attention = AttentionLayer(self.hidden_size)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 

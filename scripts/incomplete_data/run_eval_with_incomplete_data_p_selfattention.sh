@@ -2,8 +2,8 @@
 
 # Options: bert, bert_frozen, embracebert, embracebert_frozenbert (and roberta)
 MODEL_TYPE=embracebert
-MODEL_NAME="${MODEL_TYPE}_p_selfattention"
-P_TYPE="selfattention"
+P_TYPE="selfattention_pytorch"
+MODEL_NAME="${MODEL_TYPE}_p_${P_TYPE}"
 IS_CONDENSED=false  # if true, embracebert_condensed
 IS_FROZEN=false  # if true, embracebert_frozenbert
 APPLY_DROPOUT=false
@@ -27,7 +27,7 @@ if [ "$APPLY_DROPOUT" = true ]; then
 fi
 
 #OUTPUT_DIR="/media/ceslea/DATA/EmbraceBERT-results-backup/models_trained_with_complete_data/${MODEL_NAME}/"
-OUTPUT_DIR="/media/ceslea/RESEARCH/PycharmProjects/EmbraceBERT/results/${MODEL_NAME}/"
+OUTPUT_DIR="../../results/${MODEL_NAME}/"
 EVAL_DIR="../../results/test_with_incomplete_results/${MODEL_NAME}/"
 mkdir $EVAL_DIR
 RUN_DIR="../../runs/${MODEL_NAME}/"
@@ -42,7 +42,7 @@ echo $MODEL_NAME_OR_PATH
 
 BS_EVAL=1
 for BS_TRAIN in 4 16; do
-  for EPOCH in 30 100; do
+  for EPOCH in 100; do
       for DATASET in chatbot; do  # askubuntu webapplications
           echo $DATASET
           echo "Evaluating ${DATASET} dataset with incomplete data for ${EPOCH} epochs"

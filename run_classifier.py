@@ -572,7 +572,8 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train'):
         elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
-                                                share_branch_weights=args.share_branch_weights, p=args.p)
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length)
         else:
             model = model_class.from_pretrained(output_dir)
         # tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -610,7 +611,8 @@ def load_model_for_eval(args, model_class, tokenizer_class, train_step_type='tra
     elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
                                             add_branches=args.add_branches,
-                                            share_branch_weights=args.share_branch_weights, p=args.p)
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length)
     else:
         model = model_class.from_pretrained(output_dir)
     tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -737,7 +739,21 @@ def main():
     # Probability type for EmbraceLayer
     parser.add_argument('--p', type=str, default='multinomial',
                         help="Choose the probability type for p in EmbraceLayer."
-                             " Options = [multinomial, selfattention].")
+                             " Options = ['multinomial': p is random,"
+                             "            'selfattention': p with custom self-attention module,"
+                             "            'multiheadattention': p with BERT attention module,"
+                             "            'multihead_bertselfattention': no p, BertSelfAttention module is applied to"
+                             "                                           tokens and summed to produce the embracement"
+                             "                                           vector,"
+                             "            'multihead_bertattention': no p, BertAttention module is applied"
+                             "            'selfattention_pytorch': p with pytorch attention module. "
+                             "                    Query=[bs, idx, 768], where  idx ranges from 0 to 127. "
+                             "                    Context=[bs, 128, 768]. This means  that each word in a sequence "
+                             "                    will be compared against every word in the same sequence, resulting "
+                             "                    in an attention vector of shape=[bs, 1, 128]. This is for 1 word. "
+                             "                    Do the same process for every word and sum the resulting attention "
+                             "                    vectors. Apply softmax to obtain the p vector."
+                             "           ].")
 
     args = parser.parse_args()
 
@@ -802,7 +818,8 @@ def main():
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
-                                            share_branch_weights=args.share_branch_weights, p=args.p)
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length)
     else:
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config)

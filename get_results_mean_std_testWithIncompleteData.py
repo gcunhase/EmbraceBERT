@@ -24,7 +24,10 @@ MODEL_ROOT = [
               #"embrace{}_with_branches_frozenbert_sharedWeightsAll", "embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.1",
               #"embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll",
               #"embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.1", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.3",
-              "embrace{}_p_selfattention",
+              "embrace{}_p_selfattention_condensed",
+              "embrace{}_p_multiheadattention",
+              "embrace{}_p_multihead_bertselfattention", "embrace{}_p_multihead_bertattention",
+              "embrace{}_p_selfattention_pytorch",
 ]
 
 MODEL_BERT = []
@@ -52,7 +55,12 @@ MODEL_NAME = {"bert":                                               " BERT-bs{} 
               "embracebert_frozenbert_condensed":                   " FrozenCEBERT-bs{}-ep100                ",
               "embracebert_frozenbert_condensed_withDropout0.1":    " FrozenCEBERT-bs{}-ep100+Dropout0.1     ",
               "embracebert_frozenbert_condensed_withDropout0.3":    " FrozenCEBERT-bs{}-ep100+Dropout0.3     ",
-              "embracebert_p_selfattention":                        " EmbraceBERT-bs{}-p_selfatt             ",
+              "embracebert_p_selfattention":                        " EmbraceBERT-bs{}-p_selfatt              ",
+              "embracebert_p_selfattention_condensed":              " CondensedEmbraceBERT-bs{}-p_selfatt     ",
+              "embracebert_p_multiheadattention":                   " EmbraceBERT-bs{}-p_multiheadatt         ",
+              "embracebert_p_multihead_bertattention":              " EmbraceBERT-bs{}-p_multihead_bertatt    ",
+              "embracebert_p_multihead_bertselfattention":          " EmbraceBERT-bs{}-p_multihead_bertselfatt",
+              "embracebert_p_selfattention_pytorch":                " EmbraceBERT-bs{}-p_selfatt_pytorch      ",
               "embracebert_with_branches_sharedWeightsAll":                                      " EmbraceBERT-bs{}+Branches                     ",
               "embracebert_with_branches_sharedWeightsAll_withDropout0.1":                       " EmbraceBERT-bs{}+Branches+Dropout0.1          ",
               "embracebert_with_branches_sharedWeightsAll_withDropout0.3":                       " EmbraceBERT-bs{}+Branches+Dropout0.3          ",
