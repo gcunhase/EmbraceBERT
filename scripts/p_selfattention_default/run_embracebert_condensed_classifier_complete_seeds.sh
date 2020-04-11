@@ -9,7 +9,7 @@ BS_EVAL=1
 for BS_TRAIN in 4 16; do  #4 16; do
   for DATASET in chatbot; do  # askubuntu webapplications chatbot; do
       echo $DATASET
-      for EPOCH in 30 100; do # 100; do
+      for EPOCH in 100; do # 30 100; do
           echo "Training ${DATASET} dataset with ${PERC} missing for ${EPOCH} epochs"
 
           DATA_DIR="../../data/intent_processed/nlu_eval/${DATASET}corpus/"
@@ -22,7 +22,7 @@ for BS_TRAIN in 4 16; do  #4 16; do
               # Train
               CUDA_VISIBLE_DEVICES=0,1 python ../../run_classifier.py --seed $SEED --is_condensed --p $P_TYPE --task_name "${DATASET}_intent" --model_type $MODEL_TYPE --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir $DATA_DIR --max_seq_length 128 --per_gpu_eval_batch_size=$BS_EVAL --per_gpu_train_batch_size=$BS_TRAIN --learning_rate 2e-5 --num_train_epochs $EPOCH --output_dir $OUT_PATH --overwrite_output_dir --overwrite_cache --save_best --log_dir $LOG_DIR_PATH
               # Eval
-              CUDA_VISIBLE_DEVICES=0,1 python ../../run_classifier.py --seed $SEED --is_condensed --p $P_TYPE --task_name "${DATASET}_intent" --model_type $MODEL_TYPE --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_lower_case --data_dir $DATA_DIR --max_seq_length 128 --per_gpu_eval_batch_size=$BS_EVAL --per_gpu_train_batch_size=$BS_TRAIN --learning_rate 2e-5 --num_train_epochs $EPOCH --output_dir $OUT_PATH --overwrite_output_dir --overwrite_cache --save_best --log_dir $LOG_DIR_PATH
+              CUDA_VISIBLE_DEVICES=0 python ../../run_classifier.py --seed $SEED --is_condensed --p $P_TYPE --task_name "${DATASET}_intent" --model_type $MODEL_TYPE --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_lower_case --data_dir $DATA_DIR --max_seq_length 128 --per_gpu_eval_batch_size=$BS_EVAL --per_gpu_train_batch_size=$BS_TRAIN --learning_rate 2e-5 --num_train_epochs $EPOCH --output_dir $OUT_PATH --overwrite_output_dir --overwrite_cache --save_best --log_dir $LOG_DIR_PATH
           done
       done
   done

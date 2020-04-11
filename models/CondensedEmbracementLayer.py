@@ -27,9 +27,8 @@ class CondensedEmbracementLayer(nn.Module):
         embraced_features_token = []
         for i_bs in range(bs):
             # 0. Obtain relevant tokens (Embracement layer with outputs between CLS and SEP only)
-            attention_i_bs = attention_mask[i_bs]
+            attention_i_bs = attention_mask[i_bs].cpu().detach().numpy()
             if self.p == 'multinomial':
-                attention_i_bs = attention_i_bs.cpu().detach().numpy()
                 last_idx = 0
                 for i_att, att in enumerate(attention_i_bs):
                     if att == 1:
@@ -61,8 +60,12 @@ class CondensedEmbracementLayer(nn.Module):
 
             # 2. Add features into one of size (bs, embedding_size)
             embraced_features_token_bs = []
-            for i_emb, e in enumerate(embraced_features_index):
-                embraced_features_token_bs.append(tokens_to_embrace[e, i_emb])
+            if self.p == 'multinomial':
+                for i_emb, e in enumerate(embraced_features_index):
+                    embraced_features_token_bs.append(tokens_to_embrace[e, i_emb])
+            else:
+                for i_emb, e in enumerate(embraced_features_index):
+                    embraced_features_token_bs.append(tokens_to_embrace[i_bs, e, i_emb])
             embraced_features_token.append(embraced_features_token_bs)
 
         embraced_features_token = torch.tensor(embraced_features_token, dtype=torch.float)
