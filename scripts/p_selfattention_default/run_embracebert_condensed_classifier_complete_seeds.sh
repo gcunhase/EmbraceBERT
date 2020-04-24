@@ -2,7 +2,7 @@
 
 MODEL_TYPE=embracebert
 OUTPUT_DIR="../../results/${MODEL_TYPE}_p_selfattention_condensed/"
-RUN_DIR="../../runs/${MODEL_TYPE}/"
+RUN_DIR="../../runs/${MODEL_TYPE}_p_selfattention_condensed/"
 P_TYPE="selfattention"
 
 BS_EVAL=1

@@ -3,7 +3,7 @@
 MODEL_TYPE=embracebert
 P_TYPE="multiple_multihead_bertselfattention_in_p"  #"multihead_bertselfattention_in_p" #"multihead_bertattention"
 OUTPUT_DIR="../../results/${MODEL_TYPE}_p_${P_TYPE}/"
-RUN_DIR="../../runs/${MODEL_TYPE}/"
+RUN_DIR="../../runs/${MODEL_TYPE}_p_${P_TYPE}/"
 
 BS_EVAL=1
 for BS_TRAIN in 4 16; do  #4 16; do

@@ -18,4 +18,5 @@ spacy
 nltk
 # BERT and RoBERTa
 pytorch-transformers
+tensorboard
 tensorboardX

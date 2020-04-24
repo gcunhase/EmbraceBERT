@@ -639,7 +639,7 @@ def main():
     parser.add_argument("--output_dir", default=None, type=str, required=True,
                         help="The output directory where the model predictions and checkpoints will be written.")
     parser.add_argument("--log_dir", default=None, type=str,
-                        help="The log directory where the model SummaryWriter info  will be saved.")
+                        help="The log directory where the model SummaryWriter info will be saved.")
 
     ## Other parameters
     parser.add_argument("--config_name", default="", type=str,
