@@ -2,10 +2,10 @@ import torch
 from torch import nn
 import numpy as np
 from models.AttentionLayer import AttentionLayer
-from models.SelfAttentionLayer import SelfAttention, SelfAttentionPytorch
+from models.SelfAttentionLayer import SelfAttention, SelfAttentionPytorch,\
+    BertSelfAttentionScores, BertSelfAttentionScoresP, BertMultiSelfAttentionScoresP
 from pytorch_transformers.modeling_bert import BertAttention, BertSelfAttention
-
-import math
+from utils import visualize_attention
 
 
 __author__ = "Gwena Cunha"
@@ -22,6 +22,9 @@ class EmbracementLayer(nn.Module):
             self.self_attention = SelfAttention(self.hidden_size)  #self.max_seq_length)  # AttentionLayer(self.hidden_size)
         elif self.p == 'multihead_bertselfattention':
             self.self_attention = BertSelfAttention(config)
+        elif self.p == 'multihead_bertselfattention_in_p':
+            config.num_attention_heads = 1
+            self.self_attention = BertSelfAttentionScoresP(config)
         elif self.p == 'multihead_bertattention':
             self.self_attention = BertAttention(config)
         elif self.p == 'multiheadattention':
@@ -30,6 +33,9 @@ class EmbracementLayer(nn.Module):
             self.self_attention = BertSelfAttentionScores(config_att)
         elif self.p == 'selfattention_pytorch':
             self.self_attention = SelfAttentionPytorch(self.max_seq_length)  # 128
+        elif self.p == 'multiple_multihead_bertselfattention_in_p':
+            config.num_attention_heads = 1
+            self.self_attention = BertMultiSelfAttentionScoresP(config)
 
     def forward(self, output_tokens_from_bert):
         # pooled_enc_output = bs x 768
@@ -51,12 +57,31 @@ class EmbracementLayer(nn.Module):
                 probability = torch.tensor(np.ones(seq_len), dtype=torch.float)
                 embraced_features_index = torch.multinomial(probability, emb_size, replacement=True)  # shape = [768]
                 embraced_features_index = embraced_features_index.cpu().detach().numpy()  # shape = 768
-            elif 'multihead_bert' in self.p:
+            elif self.p == 'multihead_bertselfattention' or self.p == 'multihead_bertattention':
                 tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
                 attention_mask = torch.ones([1, 1, 1, np.shape(tokens_to_embrace_bs)[0]]).cuda()
                 tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).unsqueeze(0).cuda()
                 selfattention_scores = self.self_attention(tokens_to_embrace_bs_tensor, attention_mask, head_mask=None)
                 selfattention_scores = selfattention_scores[0]
+            elif self.p == 'multiple_multihead_bertselfattention_in_p':
+                tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
+                attention_mask = torch.ones([1, 1, 1, np.shape(tokens_to_embrace_bs)[0]]).cuda()
+                tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).unsqueeze(0).cuda()
+                selfattention_scores = self.self_attention(tokens_to_embrace_bs_tensor, head_mask=attention_mask,
+                                                           is_visualize_attention=False)
+                # Choose features using information from self-attention
+                multiple_embrace_vectors = []
+                for i in range(self.max_seq_length):  # 128
+                    score = selfattention_scores[i, :]
+                    #attention_probs_img = score.unsqueeze(0).cpu().detach().numpy()
+                    #visualize_attention(attention_probs_img)
+                    embraced_features_index = torch.multinomial(score, emb_size, replacement=True)  # shape = [768]
+                    embraced_features_index = embraced_features_index.cpu().detach().numpy()  # shape = 768
+                    embraced_features_token_bs = []
+                    for i_emb, e in enumerate(embraced_features_index):
+                        embraced_features_token_bs.append(tokens_to_embrace[i_bs, e, i_emb])
+                    multiple_embrace_vectors.append(embraced_features_token_bs)
+                multiple_embrace_vectors = torch.tensor(multiple_embrace_vectors, dtype=torch.float)
             else:
                 # B. Self-attention used to choose most important indexes -> p = softmax(mean(self_att))
                 #   'selfattention_scores' shape -> (bs, 128)
@@ -64,9 +89,17 @@ class EmbracementLayer(nn.Module):
                 # ADD THE NEXT 2 LINES TO CONDENSED
                 # attention_mask_bs = attention_mask[i_bs, :]
                 # _, selfattention_scores = self.self_attention(tokens_to_embrace_bs, attention_mask_bs)
+
+                # Original attention_mask ranges from 0 to -1000
+                #    If we want to mask the scores by multiplying between 0 and 1, we should give the attention_mask
+                #      as head_mask
                 if self.p == 'selfattention':
                     _, selfattention_scores = self.self_attention(tokens_to_embrace_bs)
                 elif self.p == 'multiheadattention':  # BertAttention
+                    attention_mask = torch.ones([1, 1, 1, np.shape(tokens_to_embrace_bs)[0]]).cuda()
+                    tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).unsqueeze(0).cuda()
+                    selfattention_scores = self.self_attention(tokens_to_embrace_bs_tensor, attention_mask, head_mask=None)
+                elif self.p == 'multihead_bertselfattention_in_p':
                     attention_mask = torch.ones([1, 1, 1, np.shape(tokens_to_embrace_bs)[0]]).cuda()
                     tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).unsqueeze(0).cuda()
                     selfattention_scores = self.self_attention(tokens_to_embrace_bs_tensor, attention_mask, head_mask=None)
@@ -81,9 +114,13 @@ class EmbracementLayer(nn.Module):
 
             # 2. Add features into one of size (bs, embedding_size)
             embraced_features_token_bs = []
-            if 'multihead_bert' in self.p:
+            if self.p == 'multihead_bertselfattention' or self.p == 'multihead_bertattention':
                 embraced_features_index = torch.sum(selfattention_scores, dim=1)
                 embraced_features_token_bs = embraced_features_index.squeeze()
+                embraced_features_token_bs = embraced_features_token_bs.cpu().detach().numpy()
+            elif self.p == 'multiple_multihead_bertselfattention_in_p':
+                embraced_features_token_bs = torch.sum(multiple_embrace_vectors, dim=0)
+                embraced_features_token_bs = embraced_features_token_bs.squeeze()
                 embraced_features_token_bs = embraced_features_token_bs.cpu().detach().numpy()
             else:
                 for i_emb, e in enumerate(embraced_features_index):
@@ -92,71 +129,3 @@ class EmbracementLayer(nn.Module):
         embraced_features_token = torch.tensor(embraced_features_token, dtype=torch.float)  # (bs, 768)
 
         return embraced_features_token
-
-
-class BertSelfAttentionScores(nn.Module):
-    """ Based on modeling_bert.py > BertSelfAttention """
-    def __init__(self, config):
-        super(BertSelfAttentionScores, self).__init__()
-        if config.hidden_size % config.num_attention_heads != 0:
-            raise ValueError(
-                "The hidden size (%d) is not a multiple of the number of attention "
-                "heads (%d)" % (config.hidden_size, config.num_attention_heads))
-        self.output_attentions = config.output_attentions
-
-        self.num_attention_heads = config.num_attention_heads
-        self.attention_head_size = int(config.hidden_size / config.num_attention_heads)
-        self.all_head_size = self.num_attention_heads * self.attention_head_size
-
-        self.query = nn.Linear(config.hidden_size, self.all_head_size)
-        self.key = nn.Linear(config.hidden_size, self.all_head_size)
-        self.value = nn.Linear(config.hidden_size, self.all_head_size)
-
-        self.dropout = nn.Dropout(config.attention_probs_dropout_prob)
-
-    def transpose_for_scores(self, x):
-        new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
-        x = x.view(*new_x_shape)
-        return x.permute(0, 2, 1, 3)
-
-    def forward(self, hidden_states, attention_mask, head_mask=None):
-        mixed_query_layer = self.query(hidden_states)
-        mixed_key_layer = self.key(hidden_states)
-        mixed_value_layer = self.value(hidden_states)
-
-        query_layer = self.transpose_for_scores(mixed_query_layer)
-        key_layer = self.transpose_for_scores(mixed_key_layer)
-        value_layer = self.transpose_for_scores(mixed_value_layer)
-
-        # Take the dot product between "query" and "key" to get the raw attention scores.
-        attention_scores = torch.matmul(query_layer, key_layer.transpose(-1, -2))
-        attention_scores = attention_scores / math.sqrt(self.attention_head_size)
-        # Apply the attention mask is (precomputed for all layers in BertModel forward() function)
-        attention_scores = attention_scores + attention_mask
-
-        # Normalize the attention scores to probabilities.
-        attention_probs = nn.Softmax(dim=-1)(attention_scores)
-
-        # This is actually dropping out entire tokens to attend to, which might
-        # seem a bit unusual, but is taken from the original Transformer paper.
-        attention_probs = self.dropout(attention_probs)
-
-        # Mask heads if we want to
-        if head_mask is not None:
-            attention_probs = attention_probs * head_mask
-
-        #context_layer = torch.matmul(attention_probs, value_layer)
-        #context_layer = context_layer.permute(0, 2, 1, 3).contiguous()
-        #new_context_layer_shape = context_layer.size()[:-2] + (self.all_head_size,)
-        #context_layer = context_layer.view(*new_context_layer_shape)
-        #outputs = (context_layer, attention_probs) if self.output_attentions else (context_layer,)
-
-        attention_probs_mean = attention_probs.permute(0, 2, 1, 3).contiguous()
-        attention_probs_mean = attention_probs_mean.sum(dim=2)
-        outputs = attention_probs_mean.sum(dim=1).squeeze()
-        #max_value = torch.max(outputs_tmp).item()
-        #outputs = [o/max_value for o in outputs_tmp]
-        #outputs = torch.tensor(outputs, dtype=torch.float)
-        outputs = nn.Softmax(dim=-1)(outputs)
-
-        return outputs
