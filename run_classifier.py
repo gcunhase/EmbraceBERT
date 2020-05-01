@@ -177,8 +177,8 @@ def pre_train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval
                 # Save best model
                 if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0 and args.save_best:
                     # Log metrics
-                    if args.local_rank == -1 and args.evaluate_during_training:  # Only evaluate when single GPU otherwise metrics may not average well
-                        results = evaluate(args, model, tokenizer, data_type=eval_data_type)
+                    if args.local_rank == -1 and args.evaluate_during_training and global_step % args.evaluate_steps == 0:  # Only evaluate when single GPU otherwise metrics may not average well
+                        results = evaluate(args, model, tokenizer)  #, data_type=eval_data_type)
                         # for key, value in results.items():
                         #    tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
                         # Saving checkpoint by checking eval loss was too slow and memory expensive.
@@ -193,7 +193,7 @@ def pre_train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval
                     logger.info("Loss{}: {}".format(logger_additional_str, (tr_loss - logging_loss) / args.logging_steps))
                     logger.info("Logging loss{}: {}".format(logger_additional_str, logging_loss))
                     logger.info("Loss item{}: {}".format(logger_additional_str, loss.item()))
-                    logger.info("Global step{}: {}".format(logger_additional_str, global_step))
+                    logger.info("Global step/Step{}: {}/{}".format(logger_additional_str, global_step, step))
                     logging_loss = tr_loss
 
                     # Save best checkpoint
@@ -337,8 +337,8 @@ def train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval_dat
                 # Save best model
                 if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0 and args.save_best:
                     # Log metrics
-                    if args.local_rank == -1 and args.evaluate_during_training:  # Only evaluate when single GPU otherwise metrics may not average well
-                        results = evaluate(args, model, tokenizer, data_type=eval_data_type)
+                    if args.local_rank == -1 and args.evaluate_during_training and global_step % args.evaluate_steps == 0:  # Only evaluate when single GPU otherwise metrics may not average well
+                        results = evaluate(args, model, tokenizer)  #, data_type=eval_data_type)
                         # for key, value in results.items():
                         #    tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
                         # Saving checkpoint by checking eval loss was too slow and memory expensive.
@@ -353,7 +353,7 @@ def train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval_dat
                     logger.info("Loss: {}".format((tr_loss - logging_loss) / args.logging_steps))
                     logger.info("Logging loss: {}".format(logging_loss))
                     logger.info("Loss item: {}".format(loss.item()))
-                    logger.info("Global step: {}".format(global_step))
+                    logger.info("Global step/Step: {}/{}".format(global_step, step))
                     logging_loss = tr_loss
 
                     # Save best checkpoint
@@ -664,7 +664,9 @@ def main():
                         help="Only set this when eval_type is 'incomplete_test'")
     parser.add_argument("--eval_output_filename", default="eval_results", type=str)
     parser.add_argument("--evaluate_during_training", action='store_true',
-                        help="Rul evaluation during training at each logging step.")
+                        help="Run evaluation during training at each logging step.")
+    parser.add_argument("--evaluate_steps", default=400, type=int,
+                        help="Evaluation steps.")
     parser.add_argument("--do_lower_case", action='store_true',
                         help="Set this flag if you are using an uncased model.")
 
