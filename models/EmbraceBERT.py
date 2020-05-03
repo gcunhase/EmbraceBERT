@@ -109,7 +109,8 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only
             embraced_features_token = self.embracement_layer(output_tokens_from_bert, attention_mask)
         else:  # Embracement layer with all outputs (except CLS)
-            embraced_features_token = self.embracement_layer(output_tokens_from_bert)
+            # cls_token only used for 'multihead_bertattention_clsquery'
+            embraced_features_token = self.embracement_layer(output_tokens_from_bert, cls_token=cls_output)
 
         # Last step: Apply attention layer to CLS and embraced_features_token
         # embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)

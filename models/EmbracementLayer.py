@@ -3,7 +3,8 @@ from torch import nn
 import numpy as np
 from models.AttentionLayer import AttentionLayer
 from models.SelfAttentionLayer import SelfAttention, SelfAttentionPytorch,\
-    BertSelfAttentionScores, BertSelfAttentionScoresP, BertMultiSelfAttentionScoresP
+    BertSelfAttentionScores, BertSelfAttentionScoresP, BertMultiSelfAttentionScoresP,\
+    BertMultiAttentionScoresP, BertAttentionClsQuery
 from pytorch_transformers.modeling_bert import BertAttention, BertSelfAttention
 from utils import visualize_attention
 
@@ -27,6 +28,10 @@ class EmbracementLayer(nn.Module):
             self.self_attention = BertSelfAttentionScoresP(config)
         elif self.p == 'multihead_bertattention':
             self.self_attention = BertAttention(config)
+        elif self.p == 'multihead_bertattention_clsquery':
+            self.self_attention = BertAttentionClsQuery(config)
+        elif self.p == 'attention_clsquery':
+            self.self_attention = AttentionLayer(self.hidden_size)
         elif self.p == 'multiheadattention':
             config_att = config
             config_att.output_attentions = True
@@ -36,8 +41,13 @@ class EmbracementLayer(nn.Module):
         elif self.p == 'multiple_multihead_bertselfattention_in_p':
             config.num_attention_heads = 1
             self.self_attention = BertMultiSelfAttentionScoresP(config)
+        elif self.p == 'multiple_multihead_bertattention_in_p':
+            config.num_attention_heads = 1
+            config.output_attentions = True
+            self.self_attention = BertMultiAttentionScoresP(config, max_seq_length)
+            self.softmax = nn.Softmax(dim=-1)
 
-    def forward(self, output_tokens_from_bert):
+    def forward(self, output_tokens_from_bert, cls_token=None):
         # pooled_enc_output = bs x 768
         # output_tokens_from_bert = bert_output[0]
         # cls_output = bert_output[1]  # CLS
@@ -63,12 +73,30 @@ class EmbracementLayer(nn.Module):
                 tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).unsqueeze(0).cuda()
                 selfattention_scores = self.self_attention(tokens_to_embrace_bs_tensor, attention_mask, head_mask=None)
                 selfattention_scores = selfattention_scores[0]
-            elif self.p == 'multiple_multihead_bertselfattention_in_p':
+            elif self.p == 'multihead_bertattention_clsquery':
+                print("TODO. Use cls_token - Come back to this")
+                tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
+                cls_token_bs = cls_token[i_bs, :]
+                attention_mask = torch.ones([1, 1, 1, np.shape(tokens_to_embrace_bs)[0]]).cuda()
+                tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).unsqueeze(0).cuda()
+                cls_token_bs = torch.tensor(cls_token_bs, dtype=torch.float).unsqueeze(0).cuda()
+                selfattention_scores = self.self_attention(tokens_to_embrace_bs_tensor, attention_mask, head_mask=None, cls_query=cls_token_bs)
+                selfattention_scores = selfattention_scores[0]
+            elif self.p == 'attention_clsquery':
+                tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
+                cls_token_bs = cls_token[i_bs, :]
+                tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).cuda()
+                cls_token_bs = torch.tensor(cls_token_bs, dtype=torch.float).unsqueeze(0).cuda()
+                selfattention_scores = self.self_attention(cls_token_bs, tokens_to_embrace_bs_tensor, unsqueeze_idx=0)
+            elif self.p == 'multiple_multihead_bertselfattention_in_p' or self.p == 'multiple_multihead_bertattention_in_p':
                 tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
                 attention_mask = torch.ones([1, 1, 1, np.shape(tokens_to_embrace_bs)[0]]).cuda()
                 tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).unsqueeze(0).cuda()
                 selfattention_scores = self.self_attention(tokens_to_embrace_bs_tensor, head_mask=attention_mask,
                                                            is_visualize_attention=False)
+                if self.p == 'multiple_multihead_bertattention_in_p':
+                    selfattention_scores = selfattention_scores.squeeze()
+                    selfattention_scores = self.softmax(selfattention_scores)
                 # Choose features using information from self-attention
                 multiple_embrace_vectors = []
                 for i in range(self.max_seq_length):  # 128
@@ -118,10 +146,12 @@ class EmbracementLayer(nn.Module):
                 embraced_features_index = torch.sum(selfattention_scores, dim=1)
                 embraced_features_token_bs = embraced_features_index.squeeze()
                 embraced_features_token_bs = embraced_features_token_bs.cpu().detach().numpy()
-            elif self.p == 'multiple_multihead_bertselfattention_in_p':
+            elif self.p == 'multiple_multihead_bertselfattention_in_p' or self.p == 'multiple_multihead_bertattention_in_p':
                 embraced_features_token_bs = torch.sum(multiple_embrace_vectors, dim=0)
                 embraced_features_token_bs = embraced_features_token_bs.squeeze()
                 embraced_features_token_bs = embraced_features_token_bs.cpu().detach().numpy()
+            elif self.p == 'attention_clsquery':
+                embraced_features_token_bs = selfattention_scores.cpu().detach().numpy()
             else:
                 for i_emb, e in enumerate(embraced_features_index):
                     embraced_features_token_bs.append(tokens_to_embrace[i_bs, e, i_emb])

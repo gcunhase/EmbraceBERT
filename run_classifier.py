@@ -755,13 +755,16 @@ def main():
                              "                                           tokens and summed to produce the embracement"
                              "                                           vector,"
                              "            'multihead_bertattention': no p, BertAttention module is applied, "
+                             "            'multihead_bertattention_clsquery': no p, "
+                             "                TRY=BertAttention module is applied with Q=CLS token, "
                              "            'multihead_bertselfattention_in_p': BertSelfAttention module is used in the"
                              "                     p vector in the embracement layer, "
                              "            'multiple_multihead_bertselfattention_in_p': The input is BERT "
                              "                     tokens except CLS and the output has same size. Another p=random "
-                             "                     embracement layer is applied after. BertSelfAttention returns "
-                             "                     asdkalsdkas;ldka;sldas. Self-attention is applied "
-                             "                     for every word with each token taking turns as the query."
+                             "                     embracement layer is applied after. Self-attention is applied "
+                             "                     for every word with each token taking turns as the query.,"
+                             "            'multiple_multihead_bertattention_in_p': same as above but with attention"
+                             "            'attention_clsquery': no p, AttentionLayer with Q=CLS token"
                              "           ].")
 
     args = parser.parse_args()

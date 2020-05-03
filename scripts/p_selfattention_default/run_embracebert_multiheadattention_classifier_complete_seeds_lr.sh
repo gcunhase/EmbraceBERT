@@ -1,10 +1,10 @@
 #!/bin/bash -v
 
 MODEL_TYPE=embracebert
-P_TYPE="multiple_multihead_bertattention_in_p"  #"attention_clsquery"  #"multiple_multihead_bertselfattention_in_p"  #"multihead_bertselfattention_in_p" #"multihead_bertattention"
-LR=2e-5
-OUTPUT_DIR="../../results/${MODEL_TYPE}_p_${P_TYPE}/"
-RUN_DIR="../../runs/${MODEL_TYPE}_p_${P_TYPE}/"
+P_TYPE="multiple_multihead_bertselfattention_in_p"  #"multihead_bertselfattention_in_p" #"multihead_bertattention"
+LR=2e-6
+OUTPUT_DIR="../../results/${MODEL_TYPE}_p_${P_TYPE}_lr${LR}/"
+RUN_DIR="../../runs/${MODEL_TYPE}_p_${P_TYPE}_lr${LR}/"
 
 BS_EVAL=1
 for BS_TRAIN in 4 16; do  #4 16; do
