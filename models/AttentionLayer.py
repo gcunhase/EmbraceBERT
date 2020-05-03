@@ -12,10 +12,10 @@ class AttentionLayer(nn.Module):
         self.hidden_size = hidden_size
         self.embrace_attention = Attention(self.hidden_size)
 
-    def forward(self, cls_output, embraced_features_token):
+    def forward(self, cls_output, embraced_features_token, unsqueeze_idx=1):
         # Last stage: Apply attention layer to CLS and embraced_features_token
-        query = torch.unsqueeze(cls_output, 1).cuda()  # query = torch.randn(5, 1, 256)
-        context = torch.unsqueeze(embraced_features_token, 1).cuda()  # context = torch.randn(5, 5, 256)
+        query = torch.unsqueeze(cls_output, unsqueeze_idx).cuda()  # query = torch.randn(5, 1, 256)
+        context = torch.unsqueeze(embraced_features_token, unsqueeze_idx).cuda()  # context = torch.randn(5, 5, 256)
         embrace_output, weights = self.embrace_attention(query, context)
         embrace_output = embrace_output.squeeze()
 
