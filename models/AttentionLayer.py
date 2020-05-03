@@ -7,9 +7,10 @@ __author__ = "Gwena Cunha"
 
 
 class AttentionLayer(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self, hidden_size, return_att_weights=False):
         super(AttentionLayer, self).__init__()
         self.hidden_size = hidden_size
+        self.return_att_weights = return_att_weights
         self.embrace_attention = Attention(self.hidden_size)
 
     def forward(self, cls_output, embraced_features_token, unsqueeze_idx=1):
@@ -19,4 +20,5 @@ class AttentionLayer(nn.Module):
         embrace_output, weights = self.embrace_attention(query, context)
         embrace_output = embrace_output.squeeze()
 
-        return embrace_output
+        outputs = (embrace_output, weights) if self.return_att_weights else (embrace_output,)
+        return outputs

@@ -765,6 +765,7 @@ def main():
                              "                     for every word with each token taking turns as the query.,"
                              "            'multiple_multihead_bertattention_in_p': same as above but with attention"
                              "            'attention_clsquery': no p, AttentionLayer with Q=CLS token"
+                             "            'attention_clsquery_weights': consider attention weights in p."
                              "           ].")
 
     args = parser.parse_args()

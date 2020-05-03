@@ -29,9 +29,14 @@ class EmbracementLayer(nn.Module):
         elif self.p == 'multihead_bertattention':
             self.self_attention = BertAttention(config)
         elif self.p == 'multihead_bertattention_clsquery':
-            self.self_attention = BertAttentionClsQuery(config)
+            config.output_attentions = True
+            self.self_attention = BertAttentionClsQuery(config, hidden_size)
+            self.softmax = nn.Softmax()
         elif self.p == 'attention_clsquery':
             self.self_attention = AttentionLayer(self.hidden_size)
+        elif self.p == 'attention_clsquery_weights':
+            self.self_attention = AttentionLayer(self.hidden_size, return_att_weights=True)
+            self.softmax = nn.Softmax(dim=-1)
         elif self.p == 'multiheadattention':
             config_att = config
             config_att.output_attentions = True
@@ -77,17 +82,22 @@ class EmbracementLayer(nn.Module):
                 print("TODO. Use cls_token - Come back to this")
                 tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
                 cls_token_bs = cls_token[i_bs, :]
+                #cls_token_bs = torch.tensor(cls_token_bs, dtype=torch.float).unsqueeze(0).unsqueeze(0).cuda()
                 attention_mask = torch.ones([1, 1, 1, np.shape(tokens_to_embrace_bs)[0]]).cuda()
                 tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).unsqueeze(0).cuda()
-                cls_token_bs = torch.tensor(cls_token_bs, dtype=torch.float).unsqueeze(0).cuda()
-                selfattention_scores = self.self_attention(tokens_to_embrace_bs_tensor, attention_mask, head_mask=None, cls_query=cls_token_bs)
-                selfattention_scores = selfattention_scores[0]
+                cls_token_bs = torch.tensor(cls_token_bs, dtype=torch.float).unsqueeze(0)
+                cls_token_bs = cls_token_bs.repeat(self.max_seq_length, 1)
+                cls_token_bs = cls_token_bs.unsqueeze(0).cuda()
+                selfattention_scores = self.self_attention(tokens_to_embrace_bs_tensor, head_mask=attention_mask, cls_query=cls_token_bs)
+                selfattention_scores = self.softmax(selfattention_scores[1])
+                print("")
             elif self.p == 'attention_clsquery':
                 tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
                 cls_token_bs = cls_token[i_bs, :]
                 tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).cuda()
                 cls_token_bs = torch.tensor(cls_token_bs, dtype=torch.float).unsqueeze(0).cuda()
                 selfattention_scores = self.self_attention(cls_token_bs, tokens_to_embrace_bs_tensor, unsqueeze_idx=0)
+                selfattention_scores = selfattention_scores[0]
             elif self.p == 'multiple_multihead_bertselfattention_in_p' or self.p == 'multiple_multihead_bertattention_in_p':
                 tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
                 attention_mask = torch.ones([1, 1, 1, np.shape(tokens_to_embrace_bs)[0]]).cuda()
@@ -123,6 +133,14 @@ class EmbracementLayer(nn.Module):
                 #      as head_mask
                 if self.p == 'selfattention':
                     _, selfattention_scores = self.self_attention(tokens_to_embrace_bs)
+                elif self.p == 'attention_clsquery_weights':
+                    tokens_to_embrace_bs = tokens_to_embrace[i_bs, :, :]
+                    cls_token_bs = cls_token[i_bs, :]
+                    tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).cuda()
+                    cls_token_bs = torch.tensor(cls_token_bs, dtype=torch.float).unsqueeze(0).cuda()
+                    selfattention_scores = self.self_attention(cls_token_bs, tokens_to_embrace_bs_tensor, unsqueeze_idx=0)
+                    selfattention_scores = selfattention_scores[1]
+                    selfattention_scores = self.softmax(selfattention_scores).squeeze()
                 elif self.p == 'multiheadattention':  # BertAttention
                     attention_mask = torch.ones([1, 1, 1, np.shape(tokens_to_embrace_bs)[0]]).cuda()
                     tokens_to_embrace_bs_tensor = torch.tensor(tokens_to_embrace_bs, dtype=torch.float).unsqueeze(0).cuda()

@@ -115,6 +115,7 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         # Last step: Apply attention layer to CLS and embraced_features_token
         # embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)
         embrace_output = self.embrace_attention(cls_output, embraced_features_token)
+        embrace_output = embrace_output[0]
 
         # No need because the embrace layer functions as a dropout mechanism?
         if apply_dropout:

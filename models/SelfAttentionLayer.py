@@ -467,10 +467,10 @@ class BertAttentionClsQuery(nn.Module):
         Assumes N=1 (num_attention_heads)
         Use CLS token as Query
     """
-    def __init__(self, config):
+    def __init__(self, config, max_seq_length):
         super(BertAttentionClsQuery, self).__init__()
         self.self = BertSelfAttentionClsQuery(config)
-        self.output = BertSelfOutput(config)
+        self.output = BertSelfOutput(config, max_seq_length)
         self.pruned_heads = set()
 
     def prune_heads(self, heads):
@@ -496,8 +496,8 @@ class BertAttentionClsQuery(nn.Module):
         self.self.all_head_size = self.self.attention_head_size * self.self.num_attention_heads
         self.pruned_heads = self.pruned_heads.union(heads)
 
-    def forward(self, input_tensor, attention_mask, head_mask=None, cls_query=None):
-        self_outputs = self.self(input_tensor, attention_mask, head_mask, cls_query=cls_query)
+    def forward(self, input_tensor, head_mask=None, cls_query=None):
+        self_outputs = self.self(input_tensor, head_mask, cls_query=cls_query)
         attention_output = self.output(self_outputs[0], input_tensor)
         outputs = (attention_output,) + self_outputs[1:]  # add attentions if we output them
         return outputs
@@ -527,7 +527,7 @@ class BertSelfAttentionClsQuery(nn.Module):
         x = x.view(*new_x_shape)
         return x.permute(0, 2, 1, 3)
 
-    def forward(self, hidden_states, attention_mask, head_mask=None, cls_query=None):
+    def forward(self, hidden_states, head_mask=None, cls_query=None):
         mixed_query_layer = self.query(cls_query)
         mixed_key_layer = self.key(hidden_states)
         mixed_value_layer = self.value(hidden_states)
@@ -537,10 +537,9 @@ class BertSelfAttentionClsQuery(nn.Module):
         value_layer = self.transpose_for_scores(mixed_value_layer)
 
         # Take the dot product between "query" and "key" to get the raw attention scores.
-        attention_scores = torch.matmul(query_layer, key_layer.transpose(-1, -2))
+        key_layer_transpose = key_layer.transpose(-1, -2)
+        attention_scores = torch.matmul(query_layer, key_layer_transpose)
         attention_scores = attention_scores / math.sqrt(self.attention_head_size)
-        # Apply the attention mask is (precomputed for all layers in BertModel forward() function)
-        attention_scores = attention_scores + attention_mask
 
         # Normalize the attention scores to probabilities.
         attention_probs = nn.Softmax(dim=-1)(attention_scores)
@@ -558,6 +557,10 @@ class BertSelfAttentionClsQuery(nn.Module):
         context_layer = context_layer.permute(0, 2, 1, 3).contiguous()
         new_context_layer_shape = context_layer.size()[:-2] + (self.all_head_size,)
         context_layer = context_layer.view(*new_context_layer_shape)
+
+        # Visualize attention_probs
+        attention_probs_img = attention_probs.squeeze().squeeze().cpu().detach().numpy()
+        visualize_attention(attention_probs_img[1, :30, :30])
 
         outputs = (context_layer, attention_probs) if self.output_attentions else (context_layer,)
         return outputs
