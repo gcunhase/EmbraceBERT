@@ -1,7 +1,7 @@
 #!/bin/bash -v
 
 MODEL_TYPE=embracebert
-P_TYPE="attention_clsquery_weights"  #"multiple_multihead_bertattention_in_p"  #"attention_clsquery"  #"multiple_multihead_bertselfattention_in_p"  #"multihead_bertselfattention_in_p" #"multihead_bertattention"
+P_TYPE="multihead_bertattention"  #"multiple_multihead_bertattention_in_p"  #"attention_clsquery"  #"multiple_multihead_bertselfattention_in_p"  #"multihead_bertselfattention_in_p" #"multihead_bertattention"
 LR=2e-5
 OUTPUT_DIR="../../results/${MODEL_TYPE}_p_${P_TYPE}/"
 RUN_DIR="../../runs/${MODEL_TYPE}_p_${P_TYPE}/"

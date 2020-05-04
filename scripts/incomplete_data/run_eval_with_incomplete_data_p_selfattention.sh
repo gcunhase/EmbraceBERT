@@ -2,7 +2,7 @@
 
 # Options: bert, bert_frozen, embracebert, embracebert_frozenbert (and roberta)
 MODEL_TYPE=embracebert
-P_TYPE="attention_clsquery"
+P_TYPE="multiheadattention"  #"attention_clsquery_weights"
 MODEL_NAME="${MODEL_TYPE}_p_${P_TYPE}"
 IS_CONDENSED=false  # if true, embracebert_condensed
 IS_FROZEN=false  # if true, embracebert_frozenbert
