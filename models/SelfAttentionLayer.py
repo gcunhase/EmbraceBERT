@@ -566,3 +566,125 @@ class BertSelfAttentionClsQuery(nn.Module):
 
         outputs = (context_layer, attention_probs) if self.output_attentions else (context_layer,)
         return outputs
+
+
+class BertAttentionBertC(nn.Module):
+    """ Gwena's modification
+
+        Based on modeling_bert.py > BertAttention
+        BertAttention = BertSelfAttention + Normalization + Dropout
+
+        TODO: Visualize AttentionScores Matrix
+        Assumes N=1 (num_attention_heads)
+        Use CLS token as Query
+    """
+    def __init__(self, config, max_seq_length):
+        super(BertAttentionBertC, self).__init__()
+        self.self = BertSelfAttentionBertC(config)
+        self.output = BertSelfOutput(config, max_seq_length)
+        self.pruned_heads = set()
+
+    def prune_heads(self, heads):
+        if len(heads) == 0:
+            return
+        mask = torch.ones(self.self.num_attention_heads, self.self.attention_head_size)
+        heads = set(heads) - self.pruned_heads  # Convert to set and emove already pruned heads
+        for head in heads:
+            # Compute how many pruned heads are before the head and move the index accordingly
+            head = head - sum(1 if h < head else 0 for h in self.pruned_heads)
+            mask[head] = 0
+        mask = mask.view(-1).contiguous().eq(1)
+        index = torch.arange(len(mask))[mask].long()
+
+        # Prune linear layers
+        self.self.query = prune_linear_layer(self.self.query, index)
+        self.self.key = prune_linear_layer(self.self.key, index)
+        self.self.value = prune_linear_layer(self.self.value, index)
+        self.output.dense = prune_linear_layer(self.output.dense, index, dim=1)
+
+        # Update hyper params and store pruned heads
+        self.self.num_attention_heads = self.self.num_attention_heads - len(heads)
+        self.self.all_head_size = self.self.attention_head_size * self.self.num_attention_heads
+        self.pruned_heads = self.pruned_heads.union(heads)
+
+    def forward(self, input_tensor, head_mask=None, bert_query=None):
+        self_outputs = self.self(input_tensor, head_mask, bert_query=bert_query)
+        attention_output = self.output(self_outputs[0], input_tensor)
+        outputs = (attention_output,) + self_outputs[1:]  # add attentions if we output them
+        return outputs
+
+
+class BertSelfAttentionBertC(nn.Module):
+    def __init__(self, config):
+        super(BertSelfAttentionBertC, self).__init__()
+        if config.hidden_size % config.num_attention_heads != 0:
+            raise ValueError(
+                "The hidden size (%d) is not a multiple of the number of attention "
+                "heads (%d)" % (config.hidden_size, config.num_attention_heads))
+        self.output_attentions = config.output_attentions
+        self.hidden_size = config.hidden_size
+
+        self.num_attention_heads = config.num_attention_heads
+        self.attention_head_size = int(config.hidden_size / config.num_attention_heads)
+        self.all_head_size = self.num_attention_heads * self.attention_head_size
+
+        self.query = nn.Linear(config.hidden_size, self.all_head_size)
+        self.key = nn.Linear(config.hidden_size, self.all_head_size)
+        self.value = nn.Linear(config.hidden_size, self.all_head_size)
+
+        self.dropout = nn.Dropout(config.attention_probs_dropout_prob)
+
+    def transpose_for_scores(self, x):
+        new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
+        x = x.view(*new_x_shape)
+        return x.permute(0, 2, 1, 3)
+
+    def forward(self, hidden_states, head_mask=None, bert_query=None, do_visualize_att=False):
+
+        # Mask heads if we want to
+        if head_mask is not None:
+            head_mask_resized = head_mask.unsqueeze(2)
+            head_mask_resized = head_mask_resized.repeat(1, 1, self.hidden_size).float()
+            if bert_query is not None:
+                bert_query = bert_query * head_mask_resized
+            hidden_states = hidden_states * head_mask_resized
+
+        mixed_query_layer = self.query(bert_query)
+        mixed_key_layer = self.key(hidden_states)
+        mixed_value_layer = self.value(hidden_states)
+
+        query_layer = self.transpose_for_scores(mixed_query_layer)
+        key_layer = self.transpose_for_scores(mixed_key_layer)
+        value_layer = self.transpose_for_scores(mixed_value_layer)
+
+        # Take the dot product between "query" and "key" to get the raw attention scores.
+        key_layer_transpose = key_layer.transpose(-1, -2)
+        attention_scores = torch.matmul(query_layer, key_layer_transpose)
+        attention_scores = attention_scores / math.sqrt(self.attention_head_size)
+
+        # Normalize the attention scores to probabilities.
+        attention_probs = nn.Softmax(dim=-1)(attention_scores)
+
+        # This is actually dropping out entire tokens to attend to, which might
+        # seem a bit unusual, but is taken from the original Transformer paper.
+        attention_probs = self.dropout(attention_probs)
+
+        context_layer = torch.matmul(attention_probs, value_layer)
+
+        context_layer = context_layer.permute(0, 2, 1, 3).contiguous()
+        new_context_layer_shape = context_layer.size()[:-2] + (self.all_head_size,)
+        context_layer = context_layer.view(*new_context_layer_shape)
+
+        # Visualize attention_probs
+        if do_visualize_att:
+            attention_probs_img = attention_probs.squeeze().squeeze().cpu().detach().numpy()
+            s = np.shape(attention_probs_img)
+            if len(s) == 2:
+                visualize_attention(attention_probs_img[:30, :30])
+            elif len(s) == 3:
+                visualize_attention(attention_probs_img[1, :30, :30])
+            else:
+                visualize_attention(attention_probs_img[1, 1, :30, :30])
+
+        outputs = (context_layer, attention_probs) if self.output_attentions else (context_layer,)
+        return outputs

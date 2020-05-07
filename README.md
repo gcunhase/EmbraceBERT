@@ -68,6 +68,11 @@ python -m spacy download en
 
 * EmbraceBERT_BS: when p is 'multinomial', the chosen features are the same in a batch. In EmbraceBERT_BS, these features are again calculated for each sequence in a batch sequence. So if before `bs=4`, all 4 sequences would have the same feature indexes chosen. In this new model, each one of these 4 sequences has different indexes.
     * Need to run code again to see if the results are better
+
+* EmbraceBERT with Q=BERTc, K,V=BERTi (`run_classifier_bertquery.py`, `models/EmbraceBERTwithQuery.py`)
+    * Train
+    ```--seed 1 --p multinomial --task_name chatbot_intent --model_type embracebertwithquery --train_bertc --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir_complete data/intent_processed/nlu_eval/chatbotcorpus/ --data_dir data/intent_stterror_data/chatbot/gtts_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --num_train_epochs_bertc 3.0 --output_dir_complete ./results/debug_embracebertwithquery_p_multinomial_bertc/ --output_dir ./results/debug_embracebertwithquery_p_multinomial/ --overwrite_output_dir --overwrite_cache --save_best --log_dir_complete ./runs/debug_embracebertwithquery_p_selfattention_bertc --log_dir ./runs/debug_embracebertwithquery_p_selfattention```
+    
     
 ### 3. Test model with Incomplete data
 ```
