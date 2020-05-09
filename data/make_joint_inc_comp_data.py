@@ -61,15 +61,16 @@ def make_dataset(root_data_dir, complete_data_dir, incomplete_data_dir, results_
                 data_dict = []
                 # Copy incomplete data
                 for row_inc in reader_incomplete:
-                    if row_count != 0:
+                    if row_count != 0:  # skip header
                         # Incomplete
                         data_dict.append({keys[0]: row_inc[0], keys[1]: row_inc[1], keys[2]: row_inc[2], keys[3]: row_inc[3]})
                     row_count += 1
 
                 # Copy complete data, add missing words and target (same as row[0])
+                row_count = 0
                 for row_comp in reader_complete:
-                    if row_count != 0:
-                        # Incomplete
+                    if row_count != 0:  # skip header
+                        # Complete
                         data_dict.append({keys[0]: row_comp[0], keys[1]: row_comp[1], keys[2]: '', keys[3]: row_comp[0]})
                     row_count += 1
 
