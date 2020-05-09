@@ -607,8 +607,8 @@ class BertAttentionBertC(nn.Module):
         self.self.all_head_size = self.self.attention_head_size * self.self.num_attention_heads
         self.pruned_heads = self.pruned_heads.union(heads)
 
-    def forward(self, input_tensor, head_mask=None, bert_query=None):
-        self_outputs = self.self(input_tensor, head_mask, bert_query=bert_query)
+    def forward(self, input_tensor, head_mask=None, bert_query=None, extract_key_value_from_bertc=True):
+        self_outputs = self.self(input_tensor, head_mask, bert_query=bert_query, extract_key_value_from_bertc=extract_key_value_from_bertc)
         attention_output = self.output(self_outputs[0], input_tensor)
         outputs = (attention_output,) + self_outputs[1:]  # add attentions if we output them
         return outputs
@@ -639,7 +639,7 @@ class BertSelfAttentionBertC(nn.Module):
         x = x.view(*new_x_shape)
         return x.permute(0, 2, 1, 3)
 
-    def forward(self, hidden_states, head_mask=None, bert_query=None, do_visualize_att=False):
+    def forward(self, hidden_states, head_mask=None, bert_query=None, do_visualize_att=False, extract_key_value_from_bertc=True):
 
         # Mask heads if we want to
         if head_mask is not None:
@@ -649,9 +649,14 @@ class BertSelfAttentionBertC(nn.Module):
                 bert_query = bert_query * head_mask_resized
             hidden_states = hidden_states * head_mask_resized
 
-        mixed_query_layer = self.query(bert_query)
-        mixed_key_layer = self.key(hidden_states)
-        mixed_value_layer = self.value(hidden_states)
+        if extract_key_value_from_bertc:  # BERTc: K, V
+            mixed_query_layer = self.query(hidden_states)
+            mixed_key_layer = self.key(bert_query)
+            mixed_value_layer = self.value(bert_query)
+        else:  # BERTc: Q
+            mixed_query_layer = self.query(bert_query)
+            mixed_key_layer = self.key(hidden_states)
+            mixed_value_layer = self.value(hidden_states)
 
         query_layer = self.transpose_for_scores(mixed_query_layer)
         key_layer = self.transpose_for_scores(mixed_key_layer)

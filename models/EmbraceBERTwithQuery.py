@@ -46,7 +46,7 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
     """
     # EmbraceBERT with branches: added 'add_branches' and 'share_branch_weights'
     def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False,
-                 share_branch_weights=False, p='multinomial', max_seq_length=128):
+                 share_branch_weights=False, p='multinomial', max_seq_length=128, extract_key_value_from_bertc=True):
         super(EmbraceBertWithQueryForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.vocab_size = config.vocab_size
@@ -54,6 +54,7 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
         self.is_condensed = is_condensed
         self.p = p
         self.max_seq_length = max_seq_length  # 128
+        self.extract_key_value_from_bertc = extract_key_value_from_bertc
 
         """EmbraceBERT with branches"""
         self.num_labels_evaluator = 2
@@ -128,7 +129,7 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
 
                 #if is_condensed:
                 #output_tokens_from_bert = self.multiheadattention(output_tokens_from_bert, head_mask=attention_mask, bert_query=bertc_output_tokens_from_bert)
-                output_tokens_from_bert = self.multiheadattention(output_tokens_from_bert, bert_query=bertc_output_tokens_from_bert)
+                output_tokens_from_bert = self.multiheadattention(output_tokens_from_bert, bert_query=bertc_output_tokens_from_bert, extract_key_value_from_bertc=self.extract_key_value_from_bertc)
                 output_tokens_from_bert = output_tokens_from_bert[0]
 
         if self.is_condensed:  # Embracement layer with outputs between CLS and SEP only

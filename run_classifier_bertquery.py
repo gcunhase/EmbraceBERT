@@ -625,7 +625,8 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train', tra
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
                                                 share_branch_weights=args.share_branch_weights, p=args.p,
-                                                max_seq_length=args.max_seq_length)
+                                                max_seq_length=args.max_seq_length,
+                                                extract_key_value_from_bertc=args.extract_key_value_from_bertc)
         else:
             model = model_class.from_pretrained(output_dir)
         # tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -673,7 +674,8 @@ def load_model_for_eval(args, model_class , tokenizer_class, train_step_type='tr
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
                                             add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
-                                            max_seq_length=args.max_seq_length)
+                                            max_seq_length=args.max_seq_length,
+                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc)
     else:
         model = model_class.from_pretrained(output_dir)
     tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -799,7 +801,8 @@ def main():
                              " to start end-to-end fine-tuning process.")
     parser.add_argument('--train_bertc', action='store_true',
                         help="Whether to add branches in BERT's hidden layers.")
-
+    parser.add_argument('--extract_key_value_from_bertc', action='store_true',
+                        help="Whether to use BERTc to extract Q or (K,V).")
     # Add branches
     parser.add_argument('--add_branches', action='store_true',
                         help="Whether to add branches in BERT's hidden layers.")
@@ -890,7 +893,8 @@ def main():
                                             config=config, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
-                                            max_seq_length=args.max_seq_length)
+                                            max_seq_length=args.max_seq_length,
+                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc)
     else:
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config)
