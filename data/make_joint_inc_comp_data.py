@@ -44,8 +44,6 @@ def make_dataset(root_data_dir, complete_data_dir, incomplete_data_dir, results_
     keys = ['sentence', 'label', 'missing', 'target']
     for comp_dir, inc_dir in zip(complete_files_dir, incomplete_files_dir):
         comp_file = comp_dir + 'train.tsv'
-        complete_tsv_file = open(complete_data_dir_path + comp_file, 'r')
-        reader_complete = csv.reader(complete_tsv_file, delimiter='\t')
         for stt in ['gtts', 'macsay']:
             for tts in ['google', 'sphinx', 'witai']:
                 inc_dir_stterror = inc_dir + stt + '_' + tts + '/'
@@ -56,6 +54,10 @@ def make_dataset(root_data_dir, complete_data_dir, incomplete_data_dir, results_
                 ensure_dir(save_path)
                 incomplete_tsv_file = open(incomplete_data_dir_path + inc_file, 'r')
                 reader_incomplete = csv.reader(incomplete_tsv_file, delimiter='\t')
+                complete_tsv_file = open(complete_data_dir_path + comp_file, 'r')
+                reader_complete = csv.reader(complete_tsv_file, delimiter='\t')
+                print(complete_data_dir_path + comp_file)
+                #print(incomplete_data_dir_path + inc_file, save_path)
 
                 row_count = 0
                 data_dict = []
