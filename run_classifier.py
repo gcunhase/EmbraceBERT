@@ -47,6 +47,7 @@ from pytorch_transformers import (WEIGHTS_NAME,
 from models.BERT_Dropout import BertForSequenceClassification
 from models.RoBERTa_Dropout import RobertaForSequenceClassification
 from models.EmbraceBERT import EmbraceBertForSequenceClassification
+from models.EmbraceBERTwithQuery import EmbraceBertWithQueryForSequenceClassification
 from models.EmbraceRoBERTa import EmbraceRobertaForSequenceClassification
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
@@ -58,9 +59,11 @@ logger = logging.getLogger(__name__)
 
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig, RobertaConfig)), ())
 
+# embracebertwithkeyvaluequery: bert+(multiheadattention with tokens (except CLS), embracement layer, attention with e and CLS token)
 MODEL_CLASSES = {
     'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
     'embracebert': (BertConfig, EmbraceBertForSequenceClassification, BertTokenizer),
+    'embracebertwithkeyvaluequery': (BertConfig, EmbraceBertWithQueryForSequenceClassification, BertTokenizer),
     'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
     'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
     'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
@@ -146,10 +149,13 @@ def pre_train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval
             batch = tuple(t.to(args.device) for t in batch)
             inputs = {'input_ids':      batch[0],
                       'attention_mask': batch[1],
-                      'token_type_ids': batch[2] if args.model_type in ['embracebert', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
+                      'token_type_ids': batch[2] if args.model_type in ['embracebert', 'embracebertwithkeyvaluequery', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
                       'labels':         batch[3]}
             if args.model_type in ['embracebert', 'embraceroberta', 'bert', 'roberta']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout, freeze_bert_weights=freeze_bert_weights)
+            elif args.model_type in ['embracebertwithkeyvaluequery']:
+                outputs = model(**inputs, apply_dropout=args.apply_dropout, freeze_bert_weights=freeze_bert_weights,
+                                is_evaluate=True)  # True for BERT K,V,Q
             else:
                 outputs = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
@@ -306,10 +312,12 @@ def train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval_dat
             batch = tuple(t.to(args.device) for t in batch)
             inputs = {'input_ids':      batch[0],
                       'attention_mask': batch[1],
-                      'token_type_ids': batch[2] if args.model_type in ['embracebert', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
+                      'token_type_ids': batch[2] if args.model_type in ['embracebert', 'embracebertwithkeyvaluequery', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
                       'labels':         batch[3]}
             if args.model_type in ['embracebert', 'embraceroberta', 'bert', 'roberta']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout)
+            elif args.model_type in ['embracebertwithkeyvaluequery']:
+                outputs = model(**inputs, apply_dropout=args.apply_dropout, is_evaluate=True)  # True for BERT K,V,Q
             else:
                 outputs = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
@@ -441,21 +449,25 @@ def evaluate(args, model, tokenizer, prefix=""):
             with torch.no_grad():
                 inputs = {'input_ids':      batch[0],
                           'attention_mask': batch[1],
-                          'token_type_ids': batch[2] if args.model_type in ['embracebert', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
+                          'token_type_ids': batch[2] if args.model_type in ['embracebert', '', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
                           'labels':         batch[3]}
-                outputs = model(**inputs)
+                if args.model_type in ['embracebertwithkeyvaluequery']:
+                    outputs = model(**inputs, is_evaluate=True)  # True for BERT K,V,Q
+                else:
+                    outputs = model(**inputs)
+
                 tmp_eval_loss, logits = outputs[:2]
 
                 eval_loss += tmp_eval_loss.mean().item()
             nb_eval_steps += 1
             if preds is None:
-                if args.model_type in ['embracebert']:
+                if args.model_type in ['embracebert', 'embracebertwithkeyvaluequery']:
                     preds = [logits.detach().cpu().numpy()]
                 else:  # Why doesn't this work with EmbraceBERT? This is the original line in the code.
                     preds = logits.detach().cpu().numpy()
                 out_label_ids = inputs['labels'].detach().cpu().numpy()
             else:
-                if args.model_type in ['embracebert']:
+                if args.model_type in ['embracebert', 'embracebertwithkeyvaluequery']:
                     preds.append(logits.detach().cpu().numpy())
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
@@ -569,7 +581,7 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train'):
         # Load a trained model and vocabulary that you have fine-tuned
         if args.model_type in ['bert', 'roberta']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
-        elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
+        elif args.model_type in ['embracebert', 'embraceroberta', 'embracebertwithkeyvaluequery']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
                                                 share_branch_weights=args.share_branch_weights, p=args.p,
@@ -608,7 +620,7 @@ def load_model_for_eval(args, model_class, tokenizer_class, train_step_type='tra
     # Load a trained model and vocabulary that you have fine-tuned
     if args.model_type in ['bert', 'roberta']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
-    elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
+    elif args.model_type in ['embracebert', 'embraceroberta', 'embracebertwithkeyvaluequery']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
                                             add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
@@ -827,7 +839,7 @@ def main():
     if args.model_type in ['bert', 'roberta']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob)
-    elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
+    elif args.model_type in ['embracebert', 'embraceroberta', 'embracebertwithkeyvaluequery']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
