@@ -9,7 +9,7 @@ import numpy as np
 # root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/models_trained_with_complete_data/'
 root_name = './results/'
 # stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "snips", "embracebert_with_branches_frozenbert_condensed_sharedWeightsAll", 3, 32, 'gtts_google']
-stt_error, dataname, model, epoch, epoch_q, bs, tts_stt_type = [True, "webapplications", "embracebertwithquery_p_multinomial", 100, 3, 4, 'macsay_witai']  # _withDropout0.1
+stt_error, dataname, model, epoch, epoch_q, bs, tts_stt_type = [True, "chatbot", "embracebertwithquery_p_multinomial", 100, 10, 4, 'gtts_witai']  # _withDropout0.1
 #stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "webapplications", "embraceroberta_condensed_withDropout0.1", 100, 16, 'gtts_google']
 #stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "webapplications", "embracebert_withDropout0.3", 100, 16, 'gtts_google']
 
