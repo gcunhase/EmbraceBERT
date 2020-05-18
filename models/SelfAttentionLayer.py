@@ -30,7 +30,7 @@ class SelfAttention(nn.Module):
 
         init.uniform(self.attention_weights.data, -0.005, 0.005)
 
-    def forward(self, inputs, attention_mask=None):
+    def forward(self, inputs, attention_mask=None, do_visualize_att=True):
 
         ##################################################################
         # STEP 1 - perform dot product
@@ -71,6 +71,12 @@ class SelfAttention(nn.Module):
 
         # sum the hidden states
         representations = weighted.sum(1).squeeze()
+
+        # Visualize attention scores
+        if do_visualize_att:
+            scores_img = scores.unsqueeze(0).cpu().detach().numpy()
+            scores_img = scores_img[:, :30]
+            visualize_attention(scores_img)
 
         return representations, scores
 
