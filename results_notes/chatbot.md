@@ -767,7 +767,7 @@
 | EmbraceBERT-bs4-p_multihead_bertselfatt |83.02|76.42|65.09|91.51|81.13|76.42|83.96|86.79|59.43|85.85|78.96|9.48|
 | EmbraceBERT-bs4-p_multihead_bertatt     |89.62|85.85|72.64|76.42|75.47|50.94|68.87|86.79|71.70|75.47|75.38|10.51|
 | EmbraceBERT-bs4-p_multihead_bertselfatt_in_p |68.87|53.77|83.02|68.87|68.87|70.75|83.02|75.47|75.47|67.92|71.60|8.03|
-| EmbraceBERT-bs4-p_multiheadatt_bertKeyValQuery  |83.02|63.21|61.32|92.45|61.32|64.15|95.28|90.57|80.19|69.81|76.13|13.02|
+| EmbraceBERT-bs4-p_multiheadatt_bertKeyValQuery  |83.02|63.21|61.32|92.45|61.32|64.15|95.28|90.57|80.19|69.81|**76.13**|13.02|
 | ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EmbraceBERT-bs4+Branches                      |59.43|90.57|86.79|91.51|61.32|58.49|62.26|94.34|71.70|87.74|76.42|14.30|
 | EmbraceBERT-bs4+Branches+Dropout0.1           |55.66|80.19|92.45|84.91|66.04|60.38|90.57|55.66|68.87|73.58|72.83|13.06|
@@ -1280,8 +1280,10 @@
 | FrozenCEBERT-bs4-ep100              |
 | FrozenCEBERT-bs4-ep100+Dropout0.1   |
 | ----------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| EmbraceBERT-bs4-p_multiheadatt_bertquery_epQ0   |
 | EmbraceBERT-bs4-p_multiheadatt_bertquery_epQ3   |90.57|86.79|89.62|90.57|87.74|89.62|88.68|88.68|88.68|86.79|*88.77*|1.30|
 | EmbraceBERT-bs4-p_multiheadatt_bertquery_epQ10  |88.68|88.68|85.85|88.68|89.62|90.57|89.62|90.57|90.57|87.74|**89.06**|1.41|
+| EmbraceBERT-bs4-p_multiheadatt_bertKeyVal_epQ0  |
 | EmbraceBERT-bs4-p_multiheadatt_bertKeyVal_epQ3  |85.85|87.74|87.74|88.68|89.62|90.57|85.85|90.57|87.74|87.74|*88.21*|1.59|
 | EmbraceBERT-bs4-p_multiheadatt_bertKeyVal_epQ10 |89.62|89.62|87.74|87.74|89.62|89.62|90.57|88.68|87.74|89.62|**89.06**|0.96|
 | EmbraceBERT-bs4-p_multiheadatt_bertKeyValQuery  |83.02|88.68|85.85|88.68|87.74|88.68|85.85|87.74|85.85|86.79|86.89|1.71|
@@ -2041,7 +2043,7 @@
 ## STT Error: trained and tested with INCOMPLETE and COMPLETE data
 > Note: 100, 103, 110 epochs all result in the same accuracy (baseline models)
 
-> Results for BERT are for 100 and 110
+> Results for BERT are for 100 and 110, BERTkvq 100 and 110 are the same
 
 ### gtts-google
 * Epoch 100
@@ -2141,8 +2143,7 @@
 | EmbraceBERT-bs4-p_multiheadatt_bertquery_epQ10  |95.28|93.40|93.40|92.45|92.45|95.28|93.40|95.28|94.34|92.45|93.77|1.13|
 | EmbraceBERT-bs4-p_multiheadatt_bertKeyVal_epQ3  |94.34|90.57|89.62|92.45|93.40|91.51|96.23|94.34|92.45|95.28|93.02|1.99|
 | EmbraceBERT-bs4-p_multiheadatt_bertKeyVal_epQ10 |94.34|94.34|92.45|93.40|94.34|94.34|95.28|96.23|92.45|94.34|94.15|1.10|
-| EmbraceBERT-bs4-p_multiheadatt_bertKVQ_epQ3     |
-| EmbraceBERT-bs4-p_multiheadatt_bertKVQ_epQ10    |
+| EmbraceBERT-bs4-p_multiheadatt_bertKeyValQuery  |95.28|92.45|92.45|95.28|95.28|97.17|96.23|93.40|92.45|93.40|94.34|1.63|
 | --------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | BERT-bs16                   |92.45|94.34|92.45|96.23|94.34|95.28|95.28|96.23|95.28|93.40|94.53|1.32|
 | BERT-bs16+Dropout0.1        |95.28|92.45|95.28|95.28|94.34|96.23|95.28|95.28|95.28|93.40|94.81|1.05|
@@ -2170,8 +2171,7 @@
 | EmbraceBERT-bs4-p_multiheadatt_bertquery_epQ10  |86.79|90.57|89.62|88.68|85.85|90.57|92.45|90.57|91.51|90.57|89.72|1.95|
 | EmbraceBERT-bs4-p_multiheadatt_bertKeyVal_epQ3  |83.96|89.62|90.57|85.85|88.68|90.57|89.62|87.74|92.45|91.51|89.06|2.47|
 | EmbraceBERT-bs4-p_multiheadatt_bertKeyVal_epQ10 |89.62|90.57|88.68|90.57|84.91|85.85|92.45|90.57|92.45|84.91|89.06|2.74|
-| EmbraceBERT-bs4-p_multiheadatt_bertKVQ_epQ3     |
-| EmbraceBERT-bs4-p_multiheadatt_bertKVQ_epQ10    |
+| EmbraceBERT-bs4-p_multiheadatt_bertKeyValQuery  |89.62|87.74|90.57|87.74|87.74|87.74|88.68|90.57|89.62|90.57|89.06|1.21|
 | --------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | BERT-bs16                   |90.57|88.68|91.51|88.68|84.91|89.62|89.62|87.74|92.45|85.85|88.96|2.23|
 | BERT-bs16+Dropout0.1        |88.68|87.74|90.57|87.74|85.85|86.79|89.62|86.79|91.51|86.79|88.21|1.75|
@@ -2199,8 +2199,7 @@
 | EmbraceBERT-bs4-p_multiheadatt_bertquery_epQ10  |93.40|93.40|96.23|96.23|94.34|93.40|95.28|93.40|94.34|93.40|94.34|1.12|
 | EmbraceBERT-bs4-p_multiheadatt_bertKeyVal_epQ3  |93.40|92.45|94.34|93.40|95.28|88.68|94.34|93.40|93.40|96.23|93.49|1.91|
 | EmbraceBERT-bs4-p_multiheadatt_bertKeyVal_epQ10 |93.40|94.34|96.23|92.45|96.23|93.40|95.28|96.23|96.23|94.34|94.81|1.35|
-| EmbraceBERT-bs4-p_multiheadatt_bertKVQ_epQ3     |
-| EmbraceBERT-bs4-p_multiheadatt_bertKVQ_epQ10    |
+| EmbraceBERT-bs4-p_multiheadatt_bertKeyValQuery  |93.40|96.23|93.40|95.28|93.40|89.62|96.23|95.28|94.34|94.34|94.15|1.83|
 | --------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | BERT-bs16                   |92.45|95.28|95.28|91.51|94.34|92.45|95.28|92.45|93.40|94.34|93.68|1.34|
 | BERT-bs16+Dropout0.1        |94.34|96.23|95.28|93.40|97.17|92.45|96.23|92.45|93.40|91.51|94.25|1.81|
