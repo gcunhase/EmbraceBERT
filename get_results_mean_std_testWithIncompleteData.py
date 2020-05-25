@@ -31,6 +31,8 @@ MODEL_ROOT = [
               #"embrace{}_p_multihead_bertselfattention", "embrace{}_p_multihead_bertattention",
               #"embrace{}_p_multihead_bertselfattention_in_p",
               "embrace{}withkeyvaluequery_p_multinomial",
+              "embrace{}withkeyvaluequery_p_attention_clsquery_weights",
+              #"{}withatt",
               #"embrace{}_p_attention_clsquery",
               #"embrace{}_p_attention_clsquery_weights"
 ]
@@ -45,6 +47,7 @@ for M in MODEL_ROOT:
 MODEL_NAME = {"bert":                                               " BERT-bs{}                              ",
               "bert_withDropout0.1":                                " BERT-bs{}+Dropout0.1                   ",
               "bert_withDropout0.3":                                " BERT-bs{}+Dropout0.3                   ",
+              "bertwithatt":                                        " BERTwithAtt-bs{}                       ",
               "bert_frozen":                                        " FrozenBERT-bs{}-ep100                  ",
               "bert_frozen_withDropout0.1":                         " FrozenBERT-bs{}-ep100+Dropout0.1       ",
               "bert_frozen_withDropout0.3":                         " FrozenBERT-bs{}-ep100+Dropout0.3       ",
@@ -69,7 +72,8 @@ MODEL_NAME = {"bert":                                               " BERT-bs{} 
               "embracebert_p_multihead_bertselfattention_in_p":     " EmbraceBERT-bs{}-p_multihead_bertselfatt_in_p",
               "embracebert_p_attention_clsquery":                   " EmbraceBERT-bs{}-p_att_clsquery          ",
               "embracebert_p_attention_clsquery_weights":           " EmbraceBERT-bs{}-p_att_clsquery_weights  ",
-              "embracebertwithkeyvaluequery_p_multinomial":         " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery ",
+              "embracebertwithkeyvaluequery_p_multinomial":                " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery          ",
+              "embracebertwithkeyvaluequery_p_attention_clsquery_weights": " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw ",
               "embracebert_with_branches_sharedWeightsAll":                                      " EmbraceBERT-bs{}+Branches                     ",
               "embracebert_with_branches_sharedWeightsAll_withDropout0.1":                       " EmbraceBERT-bs{}+Branches+Dropout0.1          ",
               "embracebert_with_branches_sharedWeightsAll_withDropout0.3":                       " EmbraceBERT-bs{}+Branches+Dropout0.3          ",
@@ -119,7 +123,7 @@ for dataname in ["webapplications"]:  #["askubuntu", "chatbot", "webapplications
         bs_array = [16, 32]
         epoch_array = [3]
     else:
-        bs_array = [4, 16]
+        bs_array = [4] #, 8] #, 16]
         epoch_array = [100]
 
     for epoch in epoch_array:

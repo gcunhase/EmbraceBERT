@@ -6,10 +6,10 @@ import numpy as np
 # Parameters:
 #   is_incomplete_test: True if model was trained with complete data and tested with incomplete
 
-# root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/models_trained_with_complete_data/'
+#root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/'
 root_name = './results/'
 # stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "snips", "embracebert_with_branches_frozenbert_condensed_sharedWeightsAll", 3, 32, 'gtts_google']
-stt_error, dataname, model, epoch, epoch_q, bs, tts_stt_type = [True, "chatbot", "embracebertwithquery_p_multinomial", 100, 10, 4, 'gtts_witai']  # _withDropout0.1
+stt_error, dataname, model, epoch, epoch_q, bs, tts_stt_type = [False, "chatbot", "embracebertwithkeyvaluequery_p_attention_clsquery_weights", 100, 3, 8, 'gtts_google']  # _withDropout0.1
 #stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "webapplications", "embraceroberta_condensed_withDropout0.1", 100, 16, 'gtts_google']
 #stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "webapplications", "embracebert_withDropout0.3", 100, 16, 'gtts_google']
 
@@ -21,7 +21,7 @@ if stt_error:
         root_dir = '{root_name}{model}/{dataname}/stterror/{tts_stt_type}/{dataname}_ep{epoch}_epQ{epoch_q}_bs{bs}_'. \
             format(root_name=root_name, model=model, dataname=dataname, epoch=epoch, epoch_q=epoch_q, bs=bs, tts_stt_type=tts_stt_type)
     else:
-        root_dir = '{root_name}{model}/{dataname}/stterror/{tts_stt_type}/{dataname}_ep{epoch}_bs{bs}_'.\
+        root_dir = '{root_name}{model}/{dataname}/stterror_withComplete/{tts_stt_type}/{dataname}_ep{epoch}_bs{bs}_'.\
             format(root_name=root_name, model=model, dataname=dataname, epoch=epoch, bs=bs, tts_stt_type=tts_stt_type)
 else:
     root_dir = '{root_name}{model}/{dataname}/complete/{dataname}_ep{epoch}_bs{bs}_'.\

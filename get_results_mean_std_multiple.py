@@ -14,9 +14,13 @@ MODEL_ROOT = [
 ]
 """
 
-root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/'
+#root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/'
+root_name = './results/'
 MODEL_ROOT = [
-              "embrace{}withkeyvaluequery_p_multinomial"
+              #"embrace{}withkeyvaluequery_p_multinomial",
+              #"embrace{}withkeyvaluequery_p_selfattention",
+              #"{}withatt",
+              "embrace{}withkeyvaluequery_p_attention_clsquery_weights",
 ]
 
 MODEL_BERT = []
@@ -28,12 +32,15 @@ for M in MODEL_ROOT:
 
 MODEL_NAME = {"bert":                                            " BERT-bs{}                   ",
               "bert_withDropout0.1":                             " BERT-bs{}+Dropout0.1        ",
+              "bertwithatt":                                     " BERTwithAtt-bs{}            ",
               "embracebert":                                     " EmbraceBERT-bs{}            ",
               "embracebert_withDropout0.1":                      " EmbraceBERT-bs{}+Dropout0.1 ",
-              "embracebertwithkeyvaluequery_p_multinomial":      " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery ",
+              "embracebertwithkeyvaluequery_p_multinomial":                " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery      ",
+              "embracebertwithkeyvaluequery_p_selfattention":              " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery_selfatt",
+              "embracebertwithkeyvaluequery_p_attention_clsquery_weights": " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw",
               }
 
-is_comp_inc = True
+is_comp_inc = False
 for dataname in ["chatbot"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
     if dataname == "snips":
         bs_array = [16, 32]

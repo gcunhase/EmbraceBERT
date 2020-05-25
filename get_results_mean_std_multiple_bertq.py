@@ -4,11 +4,13 @@ import numpy as np
 # Use this script if the model was trained with complete data but you wish to test it with another set of test data,
 #  in our case incomplete data.
 
-root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/'
-#root_name = './results/'
+#root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/'
+root_name = './results/'
 
-MODEL_ROOT = ["embrace{}withquery_p_multinomial",
-              "embrace{}withquery_bertKeyValue_p_multinomial",
+MODEL_ROOT = [#"embrace{}withquery_p_multinomial",
+              #"embrace{}withquery_bertKeyValue_p_multinomial",
+              #"embrace{}withquery_p_multinomial_epq0",
+              "embrace{}withquery_p_multinomial_withDropout0.1"
 ]
 
 MODEL_BERT = []
@@ -18,8 +20,10 @@ for M in MODEL_ROOT:
 #for M in MODEL_ROOT:
 #    MODEL_ROBERTA.append(M.format('roberta'))
 
-MODEL_NAME = {"embracebertwithquery_p_multinomial":              " EmbraceBERT-bs{}-p_multiheadatt_bertquery_epQ{}  ",
-              "embracebertwithquery_bertKeyValue_p_multinomial": " EmbraceBERT-bs{}-p_multiheadatt_bertKeyVal_epQ{} "
+MODEL_NAME = {"embracebertwithquery_p_multinomial":                " EmbraceBERT-bs{}-p_multiheadatt_bertquery_epQ{}  ",
+              "embracebertwithquery_bertKeyValue_p_multinomial":   " EmbraceBERT-bs{}-p_multiheadatt_bertKeyVal_epQ{} ",
+              "embracebertwithquery_p_multinomial_epq0":           " EmbraceBERT-bs{}-p_multiheadatt_bertquery_epQ{}  ",
+              "embracebertwithquery_p_multinomial_withDropout0.1": " EmbraceBERT-bs{}-p_multiheadatt_bertquery_epQ{}+Dropout0.1",
               }
 
 is_comp_inc = True
@@ -46,7 +50,7 @@ for dataname in ["webapplications"]:  #["askubuntu", "chatbot", "webapplications
                         print("| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
                         for model in model_type:
                             model_name = MODEL_NAME[model]
-                            for epq in [3, 10]:
+                            for epq in [3]: #, 10]:
 
                                 # print("{dataname} {model} - ep{epoch} bs{bs}".format(dataname=dataname, model=model, epoch=epoch, bs=bs))
                                 prefix = "stterror_withComplete" if is_comp_inc else "stterror"
