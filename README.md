@@ -64,6 +64,7 @@ python -m spacy download en
 * `p=softmax(selfattention)`:
     * Train
     ```--seed 1 --p multihead_bertselfattention_in_p --task_name chatbot_intent --model_type embracebert --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=16 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_embracebert_p_selfattention/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_embracebert_p_selfattention```
+    ```--seed 1 --p selfattention --task_name chatbot_intent --model_type embracebert --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_embracebert_p_selfattention/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_embracebert_p_selfattention```
     * Test
     ```--seed 1 --p multihead_bertselfattention_in_p --task_name chatbot_intent --model_type embracebert --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/embracebert_p_multihead_bertselfattention/chatbot/complete/chatbot_ep100_bs4_seed1/ --save_best --log_dir ./runs/debug_embracebert_p_selfattention```
 
@@ -73,7 +74,9 @@ python -m spacy download en
 * EmbraceBERT with Q=BERTc, K,V=BERTi (`run_classifier_bertquery.py`, `models/EmbraceBERTwithQuery.py`)
     * Train
     ```--seed 1 --p multinomial --task_name chatbot_intent --model_type embracebertwithquery --train_bertc --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --do_eval --do_lower_case --data_dir_complete data/intent_processed/nlu_eval/chatbotcorpus/ --data_dir data/intent_stterror_data/chatbot/gtts_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=4 --learning_rate 2e-5 --num_train_epochs 3.0 --num_train_epochs_bertc 3.0 --output_dir_complete ./results/debug_embracebertwithquery_p_multinomial_bertc/ --output_dir ./results/debug_embracebertwithquery_p_multinomial/ --overwrite_output_dir --overwrite_cache --save_best --log_dir_complete ./runs/debug_embracebertwithquery_p_selfattention_bertc --log_dir ./runs/debug_embracebertwithquery_p_selfattention```
-    
+
+* BERTwithTokens (att/projection):
+    ```--seed 1 --task_name chatbot_intent --model_type bertwithprojection --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --evaluate_during_training --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=8 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_bertwithprojection/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_bertwithprojection```    
     
 ### 3. Test model with Incomplete data
 ```

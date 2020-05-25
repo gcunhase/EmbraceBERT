@@ -14,7 +14,7 @@ import numpy as np
 
 
 # class BertForSequenceClassification(BertPreTrainedModel):
-class BertWithAttForSequenceClassification(BertPreTrainedModel):
+class BertWithTokensForSequenceClassification(BertPreTrainedModel):
     r"""
         **labels**: (`optional`) ``torch.LongTensor`` of shape ``(batch_size,)``:
             Labels for computing the sequence classification/regression loss.
@@ -45,15 +45,25 @@ class BertWithAttForSequenceClassification(BertPreTrainedModel):
     """
     # EmbraceBERT with branches: added 'add_branches' and 'share_branch_weights'
     def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False,
-                 share_branch_weights=False, p='multinomial', max_seq_length=128):
-        super(BertWithAttForSequenceClassification, self).__init__(config)
+                 share_branch_weights=False, max_seq_length=128, token_layer_type='bertwithatt'):
+        """
+
+        :param config:
+        :param dropout_prob:
+        :param is_condensed:
+        :param add_branches:
+        :param share_branch_weights:
+        :param max_seq_length:
+        :param token_layer_type: Types: ['bertwithatt', 'bertwithprojection']
+        """
+        super(BertWithTokensForSequenceClassification, self).__init__(config)
         # TODO: condensed not included
         self.num_labels = config.num_labels
         self.vocab_size = config.vocab_size
         self.hidden_size = config.hidden_size  # 768
         self.is_condensed = is_condensed
-        self.p = p
         self.max_seq_length = max_seq_length  # 128
+        self.token_layer_type = token_layer_type
 
         """EmbraceBERT with branches"""
         self.num_labels_evaluator = 2
@@ -63,7 +73,11 @@ class BertWithAttForSequenceClassification(BertPreTrainedModel):
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
-        self.embrace_attention = AttentionLayer(self.hidden_size)
+        if self.token_layer_type == 'attention':
+            self.embrace_attention = AttentionLayer(self.hidden_size)
+        else:
+            print('Projection layer')
+            self.projection_layer = nn.Linear(self.max_seq_length+1, 1)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
         """EmbraceBERT with branches"""
@@ -105,8 +119,14 @@ class BertWithAttForSequenceClassification(BertPreTrainedModel):
 
         # Apply attention layer to CLS and embraced_features_token
         # embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)
-        embrace_output = self.embrace_attention(cls_output, embraced_features_token)
-        embrace_output = embrace_output[0]
+        if self.token_layer_type == 'attention':
+            embrace_output = self.embrace_attention(cls_output, embraced_features_token)
+            embrace_output = embrace_output[0]
+        else:
+            # Concatenate cls_output and embraced_features_token (bs, seq+1, hidden_dim) -> (8, 129, 768)
+            tokens = torch.cat((cls_output.unsqueeze(1), embraced_features_token), 1)
+            tokens = tokens.permute((0, 2, 1))
+            embrace_output = self.projection_layer(tokens).squeeze()
 
         # No need because the embrace layer functions as a dropout mechanism?
         if apply_dropout:
