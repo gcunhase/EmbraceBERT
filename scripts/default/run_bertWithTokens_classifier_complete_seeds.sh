@@ -5,7 +5,7 @@ OUTPUT_DIR="../../results/${MODEL_TYPE}/"
 RUN_DIR="../../runs/${MODEL_TYPE}/"
 
 BS_EVAL=1
-for BS_TRAIN in 4; do
+for BS_TRAIN in 8; do
   for DATASET in chatbot; do
       echo $DATASET
       for EPOCH in 100; do

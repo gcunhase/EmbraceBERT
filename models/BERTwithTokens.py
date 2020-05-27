@@ -73,10 +73,24 @@ class BertWithTokensForSequenceClassification(BertPreTrainedModel):
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
-        if self.token_layer_type == 'attention':
+        if self.token_layer_type == 'bertwithatt':  # Attention Layer
             self.embrace_attention = AttentionLayer(self.hidden_size)
-        else:
-            print('Projection layer')
+        elif self.token_layer_type == 'bertwithprojectionatt':
+            # Projection Layer
+            self.projection_layer = nn.Linear(self.max_seq_length, 1)
+            # Attention Layer with CLS token and token from projection layer
+            self.embrace_attention = AttentionLayer(self.hidden_size)
+        elif self.token_layer_type == 'bertwithattprojection':
+            # Attention Layer (query=context= 128 tokens)
+            self.embrace_attention = AttentionLayer(self.hidden_size)
+            # Projection Layer
+            self.projection_layer = nn.Linear(self.max_seq_length+1, 1)
+        elif self.token_layer_type == 'bertwithattclsprojection':
+            # Attention Layer with CLS token and 128 tokens
+            self.embrace_attention = AttentionLayer(self.hidden_size)
+            # Projection Layer
+            self.projection_layer = nn.Linear(2, 1)
+        else:  # Projection Layer
             self.projection_layer = nn.Linear(self.max_seq_length+1, 1)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
@@ -119,13 +133,47 @@ class BertWithTokensForSequenceClassification(BertPreTrainedModel):
 
         # Apply attention layer to CLS and embraced_features_token
         # embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)
-        if self.token_layer_type == 'attention':
+        if self.token_layer_type == 'bertwithatt':
             embrace_output = self.embrace_attention(cls_output, embraced_features_token)
             embrace_output = embrace_output[0]
-        else:
+        elif self.token_layer_type == 'bertwithprojectionatt':
+            # Projection layer -> projection vector
+            tokens = embraced_features_token.permute((0, 2, 1))
+            projection_output = self.projection_layer(tokens).squeeze()
+            if len(projection_output.shape) == 1:
+                projection_output = projection_output.unsqueeze(0)
+            # Attention layer (T_CLS, T_all)
+            embrace_output = self.embrace_attention(cls_output, projection_output)
+            embrace_output = embrace_output[0]
+        elif self.token_layer_type == 'bertwithattprojection':
+            # Attention Layer
+            embrace_output = self.embrace_attention(embraced_features_token, embraced_features_token)
+            embrace_output = embrace_output[0]
+            # Concatenate cls_output and embrace_output (bs, seq+1, hidden_dim) -> (8, 129, 768)
+            if len(embrace_output.shape) == 2:
+                embrace_output = embrace_output.unsqueeze(0)
+            tokens = torch.cat((cls_output.unsqueeze(1), embrace_output), 1)
+            tokens = tokens.permute((0, 2, 1))
+            # Projection layer to obtain 1 feature vector for classification
+            embrace_output = self.projection_layer(tokens).squeeze()
+        elif self.token_layer_type == 'bertwithattclsprojection':
+            # Attention Layer
+            embrace_output = self.embrace_attention(cls_output, embraced_features_token)
+            embrace_output = embrace_output[0]
+            # Concatenate cls_output and embrace_output (bs, seq+1, hidden_dim) -> (8, 129, 768)
+            if len(embrace_output.shape) == 1:
+                embrace_output = embrace_output.unsqueeze(0).unsqueeze(0)
+            elif len(embrace_output.shape) == 2:
+                embrace_output = embrace_output.unsqueeze(1)
+            tokens = torch.cat((cls_output.unsqueeze(1), embrace_output), 1)
+            tokens = tokens.permute((0, 2, 1))
+            # Projection layer to obtain 1 feature vector for classification
+            embrace_output = self.projection_layer(tokens).squeeze()
+        else:  # Projection layer
             # Concatenate cls_output and embraced_features_token (bs, seq+1, hidden_dim) -> (8, 129, 768)
             tokens = torch.cat((cls_output.unsqueeze(1), embraced_features_token), 1)
             tokens = tokens.permute((0, 2, 1))
+            # Projection layer to obtain 1 feature vector for classification
             embrace_output = self.projection_layer(tokens).squeeze()
 
         # No need because the embrace layer functions as a dropout mechanism?

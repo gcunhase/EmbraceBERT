@@ -19,8 +19,10 @@ root_name = './results/'
 MODEL_ROOT = [
               #"embrace{}withkeyvaluequery_p_multinomial",
               #"embrace{}withkeyvaluequery_p_selfattention",
-              #"{}withatt",
-              "embrace{}withkeyvaluequery_p_attention_clsquery_weights",
+              #"{}withprojection",
+              "{}withprojectionatt",
+              "{}withattprojection",
+              #"embrace{}withkeyvaluequery_p_attention_clsquery_weights",
 ]
 
 MODEL_BERT = []
@@ -33,6 +35,9 @@ for M in MODEL_ROOT:
 MODEL_NAME = {"bert":                                            " BERT-bs{}                   ",
               "bert_withDropout0.1":                             " BERT-bs{}+Dropout0.1        ",
               "bertwithatt":                                     " BERTwithAtt-bs{}            ",
+              "bertwithprojection":                              " BERTwithProjection-bs{}     ",
+              "bertwithprojectionatt":                           " BERTwithProjectionAtt-bs{}          ",
+              "bertwithattprojection":                           " BERTwithAttProjection-bs{}          ",
               "embracebert":                                     " EmbraceBERT-bs{}            ",
               "embracebert_withDropout0.1":                      " EmbraceBERT-bs{}+Dropout0.1 ",
               "embracebertwithkeyvaluequery_p_multinomial":                " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery      ",
@@ -40,13 +45,13 @@ MODEL_NAME = {"bert":                                            " BERT-bs{}    
               "embracebertwithkeyvaluequery_p_attention_clsquery_weights": " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw",
               }
 
-is_comp_inc = False
+is_comp_inc = True
 for dataname in ["chatbot"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
     if dataname == "snips":
         bs_array = [16, 32]
         epoch_array = [3]
     else:
-        bs_array = [4] #, 16]
+        bs_array = [4, 8] #, 16]
         epoch_array = [100]
 
     for epoch in epoch_array:

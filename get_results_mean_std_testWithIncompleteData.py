@@ -30,9 +30,11 @@ MODEL_ROOT = [
               #"embrace{}_p_multiheadattention",
               #"embrace{}_p_multihead_bertselfattention", "embrace{}_p_multihead_bertattention",
               #"embrace{}_p_multihead_bertselfattention_in_p",
-              "embrace{}withkeyvaluequery_p_multinomial",
-              "embrace{}withkeyvaluequery_p_attention_clsquery_weights",
-              #"{}withatt",
+              #"embrace{}withkeyvaluequery_p_multinomial",
+              #"embrace{}withkeyvaluequery_p_attention_clsquery_weights",
+              #"{}withprojection",
+              "{}withprojectionatt",
+              "{}withattprojection",
               #"embrace{}_p_attention_clsquery",
               #"embrace{}_p_attention_clsquery_weights"
 ]
@@ -48,6 +50,9 @@ MODEL_NAME = {"bert":                                               " BERT-bs{} 
               "bert_withDropout0.1":                                " BERT-bs{}+Dropout0.1                   ",
               "bert_withDropout0.3":                                " BERT-bs{}+Dropout0.3                   ",
               "bertwithatt":                                        " BERTwithAtt-bs{}                       ",
+              "bertwithprojection":                                 " BERTwithProjection-bs{}                ",
+              "bertwithprojectionatt":                              " BERTwithProjectionAtt-bs{}             ",
+              "bertwithattprojection":                              " BERTwithAttProjection-bs{}             ",
               "bert_frozen":                                        " FrozenBERT-bs{}-ep100                  ",
               "bert_frozen_withDropout0.1":                         " FrozenBERT-bs{}-ep100+Dropout0.1       ",
               "bert_frozen_withDropout0.3":                         " FrozenBERT-bs{}-ep100+Dropout0.3       ",
@@ -118,12 +123,12 @@ MODEL_NAME = {"bert":                                               " BERT-bs{} 
               "embraceroberta_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.3": " FrozenCERoBERTa-bs{}+Branches+Dropout0.3         ",
               }
 
-for dataname in ["webapplications"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
+for dataname in ["chatbot"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
     if dataname == "snips":
         bs_array = [16, 32]
         epoch_array = [3]
     else:
-        bs_array = [4] #, 8] #, 16]
+        bs_array = [8] #, 8] #, 16]
         epoch_array = [100]
 
     for epoch in epoch_array:
