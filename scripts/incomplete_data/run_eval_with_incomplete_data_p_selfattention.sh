@@ -1,8 +1,9 @@
 #!/bin/bash -v
 
 # Options: bert, bert_frozen, embracebert, embracebert_frozenbert (and roberta)
-MODEL_TYPE=embracebert
-P_TYPE="multiheadattention"  #"attention_clsquery_weights"
+MODEL_TYPE=embracebertwithkeyvaluequery  #bertwithatt #embracebertwithkeyvaluequery
+P_TYPE="attention_clsquery_weights" #"multinomial" #"multiheadattention"  #"attention_clsquery_weights"
+#MODEL_NAME="${MODEL_TYPE}"
 MODEL_NAME="${MODEL_TYPE}_p_${P_TYPE}"
 IS_CONDENSED=false  # if true, embracebert_condensed
 IS_FROZEN=false  # if true, embracebert_frozenbert
@@ -28,6 +29,7 @@ fi
 
 #OUTPUT_DIR="/media/ceslea/DATA/EmbraceBERT-results-backup/models_trained_with_complete_data/${MODEL_NAME}/"
 OUTPUT_DIR="../../results/${MODEL_NAME}/"
+#OUTPUT_DIR="/media/ceslea/DATA/EmbraceBERT-results-backup/${MODEL_NAME}/"
 EVAL_DIR="../../results/test_with_incomplete_results/${MODEL_NAME}/"
 mkdir $EVAL_DIR
 RUN_DIR="../../runs/${MODEL_NAME}/"
@@ -41,9 +43,9 @@ fi
 echo $MODEL_NAME_OR_PATH
 
 BS_EVAL=1
-for BS_TRAIN in 4 16; do
+for BS_TRAIN in 4; do # 16; do
   for EPOCH in 100; do
-      for DATASET in chatbot; do  # askubuntu webapplications
+      for DATASET in chatbot askubuntu webapplications; do
           echo $DATASET
           echo "Evaluating ${DATASET} dataset with incomplete data for ${EPOCH} epochs"
 
