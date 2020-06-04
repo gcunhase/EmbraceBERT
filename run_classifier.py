@@ -601,7 +601,13 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train'):
         # Load a trained model and vocabulary that you have fine-tuned
         if args.model_type in ['bert', 'roberta']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
-        elif args.model_type in ['embracebert', 'embraceroberta', 'embracebertwithkeyvaluequery']:  # with args
+        elif args.model_type in ['embracebert', 'embracebertwithkeyvaluequery']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length,
+                                                dimension_reduction_method=args.dimension_reduction_method)
+        elif args.model_type in ['embraceroberta']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
                                                 share_branch_weights=args.share_branch_weights, p=args.p,
@@ -645,7 +651,13 @@ def load_model_for_eval(args, model_class, tokenizer_class, train_step_type='tra
     # Load a trained model and vocabulary that you have fine-tuned
     if args.model_type in ['bert', 'roberta']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
-    elif args.model_type in ['embracebert', 'embraceroberta', 'embracebertwithkeyvaluequery']:  # with args
+    elif args.model_type in ['embracebert', 'embracebertwithkeyvaluequery']:  # with args
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
+                                            add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method)
+    elif args.model_type in ['embraceroberta']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
                                             add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
@@ -809,6 +821,10 @@ def main():
                              "            'attention_clsquery': no p, AttentionLayer with Q=CLS token"
                              "            'attention_clsquery_weights': consider attention weights in p."
                              "           ].")
+    # Dimension reduction method to consider tokens other than CLS
+    parser.add_argument('--dimension_reduction_method', type=str, default='attention',
+                        help="Choose the dimension reduction method for EmbraceBERT (CLS token and embrace vector need to become 1 vector)."
+                             " Options = ['attention', 'projection'].")
 
     args = parser.parse_args()
 
@@ -869,7 +885,14 @@ def main():
     if args.model_type in ['bert', 'roberta']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob)
-    elif args.model_type in ['embracebert', 'embraceroberta', 'embracebertwithkeyvaluequery']:  # with args
+    elif args.model_type in ['embracebert', 'embracebertwithkeyvaluequery']:  # with args
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method)
+    elif args.model_type in ['embraceroberta']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,

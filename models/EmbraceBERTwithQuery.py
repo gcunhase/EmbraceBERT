@@ -46,7 +46,8 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
     """
     # EmbraceBERT with branches: added 'add_branches' and 'share_branch_weights'
     def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False,
-                 share_branch_weights=False, p='multinomial', max_seq_length=128, extract_key_value_from_bertc=True):
+                 share_branch_weights=False, p='multinomial', max_seq_length=128, extract_key_value_from_bertc=True,
+                 dimension_reduction_method='attention'):
         super(EmbraceBertWithQueryForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.vocab_size = config.vocab_size
@@ -55,6 +56,7 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
         self.p = p
         self.max_seq_length = max_seq_length  # 128
         self.extract_key_value_from_bertc = extract_key_value_from_bertc
+        self.dimension_reduction_method = dimension_reduction_method
 
         """EmbraceBERT with branches"""
         self.num_labels_evaluator = 2
@@ -70,7 +72,10 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
             #self.embracement_layer = CondensedEmbracementLayer(config, self.hidden_size, self.p)
             self.embracement_layer = CondensedEmbracementLayer(self.hidden_size, self.p)
 
-        self.embrace_attention = AttentionLayer(self.hidden_size)
+        if self.dimension_reduction_method == 'attention':
+            self.embrace_attention = AttentionLayer(self.hidden_size)
+        else:  # projection
+            self.embrace_attention = nn.Linear(2, 1)
         self.classifier = nn.Linear(self.hidden_size, self.num_labels)
 
         # BERTc multihead attention layer
@@ -140,8 +145,16 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
 
         # Last step: Apply attention layer to CLS and embraced_features_token
         # embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)
-        embrace_output = self.embrace_attention(cls_output, embraced_features_token)
-        embrace_output = embrace_output[0]
+        #embrace_output = self.embrace_attention(cls_output, embraced_features_token)
+        #embrace_output = embrace_output[0]
+        if self.dimension_reduction_method == 'attention':
+            embrace_output = self.embrace_attention(cls_output, embraced_features_token)
+            embrace_output = embrace_output[0]
+        else:  # projection
+            tokens = torch.cat((cls_output.unsqueeze(1), embraced_features_token.cuda().unsqueeze(1)), 1)
+            tokens = tokens.permute((0, 2, 1))
+            # Projection layer to obtain 1 feature vector for classification
+            embrace_output = self.embrace_attention(tokens).squeeze()
 
         # No need because the embrace layer functions as a dropout mechanism?
         if apply_dropout:

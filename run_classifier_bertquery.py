@@ -626,7 +626,8 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train', tra
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
                                                 share_branch_weights=args.share_branch_weights, p=args.p,
                                                 max_seq_length=args.max_seq_length,
-                                                extract_key_value_from_bertc=args.extract_key_value_from_bertc)
+                                                extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                                dimension_reduction_method=args.dimension_reduction_method)
         else:
             model = model_class.from_pretrained(output_dir)
         # tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -675,7 +676,8 @@ def load_model_for_eval(args, model_class , tokenizer_class, train_step_type='tr
                                             add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
                                             max_seq_length=args.max_seq_length,
-                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc)
+                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                            dimension_reduction_method=args.dimension_reduction_method)
     else:
         model = model_class.from_pretrained(output_dir)
     tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -815,6 +817,11 @@ def main():
                         help="Choose the probability type for p in EmbraceLayer."
                              " Options = ['multinomial': p is random].")
 
+    # Dimension reduction method to consider tokens other than CLS
+    parser.add_argument('--dimension_reduction_method', type=str, default='attention',
+                        help="Choose the dimension reduction method for EmbraceBERT (CLS token and embrace vector need to become 1 vector)."
+                             " Options = ['attention', 'projection'].")
+
     args = parser.parse_args()
 
     if os.path.exists(args.output_dir_complete) and os.listdir(args.output_dir_complete) and args.do_train and not args.overwrite_output_dir:
@@ -894,7 +901,8 @@ def main():
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
                                             max_seq_length=args.max_seq_length,
-                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc)
+                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                            dimension_reduction_method=args.dimension_reduction_method)
     else:
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config)
