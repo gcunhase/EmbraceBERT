@@ -1,21 +1,21 @@
 #!/bin/bash -v
 
-MODEL_TYPE=bertwithprojectionatt  #bertwithatt
+MODEL_TYPE=bertwithattclsprojection  #bertwithatt
 OUTPUT_DIR="../../results/${MODEL_TYPE}/"
 RUN_DIR="../../runs/${MODEL_TYPE}/"
 
 BS_EVAL=1
-for BS_TRAIN in 8 4; do
+for BS_TRAIN in 4; do
   for DATASET in chatbot; do # askubuntu webapplications; do
       echo $DATASET
       for EPOCH in 100; do
           for TTS in "gtts" "macsay"; do
             for STT in "google" "sphinx" "witai"; do
               echo "Training ${DATASET} dataset with ${TTS}-${STT} for ${EPOCH} epochs and bs ${BS_TRAIN}"
-              DATA_DIR="../../data/intent_stterror_data/${DATASET}/${TTS}_${STT}/"
+              DATA_DIR="../../data/intent_stterror_data_withComplete/${DATASET}/${TTS}_${STT}/"
 
               for SEED in 1 2 3 4 5 6 7 8 9 10; do
-                  RESULT_DIR="${DATASET}/stterror/${TTS}_${STT}/${DATASET}_ep${EPOCH}_bs${BS_TRAIN}_seed${SEED}"
+                  RESULT_DIR="${DATASET}/stterror_withComplete/${TTS}_${STT}/${DATASET}_ep${EPOCH}_bs${BS_TRAIN}_seed${SEED}"
                   OUT_PATH="${OUTPUT_DIR}/${RESULT_DIR}"
                   LOG_DIR_PATH="${RUN_DIR}/${RESULT_DIR}"
 

@@ -10,7 +10,9 @@ root_name = './results/'
 MODEL_ROOT = [#"embrace{}withquery_p_multinomial",
               #"embrace{}withquery_bertKeyValue_p_multinomial",
               #"embrace{}withquery_p_multinomial_epq0",
-              "embrace{}withquery_p_multinomial_withDropout0.1"
+              #"embrace{}withquery_p_multinomial_withDropout0.1",
+              "embrace{}withquery_projection_p_multinomial",
+              "embrace{}withquery_projection_p_attention_clsquery_weights",
 ]
 
 MODEL_BERT = []
@@ -24,15 +26,17 @@ MODEL_NAME = {"embracebertwithquery_p_multinomial":                " EmbraceBERT
               "embracebertwithquery_bertKeyValue_p_multinomial":   " EmbraceBERT-bs{}-p_multiheadatt_bertKeyVal_epQ{} ",
               "embracebertwithquery_p_multinomial_epq0":           " EmbraceBERT-bs{}-p_multiheadatt_bertquery_epQ{}  ",
               "embracebertwithquery_p_multinomial_withDropout0.1": " EmbraceBERT-bs{}-p_multiheadatt_bertquery_epQ{}+Dropout0.1",
+              "embracebertwithquery_projection_p_multinomial":                " EmbraceBERTwithProj-bs{}-p_multiheadatt_bertquery_epQ{}          ",
+              "embracebertwithquery_projection_p_attention_clsquery_weights": " EmbraceBERTwithProj-bs{}-p_multiheadatt_bertquery_epQ{}_attclsqw ",
               }
 
-is_comp_inc = True
-for dataname in ["webapplications"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
+is_comp_inc = False
+for dataname in ["chatbot"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
     if dataname == "snips":
         bs_array = [16, 32]
         epoch_array = [3]
     else:
-        bs_array = [4, 16]
+        bs_array = [8]  #[4, 16]
         epoch_array = [100]
 
     for epoch in epoch_array:
@@ -50,7 +54,7 @@ for dataname in ["webapplications"]:  #["askubuntu", "chatbot", "webapplications
                         print("| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
                         for model in model_type:
                             model_name = MODEL_NAME[model]
-                            for epq in [3]: #, 10]:
+                            for epq in [10]: #, 10]:
 
                                 # print("{dataname} {model} - ep{epoch} bs{bs}".format(dataname=dataname, model=model, epoch=epoch, bs=bs))
                                 prefix = "stterror_withComplete" if is_comp_inc else "stterror"

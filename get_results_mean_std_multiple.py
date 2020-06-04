@@ -19,9 +19,14 @@ root_name = './results/'
 MODEL_ROOT = [
               #"embrace{}withkeyvaluequery_p_multinomial",
               #"embrace{}withkeyvaluequery_p_selfattention",
+              "embrace{}withkeyvaluequery_projection_p_multinomial",
+              "embrace{}withkeyvaluequery_projection_p_attention_clsquery_weights",
               #"{}withprojection",
-              "{}withprojectionatt",
-              "{}withattprojection",
+              #"{}withprojectionatt",
+              #"{}withattprojection",
+              #"{}withattclsprojection",
+              #"embrace{}_projection",
+              #"embrace{}_projection_p_attention_clsquery_weights"
               #"embrace{}withkeyvaluequery_p_attention_clsquery_weights",
 ]
 
@@ -38,11 +43,16 @@ MODEL_NAME = {"bert":                                            " BERT-bs{}    
               "bertwithprojection":                              " BERTwithProjection-bs{}     ",
               "bertwithprojectionatt":                           " BERTwithProjectionAtt-bs{}          ",
               "bertwithattprojection":                           " BERTwithAttProjection-bs{}          ",
+              "bertwithattclsprojection":                        " BERTwithAttClsProjection-bs{}       ",
               "embracebert":                                     " EmbraceBERT-bs{}            ",
               "embracebert_withDropout0.1":                      " EmbraceBERT-bs{}+Dropout0.1 ",
+              "embracebert_projection":                             " EmbraceBERTwithProj-bs{}                ",
+              "embracebert_projection_p_attention_clsquery_weights":" EmbraceBERTwithProj-bs{}-p_attclsqw     ",
               "embracebertwithkeyvaluequery_p_multinomial":                " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery      ",
               "embracebertwithkeyvaluequery_p_selfattention":              " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery_selfatt",
-              "embracebertwithkeyvaluequery_p_attention_clsquery_weights": " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw",
+              "embracebertwithkeyvaluequery_p_attention_clsquery_weights":            " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw         ",
+              "embracebertwithkeyvaluequery_projection_p_multinomial":                " EmbraceBERTwithProj-bs{}-p_multiheadatt_bertKeyValQuery          ",
+              "embracebertwithkeyvaluequery_projection_p_attention_clsquery_weights": " EmbraceBERTwithProj-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw ",
               }
 
 is_comp_inc = True
@@ -51,7 +61,7 @@ for dataname in ["chatbot"]:  #["askubuntu", "chatbot", "webapplications", "snip
         bs_array = [16, 32]
         epoch_array = [3]
     else:
-        bs_array = [4, 8] #, 16]
+        bs_array = [8] #, 16]
         epoch_array = [100]
 
     for epoch in epoch_array:

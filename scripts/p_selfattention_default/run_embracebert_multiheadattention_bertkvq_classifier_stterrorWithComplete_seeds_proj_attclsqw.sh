@@ -18,10 +18,10 @@ for BS_TRAIN in 8; do  #4 16; do
           for STT in gtts macsay; do
             for TTS in google sphinx witai; do
               STT_TTS="${STT}_${TTS}"
-              DATA_DIR="../../data/intent_stterror_data/${DATASET}/${STT_TTS}/"
+              DATA_DIR="../../data/intent_stterror_data_withComplete/${DATASET}/${STT_TTS}/"
 
               for SEED in 1 2 3 4 5 6 7 8 9 10; do
-                  RESULT_DIR="${DATASET}/stterror/${STT_TTS}/${DATASET}_ep${EPOCH}_bs${BS_TRAIN}_seed${SEED}"
+                  RESULT_DIR="${DATASET}/stterror_withComplete/${STT_TTS}/${DATASET}_ep${EPOCH}_bs${BS_TRAIN}_seed${SEED}"
                   OUT_PATH="${OUTPUT_DIR}/${RESULT_DIR}"
                   LOG_DIR_PATH="${RUN_DIR}/${RESULT_DIR}"
 

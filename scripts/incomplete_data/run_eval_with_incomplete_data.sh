@@ -1,7 +1,7 @@
 #!/bin/bash -v
 
 # Options: bert, bert_frozen, embracebert, embracebert_frozenbert (and roberta)
-MODEL_TYPE=bertwithattclsprojection
+MODEL_TYPE=bertwithattprojection
 MODEL_NAME="${MODEL_TYPE}"
 IS_CONDENSED=false  # if true, embracebert_condensed
 IS_FROZEN=false  # if true, embracebert_frozenbert
@@ -41,11 +41,11 @@ else
 fi
 echo $MODEL_NAME_OR_PATH
 
-CUDA_ID=2
+CUDA_ID=0
 BS_EVAL=1
-for BS_TRAIN in 8; do
+for BS_TRAIN in 4; do
   for EPOCH in 100; do  # 100; do
-      for DATASET in chatbot; do
+      for DATASET in askubuntu webapplications; do
           echo $DATASET
           echo "Evaluating ${DATASET} dataset with incomplete data for ${EPOCH} epochs"
 

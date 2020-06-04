@@ -2,7 +2,7 @@
 
 MODEL_TYPE=embracebertwithkeyvaluequery
 DIM_REDUCTION_METHOD=projection
-P_TYPE="multinomial"
+P_TYPE="attention_clsquery_weights"
 LR=2e-5
 #OUTPUT_DIR="/media/ceslea/DATA/EmbraceBERT-results-backup/${MODEL_TYPE}_p_${P_TYPE}/"
 OUTPUT_DIR="../../results/${MODEL_TYPE}_${DIM_REDUCTION_METHOD}_p_${P_TYPE}/"
