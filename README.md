@@ -10,6 +10,8 @@ Tested with Python 3.6.8, PyTorch 1.0.1.post2, CUDA 10.1
 pip install --default-timeout=1000 torch==1.5.0+cu92 torchvision==0.6.0+cu92 -f https://download.pytorch.org/whl/torch_stable.html
 pip install -r requirements.txt
 python -m spacy download en
+source ./anaconda3/etc/profile.d/conda.sh
+conda activate my_env
 ```
 > [pytorch-transformers](https://github.com/huggingface/transformers) version from September 6th 2019
 
