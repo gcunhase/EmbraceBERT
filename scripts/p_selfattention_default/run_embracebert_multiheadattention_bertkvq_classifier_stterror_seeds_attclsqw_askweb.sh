@@ -4,8 +4,8 @@ MODEL_TYPE=embracebertwithkeyvaluequery
 P_TYPE="attention_clsquery_weights"
 LR=2e-5
 #OUTPUT_DIR="/media/ceslea/DATA/EmbraceBERT-results-backup/${MODEL_TYPE}_p_${P_TYPE}/"
-OUTPUT_DIR="../../results/${MODEL_TYPE}_p_${P_TYPE}/"
-RUN_DIR="../../runs/${MODEL_TYPE}_p_${P_TYPE}/"
+OUTPUT_DIR="../../results/${MODEL_TYPE}_attention_p_${P_TYPE}/"
+RUN_DIR="../../runs/${MODEL_TYPE}_attention_p_${P_TYPE}/"
 
 BS_EVAL=1
 for BS_TRAIN in 4; do  #4 16; do

@@ -19,8 +19,16 @@ root_name = './results/'
 MODEL_ROOT = [
               #"embrace{}withkeyvaluequery_p_multinomial",
               #"embrace{}withkeyvaluequery_p_selfattention",
-              "embrace{}withkeyvaluequery_projection_p_multinomial",
-              "embrace{}withkeyvaluequery_projection_p_attention_clsquery_weights",
+              #"embrace{}withkeyvaluequery_projection_p_multinomial",
+              #"embrace{}withkeyvaluequery_projection_p_attention_clsquery_weights",
+              #"embrace{}concatatt_attention_p_multinomial",
+              #"embrace{}concatatt_attention_p_attention_clsquery_weights",
+              #"embrace{}concatatt_projection_p_multinomial",
+              #"embrace{}concatatt_projection_p_attention_clsquery_weights",
+              "embrace{}withkeyvaluequeryconcatatt_attention_p_multinomial",
+              "embrace{}withkeyvaluequeryconcatatt_p_attention_clsquery_weights",
+              "embrace{}withkeyvaluequeryconcatatt_projection_p_multinomial",
+              "embrace{}withkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights",
               #"{}withprojection",
               #"{}withprojectionatt",
               #"{}withattprojection",
@@ -53,6 +61,14 @@ MODEL_NAME = {"bert":                                            " BERT-bs{}    
               "embracebertwithkeyvaluequery_p_attention_clsquery_weights":            " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw         ",
               "embracebertwithkeyvaluequery_projection_p_multinomial":                " EmbraceBERTwithProj-bs{}-p_multiheadatt_bertKeyValQuery          ",
               "embracebertwithkeyvaluequery_projection_p_attention_clsquery_weights": " EmbraceBERTwithProj-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw ",
+              "embracebertconcatatt_attention_p_multinomial":                         " EBERTconcatAtt-bs8                  ",
+              "embracebertconcatatt_attention_p_attention_clsquery_weights":          " EBERTconcatAtt-bs8_attclsqw         ",
+              "embracebertconcatatt_projection_p_multinomial":                        " EBERTconcatAttwithProj-bs8          ",
+              "embracebertconcatatt_projection_p_attention_clsquery_weights":         " EBERTconcatAttwithProj-bs8_attclsqw ",
+              "embracebertwithkeyvaluequeryconcatatt_attention_p_multinomial":                 " EmbraceBERTconcatatt-bs{}-p_multiheadatt_bertKeyValQuery                  ",
+              "embracebertwithkeyvaluequeryconcatatt_p_attention_clsquery_weights":            " EmbraceBERTconcatatt-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw         ",
+              "embracebertwithkeyvaluequeryconcatatt_projection_p_multinomial":                " EmbraceBERTconcatattWithProj-bs{}-p_multiheadatt_bertKeyValQuery          ",
+              "embracebertwithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights": " EmbraceBERTconcatattWithProj-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw ",
               }
 
 is_comp_inc = True

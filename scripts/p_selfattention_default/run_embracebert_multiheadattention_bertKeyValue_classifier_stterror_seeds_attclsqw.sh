@@ -3,7 +3,7 @@
 # Difference between bertquery and bertKeyValue: --extract_key_value_from_bertc
 
 MODEL_TYPE=embracebertwithqueryconcatatt  #embracebertwithquery
-P_TYPE="multinomial"
+P_TYPE="attention_clsquery_weights"
 LR=2e-5
 OUTPUT_DIR_COMPLETE="../../results/${MODEL_TYPE}_bertKeyValue_attention_p_${P_TYPE}_bertc/"
 RUN_DIR_COMPLETE="../../runs/${MODEL_TYPE}_bertKeyValue_attention_p_${P_TYPE}_bertc/"

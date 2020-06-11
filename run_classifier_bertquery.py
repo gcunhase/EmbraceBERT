@@ -72,12 +72,13 @@ ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (
 
 MODEL_CLASSES = {
     'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
-    'embracebert': (BertConfig, EmbraceBertForSequenceClassification, BertTokenizer),
-    'embracebertwithquery': (BertConfig, EmbraceBertWithQueryForSequenceClassification , BertTokenizer),
-    'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
-    'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
-    'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
-    'embraceroberta': (RobertaConfig, EmbraceRobertaForSequenceClassification, RobertaTokenizer),
+    'embracebert': (BertConfig, EmbraceBertForSequenceClassification, BertTokenizer),  # NOT SUPPORTED
+    'embracebertwithquery': (BertConfig, EmbraceBertWithQueryForSequenceClassification, BertTokenizer),
+    'embracebertwithqueryconcatatt': (BertConfig, EmbraceBertWithQueryForSequenceClassification, BertTokenizer),
+    'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),  # NOT SUPPORTED
+    'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),  # NOT SUPPORTED
+    'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),  # NOT SUPPORTED
+    'embraceroberta': (RobertaConfig, EmbraceRobertaForSequenceClassification, RobertaTokenizer),  # NOT SUPPORTED
 }
 
 
@@ -168,7 +169,7 @@ def pre_train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval
                       'labels':         batch[3]}
             if args.model_type in ['embracebert', 'embraceroberta', 'bert', 'roberta']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout, freeze_bert_weights=freeze_bert_weights)
-            elif args.model_type in ['embracebertwithquery']:
+            elif args.model_type in ['embracebertwithquery', 'embracebertwithqueryconcatatt']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout, freeze_bert_weights=freeze_bert_weights)
             else:
                 outputs = model(**inputs)
@@ -328,16 +329,20 @@ def train(args, train_dataset_complete, train_dataset_incomplete, model_bertc, m
             batch_comp = tuple(t.to(args.device) for t in batch_comp)
             inputs_comp = {'input_ids':      batch_comp[0],
                            'attention_mask': batch_comp[1],
-                           'token_type_ids': batch_comp[2] if args.model_type in ['embracebert', 'bert', 'xlnet', 'embracebertwithquery'] else None,  # XLM and RoBERTa don't use segment_ids
+                           'token_type_ids': batch_comp[2] if args.model_type in ['embracebert', 'bert', 'xlnet',
+                                                                                  'embracebertwithquery',
+                                                                                  'embracebertwithqueryconcatatt'] else None,  # XLM and RoBERTa don't use segment_ids
                            'labels':         batch_comp[3]}
             batch = tuple(t.to(args.device) for t in batch)
             inputs = {'input_ids':      batch[0],
                       'attention_mask': batch[1],
-                      'token_type_ids': batch[2] if args.model_type in ['embracebert', 'bert', 'xlnet', 'embracebertwithquery'] else None,  # XLM and RoBERTa don't use segment_ids
+                      'token_type_ids': batch[2] if args.model_type in ['embracebert', 'bert', 'xlnet',
+                                                                        'embracebertwithquery',
+                                                                        'embracebertwithqueryconcatatt'] else None,  # XLM and RoBERTa don't use segment_ids
                       'labels':         batch[3]}
             if args.model_type in ['embracebert', 'embraceroberta', 'bert', 'roberta']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout)
-            elif args.model_type in ['embracebertwithquery']:
+            elif args.model_type in ['embracebertwithquery', 'embracebertwithqueryconcatatt']:
                 outputs = model(**inputs, input_bertc=inputs_comp, apply_dropout=args.apply_dropout, model_bertc=model_bertc)
             else:
                 outputs = model(**inputs)
@@ -477,7 +482,7 @@ def evaluate(args, model, tokenizer, prefix="", train_bertc=False, is_evaluate=F
                           'token_type_ids': batch[2] if args.model_type in ['embracebert', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
                           'labels':         batch[3]}
 
-                if args.model_type in ['embracebertwithquery']:
+                if args.model_type in ['embracebertwithquery', 'embracebertwithqueryconcatatt']:
                     outputs = model(**inputs, is_evaluate=is_evaluate)
                 else:
                     outputs = model(**inputs)
@@ -486,13 +491,13 @@ def evaluate(args, model, tokenizer, prefix="", train_bertc=False, is_evaluate=F
                 eval_loss += tmp_eval_loss.mean().item()
             nb_eval_steps += 1
             if preds is None:
-                if args.model_type in ['embracebert', 'embracebertwithquery']:
+                if args.model_type in ['embracebert', 'embracebertwithquery', 'embracebertwithqueryconcatatt']:
                     preds = [logits.detach().cpu().numpy()]
                 else:  # Why doesn't this work with EmbraceBERT? This is the original line in the code.
                     preds = logits.detach().cpu().numpy()
                 out_label_ids = inputs['labels'].detach().cpu().numpy()
             else:
-                if args.model_type in ['embracebert', 'embracebertwithquery']:
+                if args.model_type in ['embracebert', 'embracebertwithquery', 'embracebertwithqueryconcatatt']:
                     preds.append(logits.detach().cpu().numpy())
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
@@ -628,6 +633,14 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train', tra
                                                 max_seq_length=args.max_seq_length,
                                                 extract_key_value_from_bertc=args.extract_key_value_from_bertc,
                                                 dimension_reduction_method=args.dimension_reduction_method)
+        elif args.model_type in ['embracebertwithqueryconcatatt']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length,
+                                                extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                                dimension_reduction_method=args.dimension_reduction_method,
+                                                concat_att_with_embracement=True)
         else:
             model = model_class.from_pretrained(output_dir)
         # tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -678,6 +691,14 @@ def load_model_for_eval(args, model_class , tokenizer_class, train_step_type='tr
                                             max_seq_length=args.max_seq_length,
                                             extract_key_value_from_bertc=args.extract_key_value_from_bertc,
                                             dimension_reduction_method=args.dimension_reduction_method)
+    elif args.model_type in ['embracebertwithqueryconcatatt']:  # with args
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
+                                            add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            concat_att_with_embracement=True)
     else:
         model = model_class.from_pretrained(output_dir)
     tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -877,6 +898,7 @@ def main():
 
     args.model_type = args.model_type.lower()
     model_type_name_has_changed = False
+    model_type_before_change = args.model_type
     if args.train_bertc:
         args.model_type = 'bert'
         model_type_name_has_changed = True
@@ -903,6 +925,15 @@ def main():
                                             max_seq_length=args.max_seq_length,
                                             extract_key_value_from_bertc=args.extract_key_value_from_bertc,
                                             dimension_reduction_method=args.dimension_reduction_method)
+    elif args.model_type in ['embracebertwithqueryconcatatt']:  # with args
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            concat_att_with_embracement=True)
     else:
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config)
@@ -916,9 +947,9 @@ def main():
 
     # ================== Training Full Model =======================
     if model_type_name_has_changed:
-        args.model_type = 'embracebertwithquery'
+        args.model_type = model_type_before_change  #'embracebertwithquery'
     if args.do_train:
-        if args.model_type in ['embracebertwithquery']:
+        if args.model_type in ['embracebertwithquery', 'embracebertwithqueryconcatatt']:
             args.model_type = 'bert'
             train_dataset_complete = load_and_cache_examples(args, args.task_name, tokenizer, evaluate=False, load_bertc=True)
             # 1. Pre-train BERTc with complete data
@@ -930,7 +961,7 @@ def main():
             # 2. Load BERTi with BERTc weights and fine-tune on incomplete data (K,V), using Q from BERTc
             model_bertc, tokenizer_bertc = load_model_for_eval(args, model_class, tokenizer_class, train_step_type='pretrain', load_bertc=True)
 
-            args.model_type = 'embracebertwithquery'
+            args.model_type = model_type_before_change  #'embracebertwithquery'
             config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
             model_berti, tokenizer_berti = load_model_for_eval(args, model_class, tokenizer_class, train_step_type='pretrain', load_bertc=True)
             train_dataset_incomplete = load_and_cache_examples(args, args.task_name, tokenizer_berti, evaluate=False, load_bertc=False)
@@ -971,7 +1002,7 @@ def main():
         results.update(result)
 
     # Evaluate BERTc
-    if model_type_name_has_changed and args.model_type == 'embracebertwithquery':
+    if model_type_name_has_changed and args.model_type == model_type_before_change:  #'embracebertwithquery':
         args.model_type = 'bert'
         if args.do_eval and args.local_rank in [-1, 0]:
             model, tokenizer = load_model_for_eval(args, model_class, tokenizer_class)

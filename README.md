@@ -79,6 +79,9 @@ conda activate my_env
 
 * BERTwithTokens (att/projection):
     ```--seed 1 --task_name chatbot_intent --model_type bertwithprojection --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --evaluate_during_training --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=8 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_bertwithprojection/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_bertwithprojection```    
+
+* BERT with proj(T_[CLS], cat(Embrace, att(T_[CLS], T_all)):
+    ```--seed 1 --p multinomial --dimension_reduction_method projection --task_name chatbot_intent --model_type embracebertconcatatt --model_name_or_path bert-base-uncased --logging_steps 1 --do_train --evaluate_during_training --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=8 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_bertwithprojection/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_bertwithprojection```    
     
 ### 3. Test model with Incomplete data
 ```

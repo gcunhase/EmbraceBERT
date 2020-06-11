@@ -1,8 +1,8 @@
 #!/bin/bash -v
 
 MODEL_TYPE=embracebertwithkeyvaluequeryconcatatt  #embracebertwithkeyvaluequery
-DIM_REDUCTION_METHOD=attention
-P_TYPE="multinomial"  #"multinomial"
+DIM_REDUCTION_METHOD=projection
+P_TYPE="attention_clsquery_weights"  #"multinomial"
 LR=2e-5
 #OUTPUT_DIR="/media/ceslea/DATA/EmbraceBERT-results-backup/${MODEL_TYPE}_p_${P_TYPE}/"
 OUTPUT_DIR="../../results/${MODEL_TYPE}_${DIM_REDUCTION_METHOD}_p_${P_TYPE}/"

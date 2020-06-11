@@ -1,13 +1,13 @@
 #!/bin/bash -v
 
 # Options: bert, bert_frozen, embracebert, embracebert_frozenbert (and roberta)
-MODEL_TYPE=embracebertconcatatt  #embracebertwithkeyvaluequery  #embracebert
+MODEL_TYPE=embracebertwithkeyvaluequeryconcatatt  #embracebertwithkeyvaluequery  #embracebert
 MODEL_NAME="${MODEL_TYPE}"
 IS_CONDENSED=false  # if true, embracebert_condensed
 IS_FROZEN=false  # if true, embracebert_frozenbert
 APPLY_DROPOUT=false
 DROPOUT_PROB=0.1
-DIM_REDUCTION_METHOD=attention
+DIM_REDUCTION_METHOD=projection
 P_TYPE="attention_clsquery_weights" #"multinomial" #"multiheadattention"  #"attention_clsquery_weights"
 
 MODEL_NAME="${MODEL_NAME}_${DIM_REDUCTION_METHOD}_p_${P_TYPE}"
