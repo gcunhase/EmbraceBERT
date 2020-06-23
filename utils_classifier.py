@@ -95,8 +95,10 @@ class DataProcessor(object):
 class SentenceClassificationProcessor(DataProcessor):
     """Processor for Intent classification dataset."""
 
-    def __init__(self, labels_array):
+    def __init__(self, labels_array): #, load_mixed_data=False):
+        """load_mixed_data for BERTc as query with complete data and BERT i as K,V with incomplete data"""
         self.labels_array = labels_array
+        #self.load_mixed_data = load_mixed_data
 
     def get_train_examples(self, data_dir, filename="train.tsv"):
         """See base class."""
@@ -122,6 +124,8 @@ class SentenceClassificationProcessor(DataProcessor):
             guid = "%s-%s" % (set_type, i)
             text_a = line[0]
             label = line[1]
+            #if self.load_mixed_data:
+            #    text_b = line[3]
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
         return examples

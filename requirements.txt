@@ -1,6 +1,7 @@
 # PyTorch
-torch>=0.4.1
+#torch>=0.4.1
 pytorch-nlp
+pytorch-model-summary
 # Progress bars in model download and training scripts
 tqdm
 # Accessing files from S3 directly.
@@ -18,4 +19,5 @@ spacy
 nltk
 # BERT and RoBERTa
 pytorch-transformers
+tensorboard
 tensorboardX

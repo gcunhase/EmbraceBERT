@@ -17,13 +17,39 @@ MODEL_ROOT = [
               #"embrace{}_condensed", "embrace{}_condensed_withDropout0.1", "embrace{}_condensed_withDropout0.3",
               #"embrace{}_frozenbert", "embrace{}_frozenbert_withDropout0.1", "embrace{}_frozenbert_withDropout0.3",
               #"embrace{}_frozenbert_condensed", "embrace{}_frozenbert_condensed_withDropout0.1", "embrace{}_frozenbert_condensed_withDropout0.3",
-              "embrace{}_with_branches_sharedWeightsAll", "embrace{}_with_branches_sharedWeightsAll_withDropout0.1",
-              "embrace{}_with_branches_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_condensed_sharedWeightsAll",
-              "embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.1",
-              "embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.3",
-              "embrace{}_with_branches_frozenbert_sharedWeightsAll", "embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.1",
-              "embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll",
-              "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.1", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.3"
+              #"embrace{}_with_branches_sharedWeightsAll", "embrace{}_with_branches_sharedWeightsAll_withDropout0.1",
+              #"embrace{}_with_branches_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_condensed_sharedWeightsAll",
+              #"embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.1",
+              #"embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.3",
+              #"embrace{}_with_branches_frozenbert_sharedWeightsAll", "embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.1",
+              #"embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll",
+              #"embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.1", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.3",
+              #
+              #"embrace{}_p_selfattention_condensed",
+              #"embrace{}_p_selfattention_pytorch",
+              #"embrace{}_p_multiheadattention",
+              #"embrace{}_p_multihead_bertselfattention", "embrace{}_p_multihead_bertattention",
+              #"embrace{}_p_multihead_bertselfattention_in_p",
+              #"embrace{}withkeyvaluequery_p_multinomial",
+              #"embrace{}withkeyvaluequery_p_attention_clsquery_weights",
+              #"{}withprojection",
+              #"{}withprojectionatt",
+              #"{}withattprojection",
+              #"{}withattclsprojection",
+              #"embrace{}_projection",
+              #"embrace{}_projection_p_attention_clsquery_weights",
+              #"embrace{}_p_attention_clsquery",
+              #"embrace{}_p_attention_clsquery_weights"
+              #"embrace{}withkeyvaluequery_projection_p_multinomial",
+              #"embrace{}withkeyvaluequery_projection_p_attention_clsquery_weights",
+              #"embrace{}concatatt_attention_p_multinomial",
+              #"embrace{}concatatt_attention_p_attention_clsquery_weights",
+              #"embrace{}concatatt_projection_p_multinomial",
+              #"embrace{}concatatt_projection_p_attention_clsquery_weights",
+              "embrace{}withkeyvaluequeryconcatatt_attention_p_multinomial",
+              "embrace{}withkeyvaluequeryconcatatt_p_attention_clsquery_weights",
+              "embrace{}withkeyvaluequeryconcatatt_projection_p_multinomial",
+              "embrace{}withkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights",
 ]
 
 MODEL_BERT = []
@@ -36,12 +62,19 @@ for M in MODEL_ROOT:
 MODEL_NAME = {"bert":                                               " BERT-bs{}                              ",
               "bert_withDropout0.1":                                " BERT-bs{}+Dropout0.1                   ",
               "bert_withDropout0.3":                                " BERT-bs{}+Dropout0.3                   ",
+              "bertwithatt":                                        " BERTwithAtt-bs{}                       ",
+              "bertwithprojection":                                 " BERTwithProjection-bs{}                ",
+              "bertwithprojectionatt":                              " BERTwithProjectionAtt-bs{}             ",
+              "bertwithattprojection":                              " BERTwithAttProjection-bs{}             ",
+              "bertwithattclsprojection":                           " BERTwithAttClsProjection-bs{}          ",
               "bert_frozen":                                        " FrozenBERT-bs{}-ep100                  ",
               "bert_frozen_withDropout0.1":                         " FrozenBERT-bs{}-ep100+Dropout0.1       ",
               "bert_frozen_withDropout0.3":                         " FrozenBERT-bs{}-ep100+Dropout0.3       ",
               "embracebert":                                        " EmbraceBERT-bs{}                       ",
               "embracebert_withDropout0.1":                         " EmbraceBERT-bs{}+Dropout0.1            ",
               "embracebert_withDropout0.3":                         " EmbraceBERT-bs{}+Dropout0.3            ",
+              "embracebert_projection":                             " EmbraceBERTwithProj-bs{}               ",
+              "embracebert_projection_p_attention_clsquery_weights":" EmbraceBERTwithProj-bs{}-p_attclsqw    ",
               "embracebert_condensed":                              " CondensedEmbraceBERT-bs{}              ",
               "embracebert_condensed_withDropout0.1":               " CondensedEmbraceBERT-bs{}+Dropout0.1   ",
               "embracebert_condensed_withDropout0.3":               " CondensedEmbraceBERT-bs{}+Dropout0.3   ",
@@ -51,6 +84,27 @@ MODEL_NAME = {"bert":                                               " BERT-bs{} 
               "embracebert_frozenbert_condensed":                   " FrozenCEBERT-bs{}-ep100                ",
               "embracebert_frozenbert_condensed_withDropout0.1":    " FrozenCEBERT-bs{}-ep100+Dropout0.1     ",
               "embracebert_frozenbert_condensed_withDropout0.3":    " FrozenCEBERT-bs{}-ep100+Dropout0.3     ",
+              "embracebert_p_selfattention":                        " EmbraceBERT-bs{}-p_selfatt              ",
+              "embracebert_p_selfattention_condensed":              " CondensedEmbraceBERT-bs{}-p_selfatt     ",
+              "embracebert_p_selfattention_pytorch":                " EmbraceBERT-bs{}-p_selfatt_pytorch      ",
+              "embracebert_p_multiheadattention":                   " EmbraceBERT-bs{}-p_multiheadatt         ",
+              "embracebert_p_multihead_bertattention":              " EmbraceBERT-bs{}-p_multihead_bertatt    ",
+              "embracebert_p_multihead_bertselfattention":          " EmbraceBERT-bs{}-p_multihead_bertselfatt",
+              "embracebert_p_multihead_bertselfattention_in_p":     " EmbraceBERT-bs{}-p_multihead_bertselfatt_in_p",
+              "embracebert_p_attention_clsquery":                   " EmbraceBERT-bs{}-p_att_clsquery          ",
+              "embracebert_p_attention_clsquery_weights":           " EmbraceBERT-bs{}-p_att_clsquery_weights  ",
+              "embracebertwithkeyvaluequery_p_multinomial":                           " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery                  ",
+              "embracebertwithkeyvaluequery_p_attention_clsquery_weights":            " EmbraceBERT-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw         ",
+              "embracebertwithkeyvaluequery_projection_p_multinomial":                " EmbraceBERTwithProj-bs{}-p_multiheadatt_bertKeyValQuery          ",
+              "embracebertwithkeyvaluequery_projection_p_attention_clsquery_weights": " EmbraceBERTwithProj-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw ",
+              "embracebertconcatatt_attention_p_multinomial":                         " EBERTconcatAtt-bs8                  ",
+              "embracebertconcatatt_attention_p_attention_clsquery_weights":          " EBERTconcatAtt-bs8_attclsqw         ",
+              "embracebertconcatatt_projection_p_multinomial":                        " EBERTconcatAttwithProj-bs8          ",
+              "embracebertconcatatt_projection_p_attention_clsquery_weights":         " EBERTconcatAttwithProj-bs8_attclsqw ",
+              "embracebertwithkeyvaluequeryconcatatt_attention_p_multinomial":                 " EmbraceBERTconcatatt-bs{}-p_multiheadatt_bertKeyValQuery                  ",
+              "embracebertwithkeyvaluequeryconcatatt_p_attention_clsquery_weights":            " EmbraceBERTconcatatt-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw         ",
+              "embracebertwithkeyvaluequeryconcatatt_projection_p_multinomial":                " EmbraceBERTconcatattWithProj-bs{}-p_multiheadatt_bertKeyValQuery          ",
+              "embracebertwithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights": " EmbraceBERTconcatattWithProj-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw ",
               "embracebert_with_branches_sharedWeightsAll":                                      " EmbraceBERT-bs{}+Branches                     ",
               "embracebert_with_branches_sharedWeightsAll_withDropout0.1":                       " EmbraceBERT-bs{}+Branches+Dropout0.1          ",
               "embracebert_with_branches_sharedWeightsAll_withDropout0.3":                       " EmbraceBERT-bs{}+Branches+Dropout0.3          ",
@@ -95,12 +149,12 @@ MODEL_NAME = {"bert":                                               " BERT-bs{} 
               "embraceroberta_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.3": " FrozenCERoBERTa-bs{}+Branches+Dropout0.3         ",
               }
 
-for dataname in ["webapplications"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
+for dataname in ["chatbot"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
     if dataname == "snips":
         bs_array = [16, 32]
         epoch_array = [3]
     else:
-        bs_array = [4, 16]
+        bs_array = [8] #, 8] #, 16]
         epoch_array = [100]
 
     for epoch in epoch_array:
@@ -113,7 +167,7 @@ for dataname in ["webapplications"]:  #["askubuntu", "chatbot", "webapplications
                 #for bs in bs_array:
                 #    print("-----------------------------------------")
                 #for model_type in [MODEL_BERT, MODEL_ROBERTA]:
-                for model_type in [MODEL_ROBERTA]:
+                for model_type in [MODEL_BERT]:
                     for bs in bs_array:
                         print("| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
                         for model in model_type:
