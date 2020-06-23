@@ -52,6 +52,7 @@ from models.BERTwithTokens import BertWithTokensForSequenceClassification
 from models.EmbraceRoBERTa import EmbraceRobertaForSequenceClassification
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
+from pytorch_model_summary import summary
 
 from utils_classifier import (compute_metrics, convert_examples_to_features,
                               output_modes, processors, labels_array)
@@ -728,6 +729,8 @@ def main():
                         help="Whether to run training.")
     parser.add_argument("--do_eval", action='store_true',
                         help="Whether to run eval on the dev set.")
+    parser.add_argument("--do_calculate_num_params", action='store_true',
+                        help="Calculate number of parameters in model.")
     parser.add_argument("--eval_type", default="default", type=str,
                         help="Options=[default, incomplete_test]. 'default' refers to when a model is tested with its"
                              " Test Data. 'incomplete_test' refers to when a model is tested with a different test"
@@ -939,8 +942,13 @@ def main():
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
     model.to(args.device)
-
     logger.info("Training/evaluation parameters %s", args)
+
+    # ================== Calculate number of parameters in model =======================
+    if args.do_calculate_num_params:
+        # n_params = sum(p.numel() for p in model.parameters())
+        # logger.info("Number of parameters: {}".format(n_params))
+        summary(model, torch.zeros((8, 128), dtype=torch.long).cuda(), show_input=True, print_summary=True)
 
     # ================== Training Full Model =======================
     if args.do_train:
