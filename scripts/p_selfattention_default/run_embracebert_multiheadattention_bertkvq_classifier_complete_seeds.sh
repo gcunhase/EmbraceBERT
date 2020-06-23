@@ -1,18 +1,17 @@
 #!/bin/bash -v
 
 MODEL_TYPE=embracebertwithkeyvaluequeryconcatatt  #embracebertwithkeyvaluequery
-DIM_REDUCTION_METHOD=attention
-P_TYPE="multinomial"
+DIM_REDUCTION_METHOD=attention # Options=[attention, projection]
+P_TYPE="multinomial" # Options=[multinomial, attention_clsquery_weights]
 LR=2e-5
-#OUTPUT_DIR="/media/ceslea/DATA/EmbraceBERT-results-backup/${MODEL_TYPE}_p_${P_TYPE}/"
 OUTPUT_DIR="../../results/${MODEL_TYPE}_${DIM_REDUCTION_METHOD}_p_${P_TYPE}/"
 RUN_DIR="../../runs/${MODEL_TYPE}_${DIM_REDUCTION_METHOD}_p_${P_TYPE}/"
 
 BS_EVAL=1
-for BS_TRAIN in 8; do  #4 16; do
-  for DATASET in chatbot; do # webapplications; do
+for BS_TRAIN in 8; do
+  for DATASET in chatbot; do
       echo $DATASET
-      for EPOCH in 100; do # 100; do
+      for EPOCH in 100; do
           echo "Training ${DATASET} dataset with ${PERC} missing for ${EPOCH} epochs"
 
           DATA_DIR="../../data/intent_processed/nlu_eval/${DATASET}corpus/"

@@ -1,6 +1,6 @@
 #!/bin/bash -v
 
-MODEL_TYPE=bertwithattclsprojection  # Options=[bertwithatt, bertwithprojection, bertwithprojectionatt, bertwithattclsprojection]
+MODEL_TYPE=bert
 OUTPUT_DIR="../../results/${MODEL_TYPE}/"
 RUN_DIR="../../runs/${MODEL_TYPE}/"
 

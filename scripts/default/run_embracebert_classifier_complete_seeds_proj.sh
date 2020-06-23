@@ -1,19 +1,18 @@
 #!/bin/bash -v
 
 MODEL_TYPE=embracebert
-DIM_REDUCTION_METHOD=projection
+DIM_REDUCTION_METHOD=projection  #attention
 OUTPUT_DIR="../../results/${MODEL_TYPE}_${DIM_REDUCTION_METHOD}/"
 RUN_DIR="../../runs/${MODEL_TYPE}_${DIM_REDUCTION_METHOD}/"
 
 BS_EVAL=1
-for BS_TRAIN in 4; do
+for BS_TRAIN in 8; do
   for DATASET in chatbot; do
       echo $DATASET
-      for EPOCH in 100; do  # 30 100; do  # 30 100; do
+      for EPOCH in 100; do
           echo "Training ${DATASET} dataset with ${PERC} missing for ${EPOCH} epochs"
 
           DATA_DIR="../../data/intent_processed/nlu_eval/${DATASET}corpus/"
-          # DATA_DIR="../../data/intent_processed/${DATASET}/"
 
           for SEED in 1 2 3 4 5 6 7 8 9 10; do
               RESULT_DIR="${DATASET}/complete/${DATASET}_ep${EPOCH}_bs${BS_TRAIN}_seed${SEED}"

@@ -12,7 +12,7 @@ BS_EVAL=1
 for BS_TRAIN in 8; do  # 16; do  #4 16; do
   for DATASET in chatbot; do  # webapplications chatbot; do
       echo $DATASET
-      EPOCH_BERTC=10
+      EPOCH_BERTC=20
       for EPOCH in 100; do # 100; do
           echo "Training ${DATASET} dataset with ${PERC} missing for ${EPOCH} epochs"
 

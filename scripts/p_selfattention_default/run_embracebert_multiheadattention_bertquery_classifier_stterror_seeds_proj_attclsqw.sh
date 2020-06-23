@@ -13,17 +13,17 @@ BS_EVAL=1
 for BS_TRAIN in 8; do  # 16; do  #4 16; do
   for DATASET in chatbot; do  # webapplications chatbot; do
       echo $DATASET
-      EPOCH_BERTC=10
+      EPOCH_BERTC=20
       for EPOCH in 100; do # 100; do
           echo "Training ${DATASET} dataset with ${PERC} missing for ${EPOCH} epochs"
 
           DATA_DIR_COMPLETE="../../data/intent_processed/nlu_eval/${DATASET}corpus/"
-          for STT in macsay; do
-            for TTS in witai; do
+          for STT in gtts macsay; do
+            for TTS in google sphinx witai; do
               STT_TTS="${STT}_${TTS}"
               DATA_DIR="../../data/intent_stterror_data/${DATASET}/${STT_TTS}/"
 
-              for SEED in 5 6 7 8 9 10; do
+              for SEED in 1 2 3 4 5 6 7 8 9 10; do
                   RESULT_DIR="${DATASET}/stterror/${STT_TTS}/${DATASET}_ep${EPOCH}_epQ${EPOCH_BERTC}_bs${BS_TRAIN}_seed${SEED}"
                   #RESULT_DIR="${DATASET}/stterror/${STT_TTS}/${DATASET}_ep${EPOCH}_bs${BS_TRAIN}_seed${SEED}"
                   OUT_PATH_COMPLETE="${OUTPUT_DIR_COMPLETE}/${RESULT_DIR}"
