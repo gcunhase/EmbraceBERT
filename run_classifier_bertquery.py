@@ -647,7 +647,8 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train', tra
         model.to(args.device)
 
 
-def load_model_for_eval(args, model_class , tokenizer_class, train_step_type='train', load_bertc=False):
+def load_model_for_eval(args, model_class, tokenizer_class, train_step_type='train', load_bertc=False,
+                        dont_initialize_berti=False, config=None):
     output_dir = args.output_dir
     if load_bertc:
         output_dir = args.output_dir_complete
@@ -677,30 +678,49 @@ def load_model_for_eval(args, model_class , tokenizer_class, train_step_type='tr
     # for checkpoint in checkpoints:
     global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
     # Load a trained model and vocabulary that you have fine-tuned
-    if args.model_type in ['bert', 'roberta']:  # with args
-        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
-    elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
-        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
-                                            add_branches=args.add_branches,
-                                            share_branch_weights=args.share_branch_weights, p=args.p,
-                                            max_seq_length=args.max_seq_length)
-    elif args.model_type in ['embracebertwithquery']:  # with args
-        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
-                                            add_branches=args.add_branches,
-                                            share_branch_weights=args.share_branch_weights, p=args.p,
-                                            max_seq_length=args.max_seq_length,
-                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc,
-                                            dimension_reduction_method=args.dimension_reduction_method)
-    elif args.model_type in ['embracebertwithqueryconcatatt']:  # with args
-        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
-                                            add_branches=args.add_branches,
-                                            share_branch_weights=args.share_branch_weights, p=args.p,
-                                            max_seq_length=args.max_seq_length,
-                                            extract_key_value_from_bertc=args.extract_key_value_from_bertc,
-                                            dimension_reduction_method=args.dimension_reduction_method,
-                                            concat_att_with_embracement=True)
+    if dont_initialize_berti:
+        if args.model_type in ['embracebertwithquery']:  # with args
+            model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                                config=config, dropout_prob=args.dropout_prob,
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length,
+                                                extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                                dimension_reduction_method=args.dimension_reduction_method)
+        elif args.model_type in ['embracebertwithqueryconcatatt']:  # with args
+            model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                                config=config, dropout_prob=args.dropout_prob,
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length,
+                                                extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                                dimension_reduction_method=args.dimension_reduction_method,
+                                                concat_att_with_embracement=True)
     else:
-        model = model_class.from_pretrained(output_dir)
+        if args.model_type in ['bert', 'roberta']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
+        elif args.model_type in ['embracebert', 'embraceroberta']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
+                                                add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length)
+        elif args.model_type in ['embracebertwithquery']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
+                                                add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length,
+                                                extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                                dimension_reduction_method=args.dimension_reduction_method)
+        elif args.model_type in ['embracebertwithqueryconcatatt']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
+                                                add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length,
+                                                extract_key_value_from_bertc=args.extract_key_value_from_bertc,
+                                                dimension_reduction_method=args.dimension_reduction_method,
+                                                concat_att_with_embracement=True)
+        else:
+            model = model_class.from_pretrained(output_dir)
     tokenizer = tokenizer_class.from_pretrained(output_dir)
     model.to(args.device)
     return model, tokenizer
@@ -838,6 +858,11 @@ def main():
                         help="Choose the probability type for p in EmbraceLayer."
                              " Options = ['multinomial': p is random].")
 
+    # This model has BERTc (BERT fine-tuned with complete data) and BERTi (initialized with BERTc, used in the
+    #   end-to-end model). This paramater is to decide if BERTi should be initialized with BERTc or not.
+    parser.add_argument('--dont_initialize_berti', action='store_true',
+                        help="Whether to initialize BERTi with BERTc or not")
+
     # Dimension reduction method to consider tokens other than CLS
     parser.add_argument('--dimension_reduction_method', type=str, default='attention',
                         help="Choose the dimension reduction method for EmbraceBERT (CLS token and embrace vector need to become 1 vector)."
@@ -959,15 +984,28 @@ def main():
                 save_model(args, model, tokenizer, model_class, train_step_type='pretrain', train_bertc=True)
 
             # 2. Load BERTi with BERTc weights and fine-tune on incomplete data (K,V), using Q from BERTc
-            model_bertc, tokenizer_bertc = load_model_for_eval(args, model_class, tokenizer_class, train_step_type='pretrain', load_bertc=True)
+            model_bertc, tokenizer_bertc = load_model_for_eval(args, model_class, tokenizer_class,
+                                                               train_step_type='pretrain', load_bertc=True)
 
             args.model_type = model_type_before_change  #'embracebertwithquery'
             config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
-            model_berti, tokenizer_berti = load_model_for_eval(args, model_class, tokenizer_class, train_step_type='pretrain', load_bertc=True)
+            if args.dont_initialize_berti:
+                config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
+                config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path,
+                                                      num_labels=num_labels, finetuning_task=args.task_name)
+                if args.add_branches == True:  # EmbraceBERT with branches
+                    config.output_hidden_states = True
+                model_berti, tokenizer_berti = load_model_for_eval(args, model_class, tokenizer_class,
+                                                                   train_step_type='pretrain', load_bertc=True, config=config,
+                                                                   dont_initialize_berti=True)
+            else:
+                model_berti, tokenizer_berti = load_model_for_eval(args, model_class, tokenizer_class,
+                                                                   train_step_type='pretrain', load_bertc=True)
             train_dataset_incomplete = load_and_cache_examples(args, args.task_name, tokenizer_berti, evaluate=False, load_bertc=False)
             global_step, tr_loss = train(args, train_dataset_complete, train_dataset_incomplete, model_bertc, model_berti, tokenizer_berti)
             logger.info(" global_step_pt2 = %s, average loss_pt2 = %s", global_step, tr_loss)
-            save_model(args, model_berti, tokenizer_berti, model_class)
+            # train_bertc=False (saves tokenizer files in train dir)
+            save_model(args, model_berti, tokenizer_berti, model_class, train_bertc=False)
         else:
             train_dataset = load_and_cache_examples(args, args.task_name, tokenizer, evaluate=False)
             # Pre-train embracement layer with classifier before fine-tuning BERT
@@ -1001,23 +1039,26 @@ def main():
             result = dict((k, v) for k, v in result.items())
         results.update(result)
 
+    """
     # Evaluate BERTc
     if model_type_name_has_changed and args.model_type == model_type_before_change:  #'embracebertwithquery':
         args.model_type = 'bert'
+        config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
         if args.do_eval and args.local_rank in [-1, 0]:
-            model, tokenizer = load_model_for_eval(args, model_class, tokenizer_class)
+            model, tokenizer = load_model_for_eval(args, model_class, tokenizer_class, load_bertc=True)
             logger.info("EVAL TYPE: {}".format(args.eval_type))
             if args.eval_type == 'default':
                 if args.do_train:
-                    result = evaluate(args, model, tokenizer, prefix=global_step, is_evaluate=True)
+                    result = evaluate(args, model, tokenizer, prefix=global_step, is_evaluate=True, train_bertc=True)
                     result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
                 else:
-                    result = evaluate(args, model, tokenizer, is_evaluate=True)
+                    result = evaluate(args, model, tokenizer, is_evaluate=True, train_bertc=True)
                     result = dict((k, v) for k, v in result.items())
             else:
-                result = evaluate(args, model, tokenizer, is_evaluate=True)
+                result = evaluate(args, model, tokenizer, is_evaluate=True, train_bertc=True)
                 result = dict((k, v) for k, v in result.items())
             results.update(result)
+    """
 
     return results
 
