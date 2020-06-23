@@ -68,8 +68,8 @@ python run_classifier.py --seed 1 --task_name chatbot_intent --model_type $MODEL
 > $MODEL_NAME2: DIM_REDUCTION_METHOD=[attention, projection], P_TYPE=[multinomial, attention_clsquery_weights]
 >               EBERT - att (111,253,250), att+p_att (113,022,722), proj (109,483,781), proj+p_att (111,253,253)
 >               EBERT_concatatt - att (113,022,722), att+p_att (114,792,194), proj (111,253,254), proj+p_att (113,022,726)
->               EBERTkvq - att (111,253,250), att+p_att (113,022,722), proj (109,483,781), proj+p_att (111,253,253)
->               EBERTkvq_concatatt - att (113,022,722), att+p_att (114,792,194), proj (111,253,254), proj+p_att (113,022,726)
+>               EBERTkvq (is_evaluate=True manually in EmbraceBERTwithQuery) - att (113,617,154), att+p_att (115,386,626), proj (111,847,685), proj+p_att (113,617,157)
+>               EBERTkvq_concatatt (is_evaluate=True manually in EmbraceBERTwithQuery) - att (115,386,626), att+p_att (117,156,098), proj (113,617,158), proj+p_att (115,386,630)
 
 ### Output    
 | File                              | Description |
