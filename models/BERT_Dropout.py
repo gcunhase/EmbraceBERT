@@ -53,6 +53,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, self.config.num_labels)
+        #self.softmax = nn.Softmax(dim=-1)  # -1: right-most dimension (last dimension)
 
         self.apply(self.init_weights)
 
@@ -69,7 +70,8 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
         if apply_dropout:
             pooled_output = self.dropout(pooled_output)
-        logits = self.classifier(pooled_output)
+        logits = self.classifier(pooled_output)  # [bs, 2]
+        #logits = self.softmax(logits)
 
         outputs = (logits,) + outputs[2:]  # add hidden states and attention if they are here
 
@@ -79,6 +81,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
                 loss_fct = MSELoss()
                 loss = loss_fct(logits.view(-1), labels.view(-1))
             else:
+                # This criterion combines `log_softmax` and `nll_loss` in a single function
                 loss_fct = CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
             outputs = (loss,) + outputs

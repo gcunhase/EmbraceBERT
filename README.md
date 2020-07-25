@@ -54,6 +54,7 @@ conda activate my_env
 ### 4. Calculate number of parameters
 ```
 python run_classifier.py --seed 1 --task_name chatbot_intent --model_type $MODEL_NAME --model_name_or_path bert-base-uncased --logging_steps 1 --do_calculate_num_params --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=8 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_num_params/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_num_params
+python run_classifier.py --seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_calculate_num_params --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=8 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_num_params/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_num_params
 # EBERT+att
 --seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequeryconcatatt --p multinomial --dimension_reduction_method attention --model_name_or_path bert-base-uncased --logging_steps 1 --do_calculate_num_params --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=8 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_num_params/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_num_params
 # EBERT+att+p_att
@@ -64,8 +65,10 @@ python run_classifier.py --seed 1 --task_name chatbot_intent --model_type $MODEL
 --seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequeryconcatatt --p attention_clsquery_weights --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_calculate_num_params --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=8 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_num_params/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_num_params
 ```
 > MODEL_NAME: 'bert' (109,483,778), 'bertwithatt' (111,253,250), 'bertwithattclsprojection' (111,253,253), 'bertwithprojection' (109,483,908), 'bertwithprojectionatt' (111,253,379),
->             'embracebert', 'embracebertconcatatt', 'embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt'
-> $MODEL_NAME2: DIM_REDUCTION_METHOD=[attention, projection], P_TYPE=[multinomial, attention_clsquery_weights]
+
+> $MODEL_NAME2: 'embracebert', 'embracebertconcatatt', 'embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt'
+
+>               DIM_REDUCTION_METHOD=[attention, projection], P_TYPE=[multinomial, attention_clsquery_weights]
 >               EBERT - att (111,253,250), att+p_att (113,022,722), proj (109,483,781), proj+p_att (111,253,253)
 >               EBERT_concatatt - att (113,022,722), att+p_att (114,792,194), proj (111,253,254), proj+p_att (113,022,726)
 >               EBERTkvq (is_evaluate=True manually in EmbraceBERTwithQuery) - att (113,617,154), att+p_att (115,386,626), proj (111,847,685), proj+p_att (113,617,157)
