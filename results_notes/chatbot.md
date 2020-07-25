@@ -294,6 +294,11 @@
 | EmbraceBERT-bs8-p_att_clsquery_weights |94.34|98.11|97.17|99.06|99.06|98.11|95.28|98.11|99.06|100.00|97.83|1.69|
 | EmbraceBERTwithProj-bs8                |98.11|98.11|98.11|100.00|97.17|100.00|97.17|100.00|99.06|98.11|*98.58*|1.05|
 | EmbraceBERTwithProj-bs8-p_attclsqw     |98.11|99.06|99.06|97.17|99.06|99.06|95.28|98.11|100.00|99.06|98.40|1.27|
+| BERT-bs8+Softmax                    	 |95.28|99.06|98.11|98.11|100.00|98.11|98.11|98.11|98.11|98.11|98.11|1.12|
+| EmbraceBERT-bs8+Softmax              	         |98.11|96.23|94.34|94.34|95.28|99.06|96.23|98.11|97.17|97.17|96.60|1.53|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax |97.17|98.11|96.23|100.00|98.11|95.28|94.34|98.11|97.17|96.23|97.08|1.55|
+| EmbraceBERTwithProj-bs8+Softmax                |98.11|98.11|99.06|100.00|98.11|99.06|98.11|100.00|99.06|98.11|98.77|0.74|
+| EmbraceBERTwithProj-bs8-p_attclsqw+Softmax     |97.17|98.11|99.06|100.00|98.11|98.11|98.11|100.00|99.06|100.00|98.77|0.95|
 | -------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | BERTwithAtt-bs8                        |98.11|97.17|97.17|96.23|99.06|98.11|99.06|98.11|98.11|97.17|97.83|0.85|
 | BERTwithAtt-bs8-p_multiheadatt_bertKeyValQuery  |
@@ -301,6 +306,10 @@
 | BERTwithProjectionAtt-bs8              |98.11|94.34|96.23|99.06|98.11|99.06|95.28|98.11|98.11|99.06|97.55|1.59|
 | BERTwithAttProjection-bs8              |98.11|98.11|97.17|98.11|97.17|98.11|98.11|97.17|98.11|98.11|97.83|0.43|
 | BERTwithAttClsProjection-bs8           |99.06|98.11|99.06|99.06|99.06|99.06|95.28|98.11|98.11|95.28|98.02|1.43|
+| BERTwithAtt-bs8+Softmax                |98.11|97.17|95.28|94.34|93.40|99.06|100.00|97.17|98.11|96.23|96.89|1.98|
+| BERTwithAtClsProjection-bs8+Softmax    |98.11|99.06|99.06|98.11|98.11|98.11|97.17|99.06|99.06|98.11|98.40|0.60|
+| BERTwithProjection-bs8+Softmax         |99.06|97.17|98.11|93.40|98.11|98.11|97.17|98.11|98.11|100.00|97.74|1.64|
+| BERTwithProjectionAtt-bs8+Softmax      |98.11|97.17|94.34|98.11|99.06|100.00|98.11|98.11|98.11|99.06|98.02|1.43|
 | -------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery                  |99.06|96.23|100.00|98.11|97.17|95.28|96.23|99.06|97.17|97.17|97.55|1.41|
 | EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery_attclsqw         |99.06|97.17|98.11|98.11|100.00|98.11|97.17|98.11|98.11|98.11|98.21|0.78|
@@ -310,11 +319,23 @@
 | EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery_attclsqw        |99.06|96.23|98.11|97.17|98.11|97.17|95.28|97.17|97.17|98.11|97.36|1.02|
 | EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery         |99.06|98.11|99.06|100.00|99.06|98.11|98.11|99.06|98.11|98.11|**98.68**|0.63|
 | EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw|100.00|98.11|98.11|98.11|98.11|100.00|98.11|99.06|97.17|98.11|98.49|0.86|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |98.11|98.11|98.11|95.28|97.17|98.11|96.23|100.00|98.11|96.23|97.55|1.28|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |98.11|97.17|98.11|98.11|98.11|98.11|99.06|99.06|98.11|95.28|97.92|1.02|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |95.28|99.06|98.11|98.11|100.00|99.06|98.11|98.11|97.17|98.11|98.11|1.19|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |99.06|100.00|98.11|98.11|98.11|98.11|97.17|100.00|99.06|99.06|98.68|0.86|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery+Softmax                 |97.17|96.23|96.23|98.11|96.23|98.11|93.40|96.23|98.11|98.11|96.79|1.41|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax        |98.11|97.17|97.17|97.17|98.11|98.11|96.23|98.11|98.11|98.11|97.64|0.63|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax         |100.00|100.00|98.11|99.06|99.06|98.11|98.11|98.11|94.34|98.11|98.30|1.51|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax|99.06|99.06|98.11|98.11|96.23|100.00|98.11|99.06|98.11|97.17|98.30|1.02|
 | -------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | EBERTconcatAtt-bs8                  |99.06|97.17|100.00|97.17|96.23|98.11|97.17|98.11|99.06|97.17|97.92|1.10|
 | EBERTconcatAtt-bs8_attclsqw         |98.11|98.11|98.11|97.17|99.06|97.17|99.06|97.17|98.11|97.17|97.92|0.71|
 | EBERTconcatAttwithProj-bs8          |98.11|97.17|98.11|97.17|98.11|100.00|98.11|97.17|98.11|98.11|98.02|0.78|
 | EBERTconcatAttwithProj-bs8_attclsqw |99.06|98.11|99.06|98.11|98.11|99.06|98.11|98.11|98.11|99.06|98.49|0.46|
+| EBERTconcatAtt-bs8+Softmax                  |98.11|96.23|99.06|99.06|97.17|97.17|100.00|99.06|99.06|97.17|98.21|1.15|
+| EBERTconcatAtt-bs8_attclsqw+Softmax         |98.11|98.11|96.23|99.06|98.11|98.11|98.11|96.23|98.11|95.28|97.55|1.13|
+| EBERTconcatAttwithProj-bs8+Softmax          |94.34|98.11|98.11|98.11|98.11|99.06|98.11|97.17|100.00|98.11|97.92|1.39|
+| EBERTconcatAttwithProj-bs8_attclsqw+Softmax |98.11|98.11|98.11|98.11|98.11|97.17|98.11|98.11|99.06|98.11|98.11|0.42|
 
 ## STT Error: trained with COMPLETE data and tested with INCOMPLETE data
 ### gtts-google - good with all but RoBERTa bs=16
@@ -516,6 +537,28 @@
 | EBERTconcatAtt-bs8_attclsqw         |88.68|89.62|88.68|72.64|67.92|67.92|88.68|85.85|66.98|**91.51**|*80.85*|9.97|
 | EBERTconcatAttwithProj-bs8          |87.74|69.81|70.75|71.70|87.74|70.75|88.68|72.64|88.68|**92.45**|*80.09*|9.07|
 | EBERTconcatAttwithProj-bs8_attclsqw |88.68|65.09|71.70|**89.62**|87.74|68.87|89.62|68.87|70.75|71.70|77.26|9.69|
+| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BERT-bs8+Softmax                              |88.68|66.98|69.81|71.70|89.62|68.87|68.87|87.74|70.75|85.85|76.89|9.17|
+| BERTwithAtt-bs8+Softmax                       |66.98|86.79|68.87|85.85|67.92|67.92|65.09|90.57|67.92|69.81|73.77|9.28|
+| BERTwithAttClsProjection-bs8+Softmax          |87.74|88.68|68.87|89.62|89.62|66.04|87.74|69.81|69.81|72.64|79.06|9.76|
+| BERTwithProjection-bs8+Softmax                |53.77|82.08|68.87|84.91|70.75|70.75|69.81|71.70|88.68|64.15|72.55|9.77|
+| BERTwithProjectionAtt-bs8+Softmax             |63.21|91.51|86.79|70.75|67.92|66.98|86.79|67.92|67.92|68.87|73.87|9.73|
+| EmbraceBERT-bs8+Softmax                       |67.92|85.85|89.62|87.74|68.87|66.98|86.79|88.68|74.53|86.79|80.38|9.07|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax|69.81|85.85|90.57|69.81|67.92|66.98|89.62|66.04|67.92|90.57|76.51|10.45|
+| EmbraceBERTwithProj-bs8+Softmax               |88.68|87.74|70.75|71.70|69.81|68.87|86.79|68.87|71.70|89.62|77.45|8.85|
+| EmbraceBERTwithProj-bs8-p_attclsqw+Softmax    |88.68|89.62|69.81|73.58|89.62|89.62|70.75|67.92|69.81|67.92|77.74|9.63|
+| EBERTconcatAtt-bs8+Softmax                  |67.92|86.79|69.81|92.45|88.68|69.81|70.75|67.92|69.81|90.57|77.45|10.06|
+| EBERTconcatAtt-bs8_attclsqw+Softmax         |68.87|90.57|88.68|85.85|67.92|68.87|84.91|87.74|66.98|89.62|80.00|9.80|
+| EBERTconcatAttwithProj-bs8+Softmax          |69.81|70.75|66.98|71.70|88.68|70.75|91.51|71.70|68.87|92.45|76.32|9.66|
+| EBERTconcatAttwithProj-bs8_attclsqw+Softmax |67.92|89.62|71.70|88.68|87.74|68.87|89.62|71.70|69.81|69.81|77.55|9.36|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |87.74|87.74|88.68|84.91|64.15|68.87|87.74|91.51|67.92|69.81|79.91|10.18|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |67.92|68.87|72.64|69.81|69.81|66.98|67.92|66.04|63.21|88.68|70.19|6.61|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |87.74|67.92|71.70|89.62|89.62|88.68|70.75|69.81|88.68|70.75|79.53|9.40|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |69.81|69.81|67.92|70.75|89.62|70.75|69.81|66.04|71.70|68.87|71.51|6.23|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery                  |66.98|86.79|83.96|88.68|67.92|69.81|87.74|68.87|64.15|91.51|77.64|10.33|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery_attclsqw         |69.81|86.79|89.62|87.74|69.81|83.02|87.74|69.81|83.96|69.81|79.81|8.36|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery          |68.87|68.87|89.62|69.81|71.70|69.81|88.68|71.70|68.87|88.68|75.66|8.79|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw |88.68|68.87|89.62|89.62|88.68|71.70|70.75|68.87|68.87|70.75|77.64|9.44|
 
 ### gtts-sphinx - not good with any
 * Epoch 100
@@ -713,6 +756,28 @@
 | EBERTconcatAtt-bs8_attclsqw         |89.62|89.62|**95.28**|88.68|77.36|86.79|92.45|92.45|65.09|89.62|86.70|8.51|
 | EBERTconcatAttwithProj-bs8          |94.34|88.68|89.62|95.28|93.40|79.25|**97.17**|84.91|96.23|95.28|*91.42*|5.48|
 | EBERTconcatAttwithProj-bs8_attclsqw |87.74|90.57|93.40|**95.28**|84.91|83.02|91.51|87.74|86.79|88.68|88.96|3.58|
+| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BERT-bs8+Softmax                              |91.51|69.81|88.68|86.79|93.40|90.57|91.51|90.57|89.62|88.68|88.11|6.35|
+| BERTwithAtt-bs8+Softmax                       |83.02|92.45|83.96|96.23|81.13|86.79|82.08|96.23|73.58|83.02|85.85|6.83|
+| BERTwithAttClsProjection-bs8+Softmax          |95.28|95.28|80.19|90.57|90.57|81.13|96.23|92.45|91.51|83.02|89.62|5.71|
+| BERTwithProjection-bs8+Softmax                |79.25|86.79|91.51|90.57|80.19|90.57|88.68|88.68|93.40|77.36|86.70|5.39|
+| BERTwithProjectionAtt-bs8+Softmax             |69.81|89.62|94.34|71.70|76.42|75.47|93.40|92.45|88.68|84.91|83.68|8.96|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax  |83.02|95.28|89.62|92.45|81.13|73.58|93.40|95.28|88.68|94.34|88.68|6.88|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax  |96.23|95.28|94.34|84.91|77.36|83.02|92.45|82.08|86.79|94.34|88.68|6.33|
+| EmbraceBERTwithProj-bs8+Softmax               |96.23|90.57|84.91|78.30|87.74|86.79|86.79|83.96|90.57|96.23|88.21|5.21|
+| EmbraceBERTwithProj-bs8-p_attclsqw+Softmax    |97.17|94.34|86.79|82.08|88.68|89.62|94.34|87.74|88.68|77.36|88.68|5.60|
+| EBERTconcatAtt-bs8+Softmax                  |66.98|97.17|82.08|88.68|92.45|76.42|80.19|77.36|84.91|93.40|83.96|8.75|
+| EBERTconcatAtt-bs8_attclsqw+Softmax         |87.74|92.45|95.28|88.68|79.25|90.57|92.45|93.40|85.85|92.45|89.81|4.44|
+| EBERTconcatAttwithProj-bs8+Softmax          |94.34|91.51|89.62|93.40|96.23|81.13|87.74|84.91|82.08|93.40|89.43|5.02|
+| EBERTconcatAttwithProj-bs8_attclsqw+Softmax |86.79|95.28|92.45|96.23|92.45|85.85|89.62|87.74|87.74|82.08|89.62|4.22|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |96.23|95.28|93.40|94.34|71.70|74.53|97.17|81.13|87.74|85.85|87.74|8.79|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |76.42|86.79|79.25|90.57|86.79|75.47|83.96|78.30|81.13|92.45|83.11|5.62|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |92.45|85.85|93.40|88.68|89.62|91.51|94.34|83.96|88.68|92.45|90.09|3.19|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |83.02|74.53|92.45|95.28|85.85|83.96|87.74|84.91|85.85|84.91|85.85|5.27|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery                  |83.96|96.23|92.45|94.34|95.28|79.25|93.40|92.45|71.70|91.51|89.06|7.68|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery_attclsqw         |73.58|95.28|91.51|94.34|86.79|86.79|91.51|92.45|89.62|85.85|88.77|5.91|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery          |85.85|84.91|97.17|78.30|95.28|86.79|94.34|86.79|87.74|93.40|89.06|5.54|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw |89.62|80.19|97.17|95.28|96.23|77.36|97.17|82.08|91.51|95.28|**90.19**|7.20|
 
 ### gtts-witai - good BERT/RoBERTa bs4
 * Epoch 100
@@ -912,6 +977,28 @@
 | EBERTconcatAtt-bs8_attclsqw         |92.45|95.28|96.23|92.45|88.68|88.68|91.51|95.28|87.74|94.34|*92.26*|2.92|
 | EBERTconcatAttwithProj-bs8          |92.45|89.62|93.40|90.57|94.34|91.51|96.23|90.57|95.28|95.28|*92.92*|2.20|
 | EBERTconcatAttwithProj-bs8_attclsqw |95.28|91.51|92.45|94.34|94.34|93.40|94.34|92.45|92.45|92.45|*93.30*|1.15|
+| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BERT-bs8+Softmax                              |94.34|87.74|94.34|88.68|94.34|92.45|91.51|94.34|91.51|91.51|92.08|2.28|
+| BERTwithAtt-bs8+Softmax                       |86.79|89.62|88.68|93.40|85.85|91.51|91.51|95.28|88.68|91.51|90.28|2.77|
+| BERTwithAttClsProjection-bs8+Softmax          |93.40|94.34|89.62|96.23|94.34|89.62|96.23|94.34|93.40|90.57|93.21|2.34|
+| BERTwithProjection-bs8+Softmax                |89.62|89.62|94.34|92.45|89.62|93.40|93.40|91.51|91.51|87.74|91.32|2.01|
+| BERTwithProjectionAtt-bs8+Softmax             |85.85|95.28|94.34|87.74|90.57|89.62|96.23|92.45|91.51|91.51|91.51|3.10|
+| EmbraceBERT-bs8+Softmax                       |89.62|94.34|90.57|95.28|87.74|85.85|94.34|96.23|91.51|95.28|92.08|3.38|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax|94.34|96.23|95.28|90.57|88.68|89.62|94.34|89.62|90.57|96.23|92.55|2.84|
+| EmbraceBERTwithProj-bs8+Softmax               |95.28|96.23|90.57|89.62|94.34|91.51|88.68|90.57|93.40|96.23|92.64|2.66|
+| EmbraceBERTwithProj-bs8-p_attclsqw+Softmax    |94.34|95.28|91.51|92.45|94.34|91.51|91.51|91.51|94.34|89.62|92.64|1.73|
+| EBERTconcatAtt-bs8+Softmax                  |86.79|95.28|89.62|94.34|95.28|88.68|90.57|89.62|91.51|96.23|91.79|3.10|
+| EBERTconcatAtt-bs8_attclsqw+Softmax         |89.62|96.23|93.40|91.51|89.62|89.62|93.40|96.23|89.62|96.23|92.55|2.78|
+| EBERTconcatAttwithProj-bs8+Softmax          |91.51|91.51|93.40|94.34|96.23|92.45|91.51|90.57|90.57|95.28|92.74|1.89|
+| EBERTconcatAttwithProj-bs8_attclsqw+Softmax |91.51|95.28|92.45|95.28|94.34|91.51|94.34|91.51|91.51|87.74|92.55|2.21|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |96.23|94.34|96.23|92.45|88.68|89.62|96.23|92.45|91.51|92.45|93.02|2.57|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |88.68|90.57|91.51|91.51|91.51|87.74|92.45|92.45|88.68|94.34|90.94|1.94|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |90.57|92.45|95.28|93.40|93.40|93.40|92.45|92.45|91.51|93.40|92.83|1.21|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |89.62|89.62|92.45|94.34|91.51|91.51|90.57|92.45|90.57|92.45|91.51|1.40|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |92.45|96.23|91.51|96.23|88.68|86.79|95.28|90.57|85.85|95.28|91.89|3.68|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |86.79|96.23|90.57|96.23|91.51|93.40|92.45|92.45|92.45|93.40|92.55|2.58|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |94.34|92.45|94.34|90.57|95.28|93.40|96.23|92.45|87.74|94.34|93.11|2.35|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |95.28|88.68|97.17|96.23|94.34|90.57|95.28|92.45|90.57|93.40|93.40|2.63|
 
 ### macsay-google - good BERT bs4 only
 * Epoch 100
@@ -1107,6 +1194,28 @@
 | EBERTconcatAtt-bs8_attclsqw         |74.53|83.96|94.34|73.58|61.32|68.87|81.13|92.45|53.77|87.74|*77.17*|12.61|
 | EBERTconcatAttwithProj-bs8          |87.74|73.58|86.79|78.30|78.30|51.89|94.34|66.04|94.34|91.51|*80.28*|12.97|
 | EBERTconcatAttwithProj-bs8_attclsqw |72.64|79.25|83.96|84.91|78.30|65.09|86.79|65.09|70.75|71.70|75.85|7.55|
+| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BERT-bs8+Softmax                              |83.96|52.83|73.58|74.53|81.13|82.08|82.08|79.25|69.81|81.13|76.04|8.85|v
+| BERTwithAtt-bs8+Softmax                       |57.55|80.19|65.09|95.28|62.26|69.81|71.70|89.62|63.21|72.64|72.74|11.61|
+| BERTwithAttClsProjection-bs8+Softmax          |90.57|83.96|56.60|92.45|77.36|52.83|92.45|81.13|73.58|58.49|75.94|14.39|
+| BERTwithProjection-bs8+Softmax                |55.66|75.47|73.58|83.02|64.15|83.02|87.74|80.19|88.68|50.94|74.25|12.54|
+| BERTwithProjectionAtt-bs8+Softmax             |52.83|83.96|85.85|49.06|62.26|59.43|91.51|73.58|81.13|68.87|70.85|13.94|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax  |71.70|93.40|89.62|91.51|63.21|57.55|86.79|94.34|83.02|94.34|**82.55**|12.89|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax  |84.91|93.40|83.96|71.70|58.49|70.75|92.45|65.09|71.70|90.57|78.30|11.68|
+| EmbraceBERTwithProj-bs8+Softmax               |92.45|92.45|63.21|60.38|71.70|75.47|76.42|65.09|80.19|91.51|76.89|11.56|
+| EmbraceBERTwithProj-bs8-p_attclsqw+Softmax    |84.91|93.40|68.87|64.15|75.47|77.36|84.91|67.92|82.08|50.94|75.00|11.72|
+| EBERTconcatAtt-bs8+Softmax                  |59.43|95.28|65.09|67.92|81.13|62.26|59.43|58.49|69.81|90.57|70.94|12.73|
+| EBERTconcatAtt-bs8_attclsqw+Softmax         |65.09|82.08|91.51|80.19|64.15|73.58|84.91|89.62|59.43|88.68|77.92|11.06|
+| EBERTconcatAttwithProj-bs8+Softmax          |78.30|77.36|79.25|77.36|90.57|57.55|76.42|66.98|59.43|91.51|75.47|10.80|
+| EBERTconcatAttwithProj-bs8_attclsqw+Softmax |72.64|90.57|82.08|88.68|82.08|71.70|82.08|66.98|69.81|55.66|76.23|10.23|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |88.68|94.34|93.40|93.40|58.49|61.32|94.34|58.49|67.92|72.64|78.30|15.14|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |63.21|76.42|65.09|82.08|67.92|61.32|66.04|63.21|63.21|90.57|69.91|9.31|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |87.74|71.70|85.85|88.68|81.13|76.42|83.96|69.81|83.02|74.53|80.28|6.40|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |67.92|55.66|77.36|80.19|73.58|61.32|74.53|65.09|66.98|68.87|69.15|7.10|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |69.81|88.68|87.74|92.45|80.19|53.77|94.34|77.36|59.43|92.45|79.62|13.68|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |49.06|94.34|78.30|92.45|70.75|79.25|90.57|83.02|80.19|79.25|79.72|12.36|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |73.58|68.87|90.57|60.38|78.30|73.58|93.40|65.09|62.26|86.79|75.28|11.16|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |75.47|55.66|87.74|89.62|86.79|58.49|88.68|66.98|78.30|86.79|77.45|12.26|
 
 ### macsay-sphinx - good RoBERTa bs4 only
 * Epoch 100
@@ -1302,6 +1411,28 @@
 | EBERTconcatAtt-bs8_attclsqw         |71.70|75.47|73.58|73.58|64.15|68.87|72.64|81.13|51.89|76.42|70.94|7.65|
 | EBERTconcatAttwithProj-bs8          |83.02|75.47|79.25|75.47|75.47|62.26|83.96|66.98|86.79|81.13|*76.98*|7.26|
 | EBERTconcatAttwithProj-bs8_attclsqw |72.64|79.25|83.96|80.19|71.70|72.64|81.13|70.75|79.25|75.47|*76.70*|4.39|
+| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BERT-bs8+Softmax                              |78.30|50.94|76.42|75.47|79.25|82.08|74.53|83.96|77.36|76.42|75.47|8.64|
+| BERTwithAtt-bs8+Softmax                       |63.21|74.53|61.32|83.96|64.15|69.81|62.26|82.08|55.66|66.04|68.30|8.77|
+| BERTwithAttClsProjection-bs8+Softmax          |84.91|80.19|65.09|78.30|71.70|66.98|86.79|76.42|84.91|68.87|76.42|7.52|
+| BERTwithProjection-bs8+Softmax                |61.32|69.81|79.25|82.08|65.09|80.19|78.30|79.25|82.08|60.38|73.77|8.28|
+| BERTwithProjectionAtt-bs8+Softmax             |53.77|75.47|80.19|53.77|60.38|62.26|82.08|78.30|77.36|70.75|69.43|10.39|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax  |71.70|73.58|75.47|84.91|64.15|52.83|82.08|78.30|75.47|84.91|74.34|9.36|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax  |85.85|75.47|80.19|71.70|61.32|66.04|83.02|65.09|69.81|82.08|74.06|8.09|
+| EmbraceBERTwithProj-bs8+Softmax               |84.91|81.13|72.64|67.92|69.81|68.87|69.81|64.15|83.96|82.08|74.53|7.27|
+| EmbraceBERTwithProj-bs8-p_attclsqw+Softmax    |84.91|82.08|75.47|66.98|76.42|70.75|83.02|73.58|82.08|63.21|75.85|6.94|
+| EBERTconcatAtt-bs8+Softmax                  |55.66|84.91|65.09|70.75|83.96|65.09|69.81|66.04|66.04|80.19|70.75|8.95|
+| EBERTconcatAtt-bs8_attclsqw+Softmax         |70.75|79.25|72.64|71.70|66.98|72.64|80.19|85.85|71.70|76.42|74.81|5.29|
+| EBERTconcatAttwithProj-bs8+Softmax          |80.19|76.42|79.25|79.25|83.96|72.64|77.36|65.09|68.87|80.19|76.32|5.49|
+| EBERTconcatAttwithProj-bs8_attclsqw+Softmax |69.81|81.13|82.08|78.30|77.36|78.30|79.25|72.64|70.75|62.26|75.19|5.88|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |83.02|83.96|83.02|82.08|52.83|61.32|78.30|60.38|68.87|78.30|73.21|10.86|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |66.04|69.81|60.38|81.13|72.64|62.26|67.92|64.15|66.98|82.08|69.34|6.99|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |79.25|68.87|82.08|78.30|78.30|78.30|81.13|69.81|77.36|84.91|**77.83**|4.76|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |73.58|61.32|80.19|82.08|69.81|69.81|70.75|72.64|69.81|71.70|72.17|5.49|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |76.42|82.08|73.58|83.02|77.36|58.49|76.42|78.30|60.38|77.36|74.34|7.90|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |52.83|79.25|74.53|73.58|67.92|69.81|78.30|74.53|74.53|67.92|71.32|7.17|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |71.70|74.53|83.96|59.43|77.36|67.92|84.91|71.70|74.53|83.02|74.91|7.50|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |73.58|65.09|83.02|78.30|83.96|65.09|87.74|67.92|80.19|83.02|76.79|7.91|
 
 ### macsay-witai - good RoBERTa bs4 only
 * Epoch 100
@@ -1499,6 +1630,28 @@
 | EBERTconcatAtt-bs8_attclsqw         |86.79|89.62|95.28|83.02|83.02|83.96|89.62|91.51|74.53|89.62|86.70|5.52|
 | EBERTconcatAttwithProj-bs8          |93.40|87.74|92.45|89.62|91.51|83.02|94.34|85.85|94.34|90.57|*90.28*|3.58|
 | EBERTconcatAttwithProj-bs8_attclsqw |87.74|87.74|91.51|95.28|90.57|83.96|90.57|85.85|89.62|87.74|89.06|3.02|
+| ------------------------------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BERT-bs8+Softmax                              |92.45|77.36|86.79|87.74|90.57|91.51|92.45|87.74|87.74|88.68|88.30|4.16|
+| BERTwithAtt-bs8+Softmax                       |80.19|90.57|80.19|91.51|81.13|84.91|83.02|92.45|83.02|83.96|85.09|4.46|
+| BERTwithAttClsProjection-bs8+Softmax          |93.40|89.62|83.02|92.45|89.62|81.13|93.40|92.45|87.74|86.79|88.96|4.09|
+| BERTwithProjection-bs8+Softmax                |82.08|84.91|92.45|93.40|82.08|92.45|90.57|87.74|93.40|79.25|87.83|5.11|
+| BERTwithProjectionAtt-bs8+Softmax             |78.30|89.62|92.45|78.30|81.13|79.25|91.51|86.79|86.79|83.02|84.72|5.16|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax  |83.96|94.34|85.85|92.45|82.08|82.08|91.51|90.57|91.51|91.51|88.58|4.37|
+| EmbraceBERT-bs8-p_att_clsquery_weights+Softmax  |89.62|96.23|91.51|87.74|79.25|85.85|86.79|83.96|83.02|91.51|87.55|4.66|
+| EmbraceBERTwithProj-bs8+Softmax               |93.40|93.40|84.91|84.91|86.79|87.74|87.74|83.02|91.51|93.40|88.68|3.75|
+| EmbraceBERTwithProj-bs8-p_attclsqw+Softmax    |92.45|94.34|85.85|86.79|86.79|92.45|94.34|87.74|91.51|82.08|89.43|3.93|
+| EBERTconcatAtt-bs8+Softmax                  |78.30|90.57|82.08|85.85|92.45|81.13|82.08|81.13|87.74|91.51|85.28|4.78|
+| EBERTconcatAtt-bs8_attclsqw+Softmax         |84.91|89.62|90.57|83.96|83.02|90.57|94.34|88.68|83.96|89.62|87.92|3.55|
+| EBERTconcatAttwithProj-bs8+Softmax          |92.45|90.57|87.74|89.62|93.40|87.74|91.51|85.85|82.08|90.57|89.15|3.22|
+| EBERTconcatAttwithProj-bs8_attclsqw+Softmax |84.91|91.51|90.57|95.28|91.51|85.85|91.51|88.68|88.68|82.08|89.06|3.68|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |95.28|91.51|93.40|91.51|79.25|83.96|94.34|82.08|83.02|83.96|87.83|5.62|
+| EmbraceBERT-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |81.13|83.02|83.02|89.62|83.02|81.13|87.74|81.13|81.13|89.62|84.06|3.36|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |90.57|87.74|92.45|91.51|90.57|91.51|92.45|86.79|87.74|89.62|90.09|1.94|
+| EmbraceBERTwithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |83.96|84.91|90.57|94.34|87.74|85.85|88.68|85.85|86.79|87.74|87.64|2.88|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery+Softmax                  |86.79|93.40|89.62|92.45|92.45|81.13|90.57|87.74|82.08|92.45|88.87|4.17|
+| EmbraceBERTconcatatt-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax         |81.13|95.28|88.68|93.40|83.02|90.57|88.68|89.62|85.85|88.68|88.49|4.09|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery+Softmax          |87.74|88.68|93.40|85.85|90.57|88.68|93.40|87.74|82.08|93.40|89.15|3.49|
+| EmbraceBERTconcatattWithProj-bs8-p_multiheadatt_bertKeyValQuery_attclsqw+Softmax |90.57|83.02|93.40|93.40|93.40|81.13|88.68|88.68|89.62|93.40|89.53|4.19|
 
 ## STT Error: trained and tested with INCOMPLETE data
 > EBERTkv, EBERTq are not included here because they use complete data 
