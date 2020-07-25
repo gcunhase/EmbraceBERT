@@ -53,6 +53,7 @@ from models.EmbraceRoBERTa import EmbraceRobertaForSequenceClassification
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 from pytorch_model_summary import summary
+from timeit import default_timer as timer
 
 from utils_classifier import (compute_metrics, convert_examples_to_features,
                               output_modes, processors, labels_array)
@@ -850,6 +851,8 @@ def main():
 
     args = parser.parse_args()
 
+    start_time = timer()
+
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train and not args.overwrite_output_dir:
         raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(args.output_dir))
 
@@ -981,6 +984,8 @@ def main():
             result = dict((k, v) for k, v in result.items())
         results.update(result)
 
+    end_time = timer()
+    logger.info("Code ran for {} minutes".format(end_time-start_time))
     return results
 
 
