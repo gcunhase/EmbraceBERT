@@ -20,8 +20,8 @@ BS_EVAL=1
 for BS_TRAIN in 8; do
   for DATASET in chatbot; do
       echo $DATASET
-      for TTS in "macsay"; do
-          for STT in "sphinx" "witai"; do
+      for TTS in "gtts" "macsay"; do
+          for STT in "google" "sphinx" "witai"; do
               for EPOCH in 100; do
                   echo "Training ${DATASET} dataset with ${TTS}-${STT} for ${EPOCH} epochs and bs ${BS_TRAIN}"
 

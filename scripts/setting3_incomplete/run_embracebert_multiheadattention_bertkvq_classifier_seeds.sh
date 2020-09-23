@@ -27,8 +27,8 @@ for BS_TRAIN in 8; do
       for EPOCH in 100; do
           echo "Training ${DATASET} dataset with ${PERC} missing for ${EPOCH} epochs"
 
-          for STT in macsay; do
-            for TTS in sphinx witai; do
+          for STT in "gtts" "macsay"; do
+            for TTS in "google" "sphinx" "witai"; do
               STT_TTS="${STT}_${TTS}"
               DATA_DIR="../../data/${DATA_PATH_NAME}/${DATASET}/${STT_TTS}/"
 

@@ -21,8 +21,8 @@ for BS_TRAIN in 8; do
   for DATASET in chatbot; do
       echo $DATASET
       for EPOCH in 100; do
-          for TTS in "macsay"; do
-            for STT in "sphinx" "witai"; do
+      for TTS in "gtts" "macsay"; do
+          for STT in "google" "sphinx" "witai"; do
               echo "Training ${DATASET} dataset with ${TTS}-${STT} for ${EPOCH} epochs and bs ${BS_TRAIN}"
               DATA_DIR="../../data/${DATA_PATH_NAME}/${DATASET}/${TTS}_${STT}/"
 

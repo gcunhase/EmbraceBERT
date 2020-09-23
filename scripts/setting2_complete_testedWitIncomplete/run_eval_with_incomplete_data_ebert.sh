@@ -27,7 +27,7 @@ echo $MODEL_NAME_OR_PATH
 CUDA_ID=0
 BS_EVAL=1
 for BS_TRAIN in 8; do
-  for EPOCH in 100; do  # 100; do
+  for EPOCH in 100; do
       for DATASET in chatbot; do
           echo $DATASET
           echo "Evaluating ${DATASET} dataset with incomplete data for ${EPOCH} epochs"
@@ -42,8 +42,8 @@ for BS_TRAIN in 8; do
               EVAL_PATH="${EVAL_DIR}/${RESULT_DIR}"
               mkdir $EVAL_PATH
 
-              for TTS in "macsay"; do
-                for STT in "sphinx" "witai"; do
+              for TTS in "gtts" "macsay"; do
+                for STT in "google" "sphinx" "witai"; do
                   DATA_DIR="../../data/${DATA_PATH_NAME}/${DATASET}/${TTS}_${STT}/"
                   EVAL_OUTPUT_FILENAME="eval_results_${TTS}_${STT}"
 
