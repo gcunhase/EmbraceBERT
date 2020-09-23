@@ -1,8 +1,8 @@
 
 # Large directories
 venv*/*
-runs/*
-results/*
+runs*/*
+results*/*
 
 # Cached data after training model
 data/*/*/*/cached*
