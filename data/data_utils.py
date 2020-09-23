@@ -27,6 +27,11 @@ INTENTION_TAGS = {
 }
 
 
+SENTIMENT_TAGS = {'Sentiment140': {'Negative': 0,
+                                   'Positive': 1}
+                  }
+
+
 def write_tsv(intention_dir_path, filename, keys, dict):
     file_test = open(intention_dir_path + "/" + filename, 'wt')
     dict_writer = csv.writer(file_test, delimiter='\t')

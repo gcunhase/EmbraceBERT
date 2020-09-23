@@ -307,6 +307,8 @@ def compute_metrics(task_name, preds, labels):
         return acc_and_f1(preds, labels)
     elif task_name == "webapplications_intent":
         return acc_and_f1(preds, labels)
+    elif task_name == "sentiment140_sentiment":
+        return acc_and_f1(preds, labels)
     else:
         raise KeyError(task_name)
 
@@ -315,6 +317,7 @@ processors = {
     "chatbot_intent": SentenceClassificationProcessor,
     "askubuntu_intent": SentenceClassificationProcessor,
     "webapplications_intent": SentenceClassificationProcessor,
+    "sentiment140_sentiment": SentenceClassificationProcessor,
 }
 
 output_modes = {
@@ -322,6 +325,7 @@ output_modes = {
     "chatbot_intent": "classification",
     "askubuntu_intent": "classification",
     "webapplications_intent": "classification",
+    "sentiment140_sentiment": "classification",
 }
 
 num_labels_task = {
@@ -329,6 +333,7 @@ num_labels_task = {
     "chatbot_intent": 2,
     "askubuntu_intent": 5,
     "webapplications_intent": 8,
+    "sentiment140_sentiment": 2,
 }
 
 labels_array = {
@@ -336,6 +341,7 @@ labels_array = {
     "chatbot_intent": ["0", "1"],
     "askubuntu_intent": ["0", "1", "2", "3", "4"],
     "webapplications_intent": ["0", "1", "2", "3", "4", "5", "6", "7"],
+    "sentiment140_sentiment": ["0", "1"],
 }
 
 labels_array_int = {
@@ -343,5 +349,6 @@ labels_array_int = {
     "chatbot_intent": [0, 1],
     "askubuntu_intent": [0, 1, 2, 3, 4],
     "webapplications_intent": [0, 1, 2, 3, 4, 5, 6, 7],
+    "sentiment140_sentiment": [0, 1],
 }
 
