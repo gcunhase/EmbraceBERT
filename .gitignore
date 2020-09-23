@@ -2,7 +2,8 @@
 # Large directories
 venv*/*
 runs*/*
-results*/*
+results/*
+results_korean/*
 
 # Cached data after training model
 data/*/*/*/cached*

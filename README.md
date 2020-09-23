@@ -1,5 +1,9 @@
 ## About
-*EmbraceBERT*: BERT with ideas from [EmbraceNet](https://arxiv.org/abs/1904.09078) to improve robustness and thus classification accuracy in noisy data.
+* *EmbraceBERT*: BERT with ideas from [EmbraceNet](https://arxiv.org/abs/1904.09078) to improve robustness and thus classification accuracy in noisy data.
+* 3 settings:
+    1. Trained and tested with complete data
+    2. Trained with complete data and tested with incomplete data
+    3. Trained and tested with incomplete data
 
 ## Contents
 [Requirements](#requirements) • [EmbraceBERT](#embracebert) • [How to Use](#how-to-use) • [Results](#results) • [How to Cite](#acknowledgement)
@@ -33,21 +37,21 @@ conda activate my_env
 * Proposed: all tokens (BERT, EBERT, EBERTkvq)
     ```
     # BERT with tokens
-    ./scripts/default/run_bertWithTokens_classifier_complete_seeds.sh
+    ./scripts/[DIR_SETTING_1_OR_3]/run_bertWithTokens_classifier_seeds.sh
     # EBERT
-    ./scripts/p_selfattention/run_embracebert_classifier_complete_seeds.sh
+    ./scripts/[DIR_SETTING_1_OR_3]/run_embracebert_classifier_seeds.sh
     # EBERTkvq
-    ./scripts/p_selfattention/run_embracebert_multiheadattention_bertkvq_classifier_complete_seeds.sh
+    ./scripts/[DIR_SETTING_1_OR_3]/run_embracebert_multiheadattention_bertkvq_classifier_seeds.sh
     ```
 
 * Baseline (BERT)
     ```
-    ./scripts/default/run_bert_classifier_complete_seeds.sh
+    ./scripts/[DIR_SETTING_1_OR_3]/run_bert_classifier_seeds.sh
     ```
     
 ### 3. Test model with Incomplete data
 ```
-./run_eval_with_incomplete_data.sh
+./scripts/[DIR_SETTING_2]/run_eval_with_incomplete_data.sh
 ```
 > Modify script with the path and type of your model 
 
@@ -85,8 +89,11 @@ python run_classifier.py --seed 1 --task_name chatbot_intent --model_type bert -
 ### Baseline
 [BERT/RoBERTa](https://github.com/gcunhase/IntentClassifier-RoBERTa) and [NLU Services](https://github.com/gcunhase/IntentClassifier) [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa)]
 
-### F1-scores
+### F1-scores (English)
 [AskUbuntu](./results_notes/askubuntu.md) • [Chatbot](./results_notes/chatbot.md) • [WebApplications](./results_notes/webapplications.md) • [Snips](./results_notes/snips.md)
+
+### F1-scores (Korean)
+[Chatbot](./results_notes/chatbot_korean.md)
 
 ## Acknowledgement
 In case you wish to use this code, please credit this repository or send me an email at `gwena.cs@gmail.com` with any requests or questions.
