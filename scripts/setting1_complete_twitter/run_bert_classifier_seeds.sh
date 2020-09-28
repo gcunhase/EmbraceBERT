@@ -5,19 +5,19 @@ MODEL_TYPE=bert
 LANGUAGE="english"  # Options = [english, korean]
 if [[ $LANGUAGE == *"english"* ]]; then
   MODEL_NAME_OR_PATH="bert-base-uncased"
-  OUTPUT_DIR="../../results/${MODEL_TYPE}/"
-  RUN_DIR="../../runs/${MODEL_TYPE}/"
+  OUTPUT_DIR="../../results_twitter/${MODEL_TYPE}/"
+  RUN_DIR="../../runs_twitter/${MODEL_TYPE}/"
   DATA_PATH_NAME="twitter_sentiment_data"
 else
   MODEL_NAME_OR_PATH="bert-base-multilingual-uncased"
-  OUTPUT_DIR="../../results_korean/${MODEL_TYPE}/"
-  RUN_DIR="../../runs_korean/${MODEL_TYPE}/"
+  OUTPUT_DIR="../../results_twitter_korean/${MODEL_TYPE}/"
+  RUN_DIR="../../runs_twitter_korean/${MODEL_TYPE}/"
   DATA_PATH_NAME="korean_twitter_sentiment_data"
 fi
 echo $MODEL_NAME_OR_PATH
 
 BS_EVAL=1
-for BS_TRAIN in 4; do
+for BS_TRAIN in 4 8; do
   for DATASET in "sentiment140"; do
       echo $DATASET
       for EPOCH in 100; do
@@ -26,7 +26,7 @@ for BS_TRAIN in 4; do
           DATA_DIR="../../data/${DATA_PATH_NAME}/${DATASET}_corrected_sentences/"
 
           for SEED in 1 2 3 4 5 6 7 8 9 10; do
-              RESULT_DIR="twitter/complete/${DATASET}_ep${EPOCH}_bs${BS_TRAIN}_seed${SEED}"
+              RESULT_DIR="${DATASET}/complete/${DATASET}_ep${EPOCH}_bs${BS_TRAIN}_seed${SEED}"
               OUT_PATH="${OUTPUT_DIR}/${RESULT_DIR}"
               LOG_DIR_PATH="${RUN_DIR}/${RESULT_DIR}"
 
