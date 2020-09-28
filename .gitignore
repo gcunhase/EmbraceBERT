@@ -4,6 +4,7 @@ venv*/*
 runs*/*
 results/*
 results_korean/*
+results_twitter/*
 
 # Cached data after training model
 data/*/*/*/cached*
