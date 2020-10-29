@@ -1,7 +1,7 @@
 Code for the paper titled *"Attentively Embracing Noise for Robust Latent Representation in BERT"* (To appear at COLING 2020, Dec 8-13 2020)
 
 ## About
-* **EmbraceBERT**: BERT with attentive embracement layer for improved robustness in noisy text classification tasks.
+**EmbraceBERT**: attentive embracement layer for BERT encoded tokens for improved robustness in noisy text classification tasks.
 
 <p align="center">
     <img src="./data/assets/model_ebertkvq_patt.png" height="400" alt="Proposed model">
@@ -29,13 +29,13 @@ python -m spacy download en
 
 ## How to Use
 ### 1. Dataset
-* Open-source NLU benchmarks (SNIPS, Chatbot Corpora)
+* Open-source NLU benchmarks ([SNIPS](https://github.com/snipsco/nlu-benchmark), [Chatbot](https://github.com/sebischair/NLU-Evaluation-Corpora))
 > Ongoing: Ask Ubuntu, Web Applications Corpora
 
-* Available in `data` directory [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa/data/README.md)] 
+* Available in [`data` directory](data) [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa/data/README.md)] 
 > Data with STT error [repository](https://github.com/gcunhase/STTError)
 
-### 2. Train Model
+### 2. Train Model (settings 1 and 3)
 > The script will run the model 10 times. If you wish to run it only once, please change the SEED parameter in the script.
 
 * Proposed: all tokens (BERT, EBERT, EBERTkvq)
@@ -59,6 +59,20 @@ python -m spacy download en
 ```
 > Modify script with the path and type of your model 
 
+## Results
+### F1-scores (English)
+
+<p align="center">
+    <img src="./data/assets/ebert_results_chatbot.png" height="300" alt="Results chatbot">
+</p>
+
+> Ablation study on: [Chatbot](./results_notes/chatbot.md) • [Snips](./results_notes/snips.md)
+
+> Ongoing: [AskUbuntu](./results_notes/askubuntu.md) • [WebApplications](./results_notes/webapplications.md) 
+
+### F1-scores (Korean)
+[Chatbot](./results_notes/chatbot_korean.md)
+
 ## Additional information
 ### Get mean and std from N runs
 Run python script in the [`get_results`](get_results) directory.
@@ -80,20 +94,12 @@ python run_classifier.py --seed 1 --task_name chatbot_intent --model_type $MODEL
 | DIM_REDUCTION_METHOD | [`attention`, `projection`] |
 | P_TYPE | [`multinomial`, `attention_clsquery_weights`] |
 
-### Output: generated files
+### Generated files
 | File                              | Description |
 | --------------------------------- | ----------- |
 | `checkpoint-best-${EPOCH_NUMBER}` | Directory with saved model |
 | `eval_results.json`               | JSONified train/eval information |
 | `eval_results.txt`                | Train/eval information: eval accuracy and loss, global_step and train loss |
-
-## Results
-### F1-scores (English)
-[Chatbot](./results_notes/chatbot.md) • [Snips](./results_notes/snips.md)
-> Ongoing: [AskUbuntu](./results_notes/askubuntu.md) • [WebApplications](./results_notes/webapplications.md) 
-
-### F1-scores (Korean)
-[Chatbot](./results_notes/chatbot_korean.md)
 
 ## Acknowledgement
 In case you wish to use this code, please cite [To be update]:
