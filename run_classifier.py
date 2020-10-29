@@ -50,6 +50,8 @@ from models.EmbraceBERT import EmbraceBertForSequenceClassification
 from models.EmbraceBERTwithQuery import EmbraceBertWithQueryForSequenceClassification
 from models.BERTwithTokens import BertWithTokensForSequenceClassification
 from models.EmbraceRoBERTa import EmbraceRobertaForSequenceClassification
+from models.EmbraceRoBERTawithQuery import EmbraceRobertaWithQueryForSequenceClassification
+from models.RoBERTawithTokens import RobertaWithTokensForSequenceClassification
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 from pytorch_model_summary import summary
@@ -65,6 +67,7 @@ ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (
 # embracebertwithkeyvaluequery: bert+(multiheadattention with tokens (except CLS), embracement layer, attention with e and CLS token)
 MODEL_CLASSES = {
     'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
+    'bertplustransformerlayer': (BertConfig, BertForSequenceClassification, BertTokenizer),  # BERT + 1 extra layer of transformer
     'embracebert': (BertConfig, EmbraceBertForSequenceClassification, BertTokenizer),
     'embracebertconcatatt': (BertConfig, EmbraceBertForSequenceClassification, BertTokenizer),
     'embracebertwithkeyvaluequery': (BertConfig, EmbraceBertWithQueryForSequenceClassification, BertTokenizer),
@@ -78,6 +81,13 @@ MODEL_CLASSES = {
     'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
     'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
     'embraceroberta': (RobertaConfig, EmbraceRobertaForSequenceClassification, RobertaTokenizer),
+    'embracerobertaconcatatt': (RobertaConfig, EmbraceRobertaForSequenceClassification, RobertaTokenizer),
+    'embracerobertawithkeyvaluequery': (RobertaConfig, EmbraceRobertaWithQueryForSequenceClassification, RobertaTokenizer),
+    'embracerobertawithkeyvaluequeryconcatatt': (RobertaConfig, EmbraceRobertaWithQueryForSequenceClassification, RobertaTokenizer),
+    'robertawithatt': (RobertaConfig, RobertaWithTokensForSequenceClassification, RobertaTokenizer),
+    'robertawithattclsprojection': (RobertaConfig, RobertaWithTokensForSequenceClassification, RobertaTokenizer),
+    'robertawithprojection': (RobertaConfig, RobertaWithTokensForSequenceClassification, RobertaTokenizer),
+    'robertawithprojectionatt': (RobertaConfig, RobertaWithTokensForSequenceClassification, RobertaTokenizer),
 }
 
 
@@ -164,12 +174,16 @@ def pre_train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval
                                                                         'bertwithatt', 'bertwithprojection',
                                                                         'bertwithprojectionatt', 'bertwithattprojection',
                                                                         'bertwithattclsprojection',
-                                                                        'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
+                                                                        'bert', 'xlnet', 'bertplustransformerlayer'] else None,  # XLM and RoBERTa don't use segment_ids
                       'labels':         batch[3]}
-            if args.model_type in ['embracebert', 'embracebertconcatatt', 'embraceroberta', 'bert', 'roberta', 'bertwithatt',
-                                   'bertwithprojection', 'bertwithprojectionatt', 'bertwithattprojection', 'bertwithattclsprojection']:
+            if args.model_type in ['embracebert', 'embracebertconcatatt', 'embraceroberta', 'embracerobertaconcatatt',
+                                   'bert', 'roberta', 'bertwithatt', 'bertwithprojection', 'bertwithprojectionatt',
+                                   'bertwithattprojection', 'bertwithattclsprojection', 'bertplustransformerlayer',
+                                   'robertawithatt', 'robertawithattclsprojection', 'robertawithprojection',
+                                   'robertawithprojectionatt']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout, freeze_bert_weights=freeze_bert_weights)
-            elif args.model_type in ['embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt']:
+            elif args.model_type in ['embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt',
+                                     'embracerobertawithkeyvaluequery', 'embracerobertawithkeyvaluequeryconcatatt']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout, freeze_bert_weights=freeze_bert_weights,
                                 is_evaluate=True)  # True for BERT K,V,Q
             else:
@@ -332,12 +346,17 @@ def train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval_dat
                                                                         'embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt',
                                                                         'bertwithatt', 'bertwithprojection',
                                                                         'bertwithprojectionatt', 'bertwithattprojection',
-                                                                        'bertwithattclsprojection', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
+                                                                        'bertwithattclsprojection', 'bert', 'xlnet',
+                                                                        'bertplustransformerlayer'] else None,  # XLM and RoBERTa don't use segment_ids
                       'labels':         batch[3]}
-            if args.model_type in ['embracebert', 'embracebertconcatatt', 'embraceroberta', 'bert', 'roberta', 'bertwithatt',
-                                   'bertwithprojection', 'bertwithprojectionatt', 'bertwithattprojection', 'bertwithattclsprojection']:
+            if args.model_type in ['embracebert', 'embracebertconcatatt', 'embraceroberta', 'embracerobertaconcatatt',
+                                   'bert', 'roberta', 'bertwithatt', 'bertwithprojection', 'bertwithprojectionatt',
+                                   'bertwithattprojection', 'bertwithattclsprojection', 'bertplustransformerlayer',
+                                   'robertawithatt', 'robertawithattclsprojection', 'robertawithprojection',
+                                   'robertawithprojectionatt']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout)
-            elif args.model_type in ['embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt']:
+            elif args.model_type in ['embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt',
+                                     'embracerobertawithkeyvaluequery', 'embracerobertawithkeyvaluequeryconcatatt']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout, is_evaluate=True)  # True for BERT K,V,Q
             else:
                 outputs = model(**inputs)
@@ -474,9 +493,11 @@ def evaluate(args, model, tokenizer, prefix=""):
                                                                             'embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt',
                                                                             'bertwithatt', 'bertwithprojection',
                                                                             'bertwithprojectionatt', 'bertwithattprojection',
-                                                                            'bertwithattclsprojection', 'bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
+                                                                            'bertwithattclsprojection', 'bert', 'xlnet',
+                                                                            'bertplustransformerlayer'] else None,  # XLM and RoBERTa don't use segment_ids
                           'labels':         batch[3]}
-                if args.model_type in ['embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt']:
+                if args.model_type in ['embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt',
+                                       'embracerobertawithkeyvaluequery', 'embracerobertawithkeyvaluequeryconcatatt']:
                     outputs = model(**inputs, is_evaluate=True)  # True for BERT K,V,Q
                 else:
                     outputs = model(**inputs)
@@ -486,15 +507,21 @@ def evaluate(args, model, tokenizer, prefix=""):
                 eval_loss += tmp_eval_loss.mean().item()
             nb_eval_steps += 1
             if preds is None:
-                if args.model_type in ['embracebert', 'embracebertconcatatt', 'embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt', 'bertwithatt',
-                                       'bertwithprojection', 'bertwithprojectionatt', 'bertwithattprojection', 'bertwithattclsprojection']:
+                if args.model_type in ['embracebert', 'embracebertconcatatt', 'embracebertwithkeyvaluequery',
+                                       'embracebertwithkeyvaluequeryconcatatt', 'bertwithatt', 'bertwithprojection',
+                                       'bertwithprojectionatt', 'bertwithattprojection', 'bertwithattclsprojection']:
+                                       #'embraceroberta', 'embracerobertaconcatatt', 'embracerobertawithkeyvaluequery',
+                                       #'embracerobertawithkeyvaluequeryconcatatt']:
                     preds = [logits.detach().cpu().numpy()]
                 else:  # Why doesn't this work with EmbraceBERT? This is the original line in the code.
                     preds = logits.detach().cpu().numpy()
                 out_label_ids = inputs['labels'].detach().cpu().numpy()
             else:
-                if args.model_type in ['embracebert', 'embracebertconcatatt', 'embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt', 'bertwithatt', 'bertwithprojection',
+                if args.model_type in ['embracebert', 'embracebertconcatatt', 'embracebertwithkeyvaluequery',
+                                       'embracebertwithkeyvaluequeryconcatatt', 'bertwithatt', 'bertwithprojection',
                                        'bertwithprojectionatt', 'bertwithattprojection', 'bertwithattclsprojection']:
+                                       #'embraceroberta', 'embracerobertaconcatatt', 'embracerobertawithkeyvaluequery',
+                                       #'embracerobertawithkeyvaluequeryconcatatt']:
                     preds.append(logits.detach().cpu().numpy())
                 else:
                     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
@@ -606,31 +633,68 @@ def save_model(args, model, tokenizer, model_class, train_step_type='train'):
         torch.save(args, os.path.join(output_dir, 'training_args.bin'))
 
         # Load a trained model and vocabulary that you have fine-tuned
-        if args.model_type in ['bert', 'roberta']:  # with args
+        if args.model_type in ['bert']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
-        elif args.model_type in ['embracebert', 'embracebertwithkeyvaluequery']:  # with args
+        elif args.model_type in ['roberta']:
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, do_calculate_num_params=args.do_calculate_num_params)
+        elif args.model_type in ['bertplustransformerlayer']:
+            model = model_class.from_pretrained(output_dir, add_transformer_layer=True, dropout_prob=args.dropout_prob)
+        elif args.model_type in ['embracebert']:  # with args
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
                                                 share_branch_weights=args.share_branch_weights, p=args.p,
                                                 max_seq_length=args.max_seq_length,
                                                 dimension_reduction_method=args.dimension_reduction_method)
-        elif args.model_type in ['embracebertconcatatt', 'embracebertwithkeyvaluequeryconcatatt']:
+        elif args.model_type in ['embracebertwithkeyvaluequery']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length,
+                                                dimension_reduction_method=args.dimension_reduction_method,
+                                                do_calculate_num_params=args.do_calculate_num_params)
+        elif args.model_type in ['embracebertconcatatt']:
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
                                                 share_branch_weights=args.share_branch_weights, p=args.p,
                                                 max_seq_length=args.max_seq_length,
                                                 dimension_reduction_method=args.dimension_reduction_method,
                                                 concat_att_with_embracement=True)
-        elif args.model_type in ['embraceroberta']:  # with args
+        elif args.model_type in ['embracebertwithkeyvaluequeryconcatatt']:
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
                                                 share_branch_weights=args.share_branch_weights, p=args.p,
-                                                max_seq_length=args.max_seq_length)
-        elif args.model_type in ['bertwithatt', 'bertwithprojection', 'bertwithprojectionatt', 'bertwithattprojection', 'bertwithattclsprojection']:
+                                                max_seq_length=args.max_seq_length,
+                                                dimension_reduction_method=args.dimension_reduction_method,
+                                                concat_att_with_embracement=True,
+                                                do_calculate_num_params=args.do_calculate_num_params)
+        elif args.model_type in ['embraceroberta', 'embracerobertawithkeyvaluequery']:  # with args
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length,
+                                                dimension_reduction_method=args.dimension_reduction_method,
+                                                do_calculate_num_params=args.do_calculate_num_params)
+        elif args.model_type in ['embracerobertaconcatatt', 'embracerobertawithkeyvaluequeryconcatatt']:
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights, p=args.p,
+                                                max_seq_length=args.max_seq_length,
+                                                dimension_reduction_method=args.dimension_reduction_method,
+                                                concat_att_with_embracement=True,
+                                                do_calculate_num_params=args.do_calculate_num_params)
+        elif args.model_type in ['bertwithatt', 'bertwithprojection', 'bertwithprojectionatt', 'bertwithattprojection',
+                                 'bertwithattclsprojection']:
             model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                                 is_condensed=args.is_condensed, add_branches=args.add_branches,
                                                 share_branch_weights=args.share_branch_weights,
                                                 max_seq_length=args.max_seq_length, token_layer_type=args.model_type)
+        elif args.model_type in ['robertawithatt', 'robertawithattclsprojection', 'robertawithprojection',
+                                 'robertawithprojectionatt']:
+            model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                                is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                                share_branch_weights=args.share_branch_weights,
+                                                max_seq_length=args.max_seq_length, token_layer_type=args.model_type,
+                                                do_calculate_num_params=args.do_calculate_num_params)
         else:
             model = model_class.from_pretrained(output_dir)
         # tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -663,31 +727,68 @@ def load_model_for_eval(args, model_class, tokenizer_class, train_step_type='tra
     # for checkpoint in checkpoints:
     global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
     # Load a trained model and vocabulary that you have fine-tuned
-    if args.model_type in ['bert', 'roberta']:  # with args
+    if args.model_type in ['bert']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob)
-    elif args.model_type in ['embracebert', 'embracebertwithkeyvaluequery']:  # with args
+    elif args.model_type in ['roberta']:
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['bertplustransformerlayer']:
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, add_transformer_layer=True)
+    elif args.model_type in ['embracebert']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
                                             add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
                                             max_seq_length=args.max_seq_length,
                                             dimension_reduction_method=args.dimension_reduction_method)
-    elif args.model_type in ['embracebertconcatatt', 'embracebertwithkeyvaluequeryconcatatt']:
+    elif args.model_type in ['embracebertwithkeyvaluequery']:  # with args
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
+                                            add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['embracebertconcatatt']:
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
                                             max_seq_length=args.max_seq_length,
                                             dimension_reduction_method=args.dimension_reduction_method,
                                             concat_att_with_embracement=True)
-    elif args.model_type in ['embraceroberta']:  # with args
+    elif args.model_type in ['embracebertwithkeyvaluequeryconcatatt']:
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            concat_att_with_embracement=True,
+                                            do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['embraceroberta', 'embracerobertawithkeyvaluequery']:  # with args
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob, is_condensed=args.is_condensed,
                                             add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
-                                            max_seq_length=args.max_seq_length)
-    elif args.model_type in ['bertwithatt', 'bertwithprojection', 'bertwithprojectionatt', 'bertwithattprojection', 'bertwithattclsprojection']:
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['embracerobertaconcatatt', 'embracerobertawithkeyvaluequeryconcatatt']:
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            concat_att_with_embracement=True,
+                                            do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['bertwithatt', 'bertwithprojection', 'bertwithprojectionatt', 'bertwithattprojection',
+                             'bertwithattclsprojection']:
         model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights,
                                             max_seq_length=args.max_seq_length, token_layer_type=args.model_type)
+    elif args.model_type in ['robertawithatt', 'robertawithattclsprojection',
+                             'robertawithprojection', 'robertawithprojectionatt']:
+        model = model_class.from_pretrained(output_dir, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights,
+                                            max_seq_length=args.max_seq_length, token_layer_type=args.model_type,
+                                            do_calculate_num_params=args.do_calculate_num_params)
     else:
         model = model_class.from_pretrained(output_dir)
     tokenizer = tokenizer_class.from_pretrained(output_dir)
@@ -907,17 +1008,33 @@ def main():
         config.output_hidden_states = True
 
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path, do_lower_case=args.do_lower_case)
-    if args.model_type in ['bert', 'roberta']:  # with args
+    if args.model_type in ['bert']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob)
-    elif args.model_type in ['embracebert', 'embracebertwithkeyvaluequery']:  # with args
+    elif args.model_type in ['roberta']:
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob,
+                                            do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['bertplustransformerlayer']:  # with args
+        model = model_class.from_pretrained(args.model_name_or_path, add_transformer_layer=True,
+                                            from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob)
+    elif args.model_type in ['embracebert']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
                                             max_seq_length=args.max_seq_length,
                                             dimension_reduction_method=args.dimension_reduction_method)
-    elif args.model_type in ['embracebertconcatatt', 'embracebertwithkeyvaluequeryconcatatt']:  # with args
+    elif args.model_type in ['embracebertwithkeyvaluequery']:  # with args
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['embracebertconcatatt']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
@@ -925,18 +1042,48 @@ def main():
                                             max_seq_length=args.max_seq_length,
                                             dimension_reduction_method=args.dimension_reduction_method,
                                             concat_att_with_embracement=True)
-    elif args.model_type in ['embraceroberta']:  # with args
+    elif args.model_type in ['embracebertwithkeyvaluequeryconcatatt']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights, p=args.p,
-                                            max_seq_length=args.max_seq_length)
-    elif args.model_type in ['bertwithatt', 'bertwithprojection', 'bertwithprojectionatt', 'bertwithattprojection', 'bertwithattclsprojection']:  # with args
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            concat_att_with_embracement=True,
+                                            do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['embraceroberta', 'embracerobertawithkeyvaluequery']:  # with args
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['embracerobertaconcatatt', 'embracerobertawithkeyvaluequeryconcatatt']:  # with args
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights, p=args.p,
+                                            max_seq_length=args.max_seq_length,
+                                            dimension_reduction_method=args.dimension_reduction_method,
+                                            concat_att_with_embracement=True,
+                                            do_calculate_num_params=args.do_calculate_num_params)
+    elif args.model_type in ['bertwithatt', 'bertwithprojection', 'bertwithprojectionatt', 'bertwithattprojection',
+                             'bertwithattclsprojection']:  # with args
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config, dropout_prob=args.dropout_prob,
                                             is_condensed=args.is_condensed, add_branches=args.add_branches,
                                             share_branch_weights=args.share_branch_weights,
                                             max_seq_length=args.max_seq_length, token_layer_type=args.model_type)
+    elif args.model_type in ['robertawithatt', 'robertawithattclsprojection', 'robertawithprojection',
+                             'robertawithprojectionatt']:
+        # with args, needs do_calculate_num_params because classifier gets (input, bool) and bool is not supported in the summary function
+        model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config, dropout_prob=args.dropout_prob,
+                                            is_condensed=args.is_condensed, add_branches=args.add_branches,
+                                            share_branch_weights=args.share_branch_weights,
+                                            max_seq_length=args.max_seq_length, token_layer_type=args.model_type,
+                                            do_calculate_num_params=args.do_calculate_num_params)
     else:
         model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config)
@@ -985,7 +1132,7 @@ def main():
         results.update(result)
 
     end_time = timer()
-    logger.info("Code ran for {} minutes".format(end_time-start_time))
+    logger.info("Code ran for {} minutes".format((end_time-start_time)/60))
     return results
 
 
