@@ -60,18 +60,15 @@ python -m spacy download en
 > Modify script with the path and type of your model 
 
 ## Results
-### F1-scores (English)
-
-<p align="center">
-    <img src="./data/assets/ebert_results_chatbot.png" height="300" alt="Results chatbot">
+<p align="left">
+    <img hspace="20cm" src="./data/assets/ebert_results_chatbot.png" height="400" alt="Results chatbot">
 </p>
 
 > Ablation study on: [Chatbot](./results_notes/chatbot.md) • [Snips](./results_notes/snips.md)
 
 > Ongoing: [AskUbuntu](./results_notes/askubuntu.md) • [WebApplications](./results_notes/webapplications.md) 
 
-### F1-scores (Korean)
-[Chatbot](./results_notes/chatbot_korean.md)
+> Korean: [Chatbot](./results_notes/chatbot_korean.md)
 
 ## Additional information
 ### Get mean and std from N runs
