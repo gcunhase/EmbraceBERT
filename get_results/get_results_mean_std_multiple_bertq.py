@@ -1,8 +1,7 @@
 import json
 import numpy as np
 
-# Use this script if the model was trained with complete data but you wish to test it with another set of test data,
-#  in our case incomplete data.
+# BERTq edition: Use this script if you want to obtain the mean and std of models trained and tested with incomplete data
 
 #root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/'
 root_name = './results/'

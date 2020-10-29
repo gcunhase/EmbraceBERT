@@ -8,7 +8,9 @@ import numpy as np
 
 #root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/'
 root_name = './results_korean/'
-stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "chatbot", "embracebertwithkeyvaluequery_projection_p_multinomial", 100, 8, 'gtts_google']  # _withDropout0.1
+stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "chatbot", "bert", 100, 8, 'gtts_google']  # _withDropout0.1
+# root_name = './results_twitter/'
+# stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "sentiment140", "bertwithatt", 100, 4, 'gtts_google']  # _withDropout0.1
 
 if stt_error:
     root_dir = '{root_name}{model}/{dataname}/stterror_withComplete/{tts_stt_type}/{dataname}_ep{epoch}_bs{bs}_'.\
