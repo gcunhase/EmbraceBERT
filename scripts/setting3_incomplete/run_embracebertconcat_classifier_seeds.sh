@@ -1,7 +1,7 @@
 #!/bin/bash -v
 
-CUDA_ID=0
-MODEL_TYPE=embracebert  # Options = [embracebert, embracebertconcatatt]
+CUDA_ID=2
+MODEL_TYPE=embracebertconcatatt  # Options = [embracebert, embracebertconcatatt]
 DIM_REDUCTION_METHOD=attention  # Options = [projection, attention]
 P_TYPE="multinomial"  # Options = [multinomial, attention_clsquery_weights]
 
@@ -22,7 +22,7 @@ echo $MODEL_NAME_OR_PATH
 BS_TRAIN=48 # 8
 BS_EVAL=1
 for DATASET in snips; do # chatbot; do
-      echo $DATASET
+    echo $DATASET
       for TTS in "macsay"; do # "gtts" "macsay"; do
           for STT in "sphinx" "witai"; do # "google" "sphinx" "witai"; do
             for EPOCH in 100; do
@@ -41,8 +41,8 @@ for DATASET in snips; do # chatbot; do
                     CUDA_VISIBLE_DEVICES=$CUDA_ID python ../../run_classifier.py --seed $SEED --p $P_TYPE --dimension_reduction_method $DIM_REDUCTION_METHOD --task_name "${DATASET}_intent" --model_type $MODEL_TYPE --model_name_or_path $MODEL_NAME_OR_PATH --logging_steps 1 --do_eval --do_lower_case --data_dir $DATA_DIR --max_seq_length 128 --per_gpu_eval_batch_size=$BS_EVAL --per_gpu_train_batch_size=$BS_TRAIN --learning_rate 2e-5 --num_train_epochs $EPOCH --output_dir $OUT_PATH --overwrite_output_dir --overwrite_cache --save_best --log_dir $LOG_DIR_PATH
                 done
             done
-          done
-      done
+        done
+    done
 done
 
 DIM_REDUCTION_METHOD=attention  # Options = [projection, attention]
@@ -65,7 +65,7 @@ echo $MODEL_NAME_OR_PATH
 BS_TRAIN=48 # 8
 BS_EVAL=1
 for DATASET in snips; do # chatbot; do
-      echo $DATASET
+    echo $DATASET
       for TTS in "macsay"; do # "gtts" "macsay"; do
           for STT in "sphinx" "witai"; do # "google" "sphinx" "witai"; do
             for EPOCH in 100; do
@@ -84,6 +84,6 @@ for DATASET in snips; do # chatbot; do
                     CUDA_VISIBLE_DEVICES=$CUDA_ID python ../../run_classifier.py --seed $SEED --p $P_TYPE --dimension_reduction_method $DIM_REDUCTION_METHOD --task_name "${DATASET}_intent" --model_type $MODEL_TYPE --model_name_or_path $MODEL_NAME_OR_PATH --logging_steps 1 --do_eval --do_lower_case --data_dir $DATA_DIR --max_seq_length 128 --per_gpu_eval_batch_size=$BS_EVAL --per_gpu_train_batch_size=$BS_TRAIN --learning_rate 2e-5 --num_train_epochs $EPOCH --output_dir $OUT_PATH --overwrite_output_dir --overwrite_cache --save_best --log_dir $LOG_DIR_PATH
                 done
             done
-          done
-      done
+        done
+    done
 done

@@ -1,6 +1,6 @@
 #!/bin/bash -v
 
-MODEL_TYPE=embracebertwithkeyvaluequery  # Options=[embracebert, embracebertconcatatt, embracebertwithkeyvaluequery, embracebertwithkeyvaluequeryconcatatt]
+MODEL_TYPE=embracebertwithkeyvaluequeryconcatatt  # Options=[embracebert, embracebertconcatatt, embracebertwithkeyvaluequery, embracebertwithkeyvaluequeryconcatatt]
 
 MODEL_NAME="${MODEL_TYPE}"
 DIM_REDUCTION_METHOD=attention  # Options = [projection, attention]
@@ -25,7 +25,7 @@ else
 fi
 echo $MODEL_NAME_OR_PATH
 
-CUDA_ID=1
+CUDA_ID=2
 BS_EVAL=1
 for BS_TRAIN in 32; do #  8; do
   for EPOCH in 100; do

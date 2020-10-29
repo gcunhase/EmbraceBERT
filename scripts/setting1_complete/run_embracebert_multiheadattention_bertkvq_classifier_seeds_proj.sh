@@ -1,9 +1,9 @@
 #!/bin/bash -v
 
-CUDA_ID=4
+CUDA_ID=5
 
 MODEL_TYPE=embracebertwithkeyvaluequery  #embracebertwithkeyvaluequery, embracebertwithkeyvaluequeryconcatatt
-DIM_REDUCTION_METHOD=attention # Options=[projection, attention]
+DIM_REDUCTION_METHOD=projection # Options=[projection, attention]
 P_TYPE="multinomial" # Options=[multinomial, attention_clsquery_weights]
 LR=2e-5
 
@@ -49,7 +49,7 @@ for BS_TRAIN in 48; do # 8; do
   done
 done
 
-DIM_REDUCTION_METHOD=attention # Options=[projection, attention]
+DIM_REDUCTION_METHOD=projection # Options=[projection, attention]
 P_TYPE="attention_clsquery_weights" # Options=[multinomial, attention_clsquery_weights]
 LR=2e-5
 

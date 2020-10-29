@@ -1,8 +1,8 @@
 #!/bin/bash -v
 
-MODEL_TYPE=bert
+MODEL_TYPE=bert  # Options = [bert, bertplustransformerlayer]
 
-LANGUAGE="korean"  # Options = [english, korean]
+LANGUAGE="english"  # Options = [english, korean]
 if [[ $LANGUAGE == *"english"* ]]; then
   MODEL_NAME_OR_PATH="bert-base-uncased"
   OUTPUT_DIR="../../results/${MODEL_TYPE}/"
@@ -17,15 +17,19 @@ fi
 echo $MODEL_NAME_OR_PATH
 
 BS_EVAL=1
-for BS_TRAIN in 8; do
-  for DATASET in chatbot; do
+for BS_TRAIN in 48; do # 8; do
+  for DATASET in snips; do # chatbot; do
       echo $DATASET
       for EPOCH in 100; do
           echo "Training ${DATASET} dataset with complete data for ${EPOCH} epochs"
 
-          DATA_DIR="../../data/${DATA_PATH_NAME}/nlu_eval/${DATASET}corpus/"
+          if [[ $DATASET == *"snips"* ]]; then
+            DATA_DIR="../../data/${DATA_PATH_NAME}/${DATASET}/"
+          else
+            DATA_DIR="../../data/${DATA_PATH_NAME}/nlu_eval/${DATASET}corpus/"
+          fi
 
-          for SEED in 1 2 3 4 5 6 7 8 9 10; do
+          for SEED in 4 5 6 7 8 9 10; do
               RESULT_DIR="${DATASET}/complete/${DATASET}_ep${EPOCH}_bs${BS_TRAIN}_seed${SEED}"
               OUT_PATH="${OUTPUT_DIR}/${RESULT_DIR}"
               LOG_DIR_PATH="${RUN_DIR}/${RESULT_DIR}"

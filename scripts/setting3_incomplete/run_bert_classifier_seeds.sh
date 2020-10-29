@@ -1,8 +1,8 @@
 #!/bin/bash -v
 
-MODEL_TYPE=bert
+MODEL_TYPE=bert  # Options = [bert, bertplustransformerlayer]
 
-LANGUAGE="korean"  # Options = [english, korean]
+LANGUAGE="english"  # Options = [english, korean]
 if [[ $LANGUAGE == *"english"* ]]; then
   MODEL_NAME_OR_PATH="bert-base-uncased"
   OUTPUT_DIR="../../results/${MODEL_TYPE}/"
@@ -17,11 +17,11 @@ fi
 echo $MODEL_NAME_OR_PATH
 
 BS_EVAL=1
-for BS_TRAIN in 8; do
-  for DATASET in chatbot; do
+for BS_TRAIN in 32; do # 8; do
+  for DATASET in snips; do # chatbot; do
       echo $DATASET
-      for TTS in "gtts" "macsay"; do
-          for STT in "google" "sphinx" "witai"; do
+      for TTS in "macsay"; do # "gtts" "macsay"; do
+          for STT in "sphinx" "witai"; do # "google" "sphinx" "witai"; do
               for EPOCH in 100; do
                   echo "Training ${DATASET} dataset with ${TTS}-${STT} for ${EPOCH} epochs and bs ${BS_TRAIN}"
 
@@ -33,9 +33,9 @@ for BS_TRAIN in 8; do
                       LOG_DIR_PATH="${RUN_DIR}/${RESULT_DIR}"
 
                       # Train
-                      CUDA_VISIBLE_DEVICES=1 python ../../run_classifier.py --seed $SEED --task_name "${DATASET}_intent" --model_type $MODEL_TYPE --model_name_or_path $MODEL_NAME_OR_PATH --logging_steps 1 --do_train --evaluate_during_training --do_lower_case --data_dir $DATA_DIR --max_seq_length 128 --per_gpu_eval_batch_size=$BS_EVAL --per_gpu_train_batch_size=$BS_TRAIN --learning_rate 2e-5 --num_train_epochs $EPOCH --output_dir $OUT_PATH --overwrite_output_dir --overwrite_cache --save_best --log_dir $LOG_DIR_PATH
+                      CUDA_VISIBLE_DEVICES=4 python ../../run_classifier.py --seed $SEED --task_name "${DATASET}_intent" --model_type $MODEL_TYPE --model_name_or_path $MODEL_NAME_OR_PATH --logging_steps 1 --do_train --evaluate_during_training --do_lower_case --data_dir $DATA_DIR --max_seq_length 128 --per_gpu_eval_batch_size=$BS_EVAL --per_gpu_train_batch_size=$BS_TRAIN --learning_rate 2e-5 --num_train_epochs $EPOCH --output_dir $OUT_PATH --overwrite_output_dir --overwrite_cache --save_best --log_dir $LOG_DIR_PATH
                       # Eval
-                      CUDA_VISIBLE_DEVICES=1 python ../../run_classifier.py --seed $SEED --task_name "${DATASET}_intent" --model_type $MODEL_TYPE --model_name_or_path $MODEL_NAME_OR_PATH --logging_steps 1 --do_eval --do_lower_case --data_dir $DATA_DIR --max_seq_length 128 --per_gpu_eval_batch_size=$BS_EVAL --per_gpu_train_batch_size=$BS_TRAIN --learning_rate 2e-5 --num_train_epochs $EPOCH --output_dir $OUT_PATH --overwrite_output_dir --overwrite_cache --save_best --log_dir $LOG_DIR_PATH
+                      CUDA_VISIBLE_DEVICES=4 python ../../run_classifier.py --seed $SEED --task_name "${DATASET}_intent" --model_type $MODEL_TYPE --model_name_or_path $MODEL_NAME_OR_PATH --logging_steps 1 --do_eval --do_lower_case --data_dir $DATA_DIR --max_seq_length 128 --per_gpu_eval_batch_size=$BS_EVAL --per_gpu_train_batch_size=$BS_TRAIN --learning_rate 2e-5 --num_train_epochs $EPOCH --output_dir $OUT_PATH --overwrite_output_dir --overwrite_cache --save_best --log_dir $LOG_DIR_PATH
                   done
               done
           done

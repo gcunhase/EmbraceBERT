@@ -1,8 +1,8 @@
 #!/bin/bash -v
 
-CUDA_ID=0
-MODEL_TYPE=embracebert  # Options = [embracebert, embracebertconcatatt]
-DIM_REDUCTION_METHOD=attention  # Options = [projection, attention]
+CUDA_ID=4
+MODEL_TYPE=embracebertconcatatt  # Options = [embracebert, embracebertconcatatt]
+DIM_REDUCTION_METHOD=projection  # Options = [projection, attention]
 P_TYPE="multinomial"  # Options = [multinomial, attention_clsquery_weights]
 
 LANGUAGE="english"  # Options = [english, korean]
@@ -45,7 +45,7 @@ for DATASET in snips; do # chatbot; do
       done
 done
 
-DIM_REDUCTION_METHOD=attention  # Options = [projection, attention]
+DIM_REDUCTION_METHOD=projection  # Options = [projection, attention]
 P_TYPE="attention_clsquery_weights"  # Options = [multinomial, attention_clsquery_weights]
 
 LANGUAGE="english"  # Options = [english, korean]

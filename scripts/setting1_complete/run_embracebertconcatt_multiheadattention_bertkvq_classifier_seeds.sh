@@ -1,8 +1,8 @@
 #!/bin/bash -v
 
-CUDA_ID=4
+CUDA_ID=6
 
-MODEL_TYPE=embracebertwithkeyvaluequery  #embracebertwithkeyvaluequery, embracebertwithkeyvaluequeryconcatatt
+MODEL_TYPE=embracebertwithkeyvaluequeryconcatatt  #embracebertwithkeyvaluequery, embracebertwithkeyvaluequeryconcatatt
 DIM_REDUCTION_METHOD=attention # Options=[projection, attention]
 P_TYPE="multinomial" # Options=[multinomial, attention_clsquery_weights]
 LR=2e-5

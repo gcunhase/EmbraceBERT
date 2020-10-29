@@ -1,6 +1,6 @@
 #!/bin/bash -v
 
-MODEL_TYPE=bert  # Options = [bert, bertwithatt, bertwithprojection, bertwithprojectionatt, bertwithattclsprojection]
+MODEL_TYPE=bertwithprojectionatt  # Options = [bert, bertwithatt, bertwithprojection, bertwithprojectionatt, bertwithattclsprojection]
 MODEL_NAME="${MODEL_TYPE}"
 
 LANGUAGE="english"  # Options = [english, korean]

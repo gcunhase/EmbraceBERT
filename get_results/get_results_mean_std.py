@@ -7,7 +7,7 @@ import numpy as np
 #   is_incomplete_test: True if model was trained with complete data and tested with incomplete
 
 #root_name = '/media/ceslea/DATA/EmbraceBERT-results-backup/'
-root_name = './results/'
+root_name = '../results/'
 # stt_error, dataname, model, epoch, bs, tts_stt_type = [False, "snips", "embracebert_with_branches_frozenbert_condensed_sharedWeightsAll", 3, 32, 'gtts_google']
 #stt_error, dataname, model, epoch, epoch_q, bs, tts_stt_type = [False, "chatbot", "embracebertconcatatt_attention_p_attention_clsquery_weights", 100, 3, 8, 'gtts_google']  # _withDropout0.1
 #stt_error, dataname, model, epoch, epoch_q, bs, tts_stt_type = [False, "snips", "embracebertwithkeyvaluequeryconcatatt_attention_p_attention_clsquery_weights", 100, 3, 32, 'gtts_google']  # _withDropout0.1

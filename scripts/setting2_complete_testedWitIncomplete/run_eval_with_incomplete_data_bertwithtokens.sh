@@ -1,6 +1,6 @@
 #!/bin/bash -v
 
-MODEL_TYPE=bert  # Options = [bert, bertwithatt, bertwithprojection, bertwithprojectionatt, bertwithattclsprojection]
+MODEL_TYPE=bertwithattclsprojection  # Options = [bert, bertwithatt, bertwithprojection, bertwithprojectionatt, bertwithattclsprojection]
 MODEL_NAME="${MODEL_TYPE}"
 
 LANGUAGE="english"  # Options = [english, korean]
@@ -21,7 +21,7 @@ else
 fi
 echo $MODEL_NAME_OR_PATH
 
-CUDA_ID=0
+CUDA_ID=1
 BS_EVAL=1
 for BS_TRAIN in 32; do  # 8; do
   for EPOCH in 100; do

@@ -1,8 +1,8 @@
 #!/bin/bash -v
 
-MODEL_TYPE=bertwithatt  # Options = [bertwithatt, bertwithprojection, bertwithprojectionatt, bertwithattclsprojection]
+MODEL_TYPE=bertwithprojection  # Options = [bertwithatt, bertwithprojection, bertwithprojectionatt, bertwithattclsprojection]
 
-LANGUAGE="korean"  # Options = [english, korean]
+LANGUAGE="english"  # Options = [english, korean]
 if [[ $LANGUAGE == *"english"* ]]; then
   MODEL_NAME_OR_PATH="bert-base-uncased"
   OUTPUT_DIR="../../results/${MODEL_TYPE}/"
@@ -17,12 +17,12 @@ fi
 echo $MODEL_NAME_OR_PATH
 
 BS_EVAL=1
-for BS_TRAIN in 8; do
-  for DATASET in chatbot; do
+for BS_TRAIN in 32; do # 8; do
+  for DATASET in snips; do # chatbot; do
       echo $DATASET
       for EPOCH in 100; do
-      for TTS in "gtts" "macsay"; do
-          for STT in "google" "sphinx" "witai"; do
+      for TTS in "macsay"; do # "gtts" "macsay"; do
+          for STT in "sphinx" "witai"; do # "google" "sphinx" "witai"; do
               echo "Training ${DATASET} dataset with ${TTS}-${STT} for ${EPOCH} epochs and bs ${BS_TRAIN}"
               DATA_DIR="../../data/${DATA_PATH_NAME}/${DATASET}/${TTS}_${STT}/"
 
