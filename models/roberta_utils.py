@@ -290,7 +290,7 @@ class RobertaClassificationHead(nn.Module):
         self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
         self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
 
-    def forward(self, features, apply_dropout, **kwargs):
+    def forward(self, features, apply_dropout=False, **kwargs):
         x = features[:, 0, :]  # take <s> token (equiv. to [CLS])
         if apply_dropout:
             x = self.dropout(x)

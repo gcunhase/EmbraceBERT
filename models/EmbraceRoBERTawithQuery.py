@@ -38,6 +38,8 @@ from models.BranchesLayer import BranchesLayer
 from models.roberta_utils import (ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP,
                                   ROBERTA_START_DOCSTRING, ROBERTA_INPUTS_DOCSTRING,
                                   RobertaConfig, RobertaModel, RobertaClassificationHead)
+# RoBERTa uses the same model as BERT except the embedding layer
+from models.SelfAttentionLayer import BertAttentionBertC
 
 
 logger = logging.getLogger(__name__)
@@ -46,7 +48,7 @@ logger = logging.getLogger(__name__)
 @add_start_docstrings("""RoBERTa Model transformer with a sequence classification/regression head on top (a linear layer 
     on top of the pooled output) e.g. for GLUE tasks. """,
                       ROBERTA_START_DOCSTRING, ROBERTA_INPUTS_DOCSTRING)
-class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
+class EmbraceRobertaWithQueryForSequenceClassification(BertPreTrainedModel):
     r"""
         **labels**: (`optional`) ``torch.LongTensor`` of shape ``(batch_size,)``:
             Labels for computing the sequence classification/regression loss.
@@ -82,16 +84,17 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
     base_model_prefix = "roberta"
 
     def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False,
-                 share_branch_weights=False, p='multinomial', max_seq_length=128,
+                 share_branch_weights=False, p='multinomial', max_seq_length=128, extract_key_value_from_bertc=True,
                  dimension_reduction_method='attention', concat_att_with_embracement=False,
                  do_calculate_num_params=False):
-        super(EmbraceRobertaForSequenceClassification, self).__init__(config)
+        super(EmbraceRobertaWithQueryForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.vocab_size = config.vocab_size
         self.hidden_size = config.hidden_size  # 768
         self.is_condensed = is_condensed
         self.p = p
         self.max_seq_length = max_seq_length  # 128
+        self.extract_key_value_from_bertc = extract_key_value_from_bertc
         self.dimension_reduction_method = dimension_reduction_method
         self.concat_att_with_embracement = concat_att_with_embracement
         self.do_calculate_num_params = do_calculate_num_params
@@ -121,14 +124,19 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
             # Projection between 3 inputs: T_[CLS], T_e, T_att
             self.projection = nn.Linear(3, 1)
 
+        # BERTc multihead attention layer
+        config.output_attentions = True
+        self.multiheadattention = BertAttentionBertC(config, self.hidden_size)
+
         """EmbraceBERT with branches"""
         if self.add_branches:
             self.branches_layer = BranchesLayer(config, share_branch_weights,
                                                 num_labels_evaluator=self.num_labels_evaluator)
         """END MODIFICATION"""
 
-    def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None,
-                position_ids=None, head_mask=None, apply_dropout=False, freeze_bert_weights=False):
+    def forward(self, input_ids, input_bertc=None, token_type_ids=None, attention_mask=None, labels=None,
+                position_ids=None, head_mask=None, apply_dropout=False, freeze_bert_weights=False, model_bertc=None,
+                is_evaluate=False):
 
         # Fine-tune with
         if freeze_bert_weights:
@@ -145,6 +153,29 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
             output_tokens_from_bert, attention_mask, logits_branches, logits_branches_evaluator, labels_branch_evaluator = self.branches_layer(
                 hidden_tokens_from_bert, output_tokens_from_bert, attention_mask, labels)
         """END MODIFICATION"""
+
+        if self.do_calculate_num_params:  # needed to calcualte the num of params
+            output_tokens_from_bert_tmp = self.multiheadattention(output_tokens_from_bert, bert_query=output_tokens_from_bert)
+            output_tokens_from_bert_tmp = output_tokens_from_bert_tmp[0]
+
+        # ADD: Multi-head attention layer
+        if is_evaluate:  # Q, K, V from BERTi
+            # if is_condensed:
+            # output_tokens_from_bert = self.multiheadattention(output_tokens_from_bert, head_mask=attention_mask, bert_query=output_tokens_from_bert)
+            output_tokens_from_bert = self.multiheadattention(output_tokens_from_bert, bert_query=output_tokens_from_bert)
+            output_tokens_from_bert = output_tokens_from_bert[0]
+        else:  # Q from BERTc, (K,V) from BERTi
+            if model_bertc is not None:
+                model_bertc.eval()
+                # bertc_output = model_bertc.bert(**input_bertc, apply_dropout=apply_dropout)
+                bertc_output = model_bertc.bert(input_bertc['input_ids'], token_type_ids=input_bertc['token_type_ids'], attention_mask=input_bertc['attention_mask'])
+                bertc_cls_output = bertc_output[1]  # CLS
+                bertc_output_tokens_from_bert = bertc_output[0]
+
+                # if is_condensed:
+                # output_tokens_from_bert = self.multiheadattention(output_tokens_from_bert, head_mask=attention_mask, bert_query=bertc_output_tokens_from_bert)
+                output_tokens_from_bert = self.multiheadattention(output_tokens_from_bert, bert_query=bertc_output_tokens_from_bert, extract_key_value_from_bertc=self.extract_key_value_from_bertc)
+                output_tokens_from_bert = output_tokens_from_bert[0]
 
         # Embracement layer with attention and no docking
         # sequence_output = outputs[0]
@@ -181,10 +212,6 @@ class EmbraceRobertaForSequenceClassification(BertPreTrainedModel):
                 tokens = tokens.permute((0, 2, 1))
                 # Projection layer to obtain 1 feature vector for classification
                 embrace_output = self.projection(tokens).squeeze()
-
-        #if len(embrace_output.shape) == 1:  # Last batch might have only 1 sample
-        #    embrace_output = embrace_output.unsqueeze(0)
-        #embrace_output = embrace_output.unsqueeze(1)
 
         # Classify, dropout also applied here, but maybe not needed because the embrace layer functions as
         #   a dropout mechanism?

@@ -33,6 +33,7 @@ from pytorch_transformers.modeling_utils import add_start_docstrings
 
 from models.roberta_utils import (ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP,
                                   RobertaConfig, RobertaModel, RobertaClassificationHead)
+from models.AttentionLayer import AttentionLayer
 
 
 """
@@ -50,7 +51,7 @@ logger = logging.getLogger(__name__)
 #@add_start_docstrings("""RoBERTa Model transformer with a sequence classification/regression head on top (a linear layer
 #    on top of the pooled output) e.g. for GLUE tasks. """,
 #                      ROBERTA_START_DOCSTRING, ROBERTA_INPUTS_DOCSTRING)
-class RobertaForSequenceClassification(BertPreTrainedModel):
+class RobertaWithTokensForSequenceClassification(BertPreTrainedModel):
     r"""
         **labels**: (`optional`) ``torch.LongTensor`` of shape ``(batch_size,)``:
             Labels for computing the sequence classification/regression loss.
@@ -85,12 +86,33 @@ class RobertaForSequenceClassification(BertPreTrainedModel):
     pretrained_model_archive_map = ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP
     base_model_prefix = "roberta"
 
-    def __init__(self, config, dropout_prob, do_calculate_num_params=False):
-        super(RobertaForSequenceClassification, self).__init__(config)
+    def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False,
+                 share_branch_weights=False, max_seq_length=128, token_layer_type='robertawithatt',
+                 do_calculate_num_params=False):
+        super(RobertaWithTokensForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
+        self.vocab_size = config.vocab_size
+        self.hidden_size = config.hidden_size  # 768
+        self.is_condensed = is_condensed
+        self.max_seq_length = max_seq_length  # 128
+        self.token_layer_type = token_layer_type
         self.do_calculate_num_params = do_calculate_num_params
 
         self.roberta = RobertaModel(config)
+        if self.token_layer_type == 'robertawithatt':  # Attention Layer
+            self.embrace_attention = AttentionLayer(self.hidden_size)
+        elif self.token_layer_type == 'robertawithprojectionatt':
+            # Projection Layer
+            self.projection_layer = nn.Linear(self.max_seq_length, 1)
+            # Attention Layer with CLS token and token from projection layer
+            self.embrace_attention = AttentionLayer(self.hidden_size)
+        elif self.token_layer_type == 'robertawithattclsprojection':
+            # Attention Layer with CLS token and 128 tokens
+            self.embrace_attention = AttentionLayer(self.hidden_size)
+            # Projection Layer
+            self.projection_layer = nn.Linear(2, 1)
+        else:  # Projection Layer
+            self.projection_layer = nn.Linear(self.max_seq_length + 1, 1)
         self.classifier = RobertaClassificationHead(config, dropout_prob)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None,
@@ -102,12 +124,58 @@ class RobertaForSequenceClassification(BertPreTrainedModel):
 
         outputs = self.roberta(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                                attention_mask=attention_mask, head_mask=head_mask)
-        sequence_output = outputs[0]  # CLS token is extracted inside self.classifier for RoBERTa [:, 0, :]
+        cls_output = outputs[1]  # CLS
+        output_tokens_from_roberta = outputs[0]
+
+        embraced_features_token = output_tokens_from_roberta
+
+        # Apply attention layer to CLS and embraced_features_token
+        # embrace_output = self.embrace_attention(embraced_cls_with_branches, embraced_features_token)
+        if self.token_layer_type == 'robertawithatt':
+            embrace_output = self.embrace_attention(cls_output, embraced_features_token)
+            embrace_output = embrace_output[0]
+        elif self.token_layer_type == 'robertawithprojectionatt':
+            # Projection layer -> projection vector
+            tokens = embraced_features_token.permute((0, 2, 1))
+            projection_output = self.projection_layer(tokens).squeeze()
+            if len(projection_output.shape) == 1:
+                projection_output = projection_output.unsqueeze(0)
+            # Attention layer (T_CLS, T_all)
+            embrace_output = self.embrace_attention(cls_output, projection_output)
+            embrace_output = embrace_output[0]
+        elif self.token_layer_type == 'robertawithattclsprojection':
+            # Attention Layer
+            embrace_output = self.embrace_attention(cls_output, embraced_features_token)
+            embrace_output = embrace_output[0]
+            # Concatenate cls_output and embrace_output (bs, seq+1, hidden_dim) -> (8, 129, 768)
+            if len(embrace_output.shape) == 1:
+                embrace_output = embrace_output.unsqueeze(0).unsqueeze(0)
+            elif len(embrace_output.shape) == 2:
+                embrace_output = embrace_output.unsqueeze(1)
+            tokens = torch.cat((cls_output.unsqueeze(1), embrace_output), 1)
+            tokens = tokens.permute((0, 2, 1))
+            # Projection layer to obtain 1 feature vector for classification
+            embrace_output = self.projection_layer(tokens).squeeze()
+        else:  # Projection layer
+            # Concatenate cls_output and embraced_features_token (bs, seq+1, hidden_dim) -> (8, 129, 768)
+            tokens = torch.cat((cls_output.unsqueeze(1), embraced_features_token), 1)
+            tokens = tokens.permute((0, 2, 1))
+            # Projection layer to obtain 1 feature vector for classification
+            embrace_output = self.projection_layer(tokens).squeeze()
+
+        # Classify, dropout also applied here, but maybe not needed because the embrace layer functions as
+        #   a dropout mechanism?
+        s = embrace_output.shape
+        if len(s) == 1:  # bs=1
+            embrace_output = embrace_output.unsqueeze(0).unsqueeze(0)
+        else:  # bs != 1
+            embrace_output = embrace_output.unsqueeze(1)
+        # logits = self.classifier(embrace_output, apply_dropout)
         if self.do_calculate_num_params:
             # args.do_calculate_num_params:
-            logits = self.classifier(sequence_output)
+            logits = self.classifier(embrace_output)
         else:  # Regular run:
-            logits = self.classifier(sequence_output, apply_dropout)
+            logits = self.classifier(embrace_output, apply_dropout)
 
         outputs = (logits,) + outputs[2:]
         if labels is not None:
@@ -121,4 +189,3 @@ class RobertaForSequenceClassification(BertPreTrainedModel):
             outputs = (loss,) + outputs
 
         return outputs  # (loss), logits, (hidden_states), (attentions)
-
