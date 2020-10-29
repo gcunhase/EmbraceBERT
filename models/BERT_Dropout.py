@@ -1,5 +1,6 @@
 import torch.nn as nn
 from pytorch_transformers import *
+from pytorch_transformers.modeling_bert import BertLayer, BertPooler
 from torch.nn import CrossEntropyLoss, MSELoss
 from models.bert_utils import BertPreTrainedModel
 
@@ -46,14 +47,17 @@ class BertForSequenceClassification(BertPreTrainedModel):
         loss, logits = outputs[:2]
 
     """
-    def __init__(self, config, dropout_prob):
+    def __init__(self, config, dropout_prob, add_transformer_layer=False):
         super(BertForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
+        self.add_transformer_layer = add_transformer_layer
 
         self.bert = BertModel(config)
+        if self.add_transformer_layer:
+            self.transformer_layer = BertLayer(config)
+            self.pooler = BertPooler(config)
         self.dropout = nn.Dropout(dropout_prob)  # config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, self.config.num_labels)
-        #self.softmax = nn.Softmax(dim=-1)  # -1: right-most dimension (last dimension)
 
         self.apply(self.init_weights)
 
@@ -66,6 +70,12 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
         outputs = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                             attention_mask=attention_mask, head_mask=head_mask)
+        if self.add_transformer_layer:
+            bert_output = outputs[0]
+            model_output = self.transformer_layer(bert_output, attention_mask=attention_mask.unsqueeze(1).unsqueeze(1).float(), head_mask=head_mask)
+            sequence_output = model_output[0]
+            pooled_output = self.pooler(sequence_output)
+            outputs = (sequence_output, pooled_output)
         pooled_output = outputs[1]
 
         if apply_dropout:
