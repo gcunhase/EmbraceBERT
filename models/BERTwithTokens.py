@@ -45,7 +45,8 @@ class BertWithTokensForSequenceClassification(BertPreTrainedModel):
     """
     # EmbraceBERT with branches: added 'add_branches' and 'share_branch_weights'
     def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False,
-                 share_branch_weights=False, max_seq_length=128, token_layer_type='bertwithatt'):
+                 share_branch_weights=False, max_seq_length=128, token_layer_type='bertwithatt',
+                 do_calculate_num_params=False):
         """
 
         :param config:

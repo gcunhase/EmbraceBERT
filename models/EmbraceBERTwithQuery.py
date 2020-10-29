@@ -47,7 +47,7 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
     # EmbraceBERT with branches: added 'add_branches' and 'share_branch_weights'
     def __init__(self, config, dropout_prob, is_condensed=False, add_branches=False,
                  share_branch_weights=False, p='multinomial', max_seq_length=128, extract_key_value_from_bertc=True,
-                 dimension_reduction_method='attention', concat_att_with_embracement=False):
+                 dimension_reduction_method='attention', concat_att_with_embracement=False, do_calculate_num_params=False):
         super(EmbraceBertWithQueryForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
         self.vocab_size = config.vocab_size
@@ -58,6 +58,7 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
         self.extract_key_value_from_bertc = extract_key_value_from_bertc
         self.dimension_reduction_method = dimension_reduction_method
         self.concat_att_with_embracement = concat_att_with_embracement
+        self.do_calculate_num_params = do_calculate_num_params
 
         """EmbraceBERT with branches"""
         self.num_labels_evaluator = 2
@@ -124,6 +125,10 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
             hidden_tokens_from_bert = bert_output[2]
             output_tokens_from_bert, attention_mask, logits_branches, logits_branches_evaluator, labels_branch_evaluator = self.branches_layer(hidden_tokens_from_bert, output_tokens_from_bert, attention_mask, labels)
         """END MODIFICATION"""
+
+        if self.do_calculate_num_params:  # needed to calculate the number of params
+            output_tokens_from_bert_tmp = self.multiheadattention(output_tokens_from_bert, bert_query=output_tokens_from_bert)
+            output_tokens_from_bert_tmp = output_tokens_from_bert_tmp[0]
 
         # ADD: Multi-head attention layer
         if is_evaluate:  # Q, K, V from BERTi
