@@ -4,11 +4,11 @@ Code for the paper titled *"Attentively Embracing Noise for Robust Latent Repres
 * **EmbraceBERT**: BERT with attentive embracement layer for improved robustness in noisy text classification tasks.
 
 <p align="center">
-    <img src="./data/assets/model_ebertkvq_patt.png" height="500" alt="Proposed model">
+    <img src="./data/assets/model_ebertkvq_patt.png" height="400" alt="Proposed model">
 </p>
 
 <p align="center">
-    <img src="./data/assets/embracement_layers.png" height="300" alt="Embracement layers">
+    <img src="./data/assets/embracement_layers.png" height="250" alt="Embracement layers">
 </p>
 
 * Evaluated on 3 settings:
