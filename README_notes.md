@@ -117,8 +117,3 @@ python run_classifier.py --seed 1 --task_name chatbot_intent --model_type robert
 >               EBERT_concatatt - att (113,022,722), att+p_att (114,792,194), proj (111,253,254), proj+p_att (113,022,726)
 >               EBERTkvq (is_evaluate=True manually in EmbraceBERTwithQuery) - att (113,617,154), att+p_att (115,386,626), proj (111,847,685), proj+p_att (113,617,157)
 >               EBERTkvq_concatatt (is_evaluate=True manually in EmbraceBERTwithQuery) - att (115,386,626), att+p_att (117,156,098), proj (113,617,158), proj+p_att (115,386,630)
-
-# Significance testing
-```
---seed 1 --task_name chatbot_intent --model_type bertwithatt --model_name_or_path bert-base-uncased --logging_steps 1 --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=8 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results/debug_robertawithatt/ --overwrite_output_dir --overwrite_cache --save_best --log_dir ./runs/debug_robertawithatt
-```
