@@ -8,8 +8,17 @@ python -m spacy download en
 source ./anaconda3/etc/profile.d/conda.sh
 conda activate my_env
 ```
-> [pytorch-transformers](https://github.com/huggingface/transformers) version from September 6th 2019
+> 1.2.0 [pytorch-transformers](https://github.com/huggingface/transformers) [version from September 6th 2019](https://github.com/huggingface/transformers/releases/tag/v3.1.0)
 > https://pypi.org/project/pytorch-model-summary/
+
+Manual [Python 3.6.8](https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz) installation:
+'''
+./configure
+make
+make test
+sudo make install
+'''
+
 
 ## EmbraceBERT
 1. Docking layer **not needed**: modality features all have the same size

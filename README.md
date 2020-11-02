@@ -22,6 +22,8 @@ Code for the paper titled *"Attentively Embracing Noise for Robust Latent Repres
 ## Requirements
 Tested with Python 3.6.8, PyTorch 1.0.1.post2, CUDA 10.1
 ```
+pip install --upgrade pip
+pip install --default-timeout=1000 torch==1.0.1.post2 -f https://download.pytorch.org/whl/torch_stable.html
 pip install -r requirements.txt
 python -m spacy download en
 ```

@@ -18,6 +18,7 @@ spacy
 # WordNet for synonym dictionary
 nltk
 # BERT and RoBERTa
-pytorch-transformers
-tensorboard
+pytorch-transformers==1.2.0
+# Summary writer
+#tensorboard
 tensorboardX
