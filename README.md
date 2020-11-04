@@ -33,11 +33,34 @@ python -m spacy download en
 * Open-source NLU benchmarks ([SNIPS](https://github.com/snipsco/nlu-benchmark), [Chatbot](https://github.com/sebischair/NLU-Evaluation-Corpora))
 > Ongoing: Ask Ubuntu, Web Applications Corpora
 
-* Available in [`data` directory](data) [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa/data/README.md)] 
+* Already available in the [`data` directory](data) [[more info](https://github.com/gcunhase/IntentClassifier-RoBERTa/data/README.md)] 
 > Data with STT error [repository](https://github.com/gcunhase/STTError)
 
-### 2. Train Model (settings 1 and 3)
-> The script will run the model 10 times. If you wish to run it only once, please change the SEED parameter in the script.
+### 2. Train and eval model
+* Setting 1: clean data
+    * Proposed: `./scripts/settings_1run/run_proposed_setting1_clean.sh`
+    * Baseline: `./scripts/settings_1run/run_baseline_setting1_clean.sh`
+
+* Setting 3: noisy data
+    * Proposed: `./scripts/settings_1run/run_proposed_setting3_noisy.sh`
+    * Baseline: `./scripts/settings_1run/run_baseline_setting3_noisy.sh`
+
+## Results
+<p align="left">
+    <img hspace="20cm" src="./data/assets/ebert_results_chatbot.png" height="400" alt="Results chatbot">
+</p>
+
+> Ablation study on: [Chatbot](./results_notes/chatbot.md) • [Snips](./results_notes/snips.md)
+
+> Ongoing: [AskUbuntu](./results_notes/askubuntu.md) • [WebApplications](./results_notes/webapplications.md) 
+
+> Korean: [Chatbot](./results_notes/chatbot_korean.md)
+
+
+### Getting paper's ablation study
+> The scripts mentioned here will run the model 10 times. If you wish to run it only once, please change the SEED parameter in the script.
+
+#### A. Train Model (settings 1 and 3)
 
 * Proposed: all tokens (BERT, EBERT, EBERTkvq)
     ```
@@ -54,22 +77,11 @@ python -m spacy download en
     ./scripts/[DIR_SETTING_1_OR_3]/run_bert_classifier_seeds.sh
     ```
     
-### 3. Test model with noisy data (setting 2)
+#### B. Test model with noisy data (setting 2)
 ```
 ./scripts/[DIR_SETTING_2]/run_eval_with_incomplete_data.sh
 ```
 > Modify script with the path and type of your model 
-
-## Results
-<p align="left">
-    <img hspace="20cm" src="./data/assets/ebert_results_chatbot.png" height="400" alt="Results chatbot">
-</p>
-
-> Ablation study on: [Chatbot](./results_notes/chatbot.md) • [Snips](./results_notes/snips.md)
-
-> Ongoing: [AskUbuntu](./results_notes/askubuntu.md) • [WebApplications](./results_notes/webapplications.md) 
-
-> Korean: [Chatbot](./results_notes/chatbot_korean.md)
 
 ## Additional information
 ### Get mean and std from N runs
