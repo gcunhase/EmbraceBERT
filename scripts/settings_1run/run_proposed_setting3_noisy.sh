@@ -7,7 +7,7 @@ DIM_REDUCTION_METHOD=projection  # Options = [projection, attention]
 P_TYPE="attention_clsquery_weights"  # Options = [multinomial, attention_clsquery_weights]
 LR=2e-5
 
-LANGUAGE="korean"  # Options = [english, korean]
+LANGUAGE="english"  # Options = [english, korean]
 if [[ $LANGUAGE == *"english"* ]]; then
   MODEL_NAME_OR_PATH="bert-base-uncased"
   OUTPUT_DIR="../../results/${MODEL_TYPE}_${DIM_REDUCTION_METHOD}_p_${P_TYPE}/"

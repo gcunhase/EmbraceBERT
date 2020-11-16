@@ -1,7 +1,7 @@
 #!/bin/bash -v
 
-CUDA_ID=0
-MODEL_TYPE=bertwithprojection  # Options=[bertwithatt, bertwithprojection, bertwithprojectionatt, bertwithattclsprojection]
+CUDA_ID=2
+MODEL_TYPE=bertwithattclsprojection  # Options=[bertwithatt, bertwithprojection, bertwithprojectionatt, bertwithattclsprojection]
 
 LANGUAGE="english"  # Options = [english, korean]
 if [[ $LANGUAGE == *"english"* ]]; then

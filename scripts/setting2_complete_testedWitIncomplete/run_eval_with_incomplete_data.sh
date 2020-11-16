@@ -23,7 +23,7 @@ echo $MODEL_NAME_OR_PATH
 
 CUDA_ID=0
 BS_EVAL=1
-for BS_TRAIN in 32; do  # 8; do
+for BS_TRAIN in 48; do  # 8; do
   for EPOCH in 100; do
       for DATASET in snips; do  # chatbot; do
           echo $DATASET

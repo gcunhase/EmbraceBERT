@@ -4,7 +4,7 @@ CUDA_ID=0
 
 MODEL_TYPE=bert
 
-LANGUAGE="korean"  # Options = [english, korean]
+LANGUAGE="english"  # Options = [english, korean]
 if [[ $LANGUAGE == *"english"* ]]; then
   MODEL_NAME_OR_PATH="bert-base-uncased"
   OUTPUT_DIR="../../results/${MODEL_TYPE}/"

@@ -1,5 +1,6 @@
 #!/bin/bash -v
 
+CUDA_ID=6
 MODEL_TYPE=embracebertwithkeyvaluequeryconcatatt  # Options=[embracebert, embracebertconcatatt, embracebertwithkeyvaluequery, embracebertwithkeyvaluequeryconcatatt]
 
 MODEL_NAME="${MODEL_TYPE}"
@@ -25,9 +26,8 @@ else
 fi
 echo $MODEL_NAME_OR_PATH
 
-CUDA_ID=2
 BS_EVAL=1
-for BS_TRAIN in 32; do #  8; do
+for BS_TRAIN in 48; do #  8; do
   for EPOCH in 100; do
       for DATASET in snips; do  # chatbot; do
           echo $DATASET
@@ -82,7 +82,7 @@ fi
 echo $MODEL_NAME_OR_PATH
 
 BS_EVAL=1
-for BS_TRAIN in 32; do #  8; do
+for BS_TRAIN in 48; do #  8; do
   for EPOCH in 100; do
       for DATASET in snips; do  # chatbot; do
           echo $DATASET

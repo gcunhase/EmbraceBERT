@@ -1,9 +1,11 @@
 #!/bin/bash -v
 
+CUDA_ID=5
 MODEL_TYPE=embracebertwithkeyvaluequery  # Options=[embracebert, embracebertconcatatt, embracebertwithkeyvaluequery, embracebertwithkeyvaluequeryconcatatt]
+
 MODEL_NAME="${MODEL_TYPE}"
 DIM_REDUCTION_METHOD=projection  # Options = [projection, attention]
-P_TYPE="attention_clsquery_weights" # Options = [multinomial, attention_clsquery_weights]
+P_TYPE="multinomial" # Options = [multinomial, attention_clsquery_weights]
 MODEL_NAME="${MODEL_NAME}_${DIM_REDUCTION_METHOD}_p_${P_TYPE}"
 
 LANGUAGE="english"  # Options = [english, korean]
@@ -24,9 +26,8 @@ else
 fi
 echo $MODEL_NAME_OR_PATH
 
-CUDA_ID=5
 BS_EVAL=1
-for BS_TRAIN in 32; do #  8; do
+for BS_TRAIN in 48; do #  8; do
   for EPOCH in 100; do
       for DATASET in snips; do  # chatbot; do
           echo $DATASET
@@ -59,7 +60,7 @@ done
 
 MODEL_NAME="${MODEL_TYPE}"
 DIM_REDUCTION_METHOD=projection  # Options = [projection, attention]
-P_TYPE="multinomial" # Options = [multinomial, attention_clsquery_weights]
+P_TYPE="attention_clsquery_weights" # Options = [multinomial, attention_clsquery_weights]
 MODEL_NAME="${MODEL_NAME}_${DIM_REDUCTION_METHOD}_p_${P_TYPE}"
 
 LANGUAGE="english"  # Options = [english, korean]
@@ -81,7 +82,7 @@ fi
 echo $MODEL_NAME_OR_PATH
 
 BS_EVAL=1
-for BS_TRAIN in 32; do #  8; do
+for BS_TRAIN in 48; do #  8; do
   for EPOCH in 100; do
       for DATASET in snips; do  # chatbot; do
           echo $DATASET
