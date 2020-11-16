@@ -14,3 +14,4 @@ data/*/*/cached*
 .idea/*
 *.pyc
 .DS_Store
+/get_results_mean_std.py
