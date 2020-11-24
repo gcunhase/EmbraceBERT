@@ -7,6 +7,7 @@ results_korean/*
 results_twitter/*
 
 # Cached data after training model
+data/*/*/*/*/cached*
 data/*/*/*/cached*
 data/*/*/cached*
 
