@@ -11,48 +11,27 @@ if root_name == './':
     root_name += 'results/test_with_incomplete_results/'
 
 MODEL_ROOT = [
-              "{}", #"{}_withDropout0.1", "{}_withDropout0.3",
-              #"{}_frozen", "{}_frozen_withDropout0.1", "{}_frozen_withDropout0.3",
-              #"embrace{}", "embrace{}_withDropout0.1", "embrace{}_withDropout0.3",
-              #"embrace{}_condensed", "embrace{}_condensed_withDropout0.1", "embrace{}_condensed_withDropout0.3",
-              #"embrace{}_frozenbert", "embrace{}_frozenbert_withDropout0.1", "embrace{}_frozenbert_withDropout0.3",
-              #"embrace{}_frozenbert_condensed", "embrace{}_frozenbert_condensed_withDropout0.1", "embrace{}_frozenbert_condensed_withDropout0.3",
-              #"embrace{}_with_branches_sharedWeightsAll", "embrace{}_with_branches_sharedWeightsAll_withDropout0.1",
-              #"embrace{}_with_branches_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_condensed_sharedWeightsAll",
-              #"embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.1",
-              #"embrace{}_with_branches_condensed_sharedWeightsAll_withDropout0.3",
-              #"embrace{}_with_branches_frozenbert_sharedWeightsAll", "embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.1",
-              #"embrace{}_with_branches_frozenbert_sharedWeightsAll_withDropout0.3", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll",
-              #"embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.1", "embrace{}_with_branches_frozenbert_condensed_sharedWeightsAll_withDropout0.3",
-              #
-              #"embrace{}_p_selfattention_condensed",
-              #"embrace{}_p_selfattention_pytorch",
-              #"embrace{}_p_multiheadattention",
-              #"embrace{}_p_multihead_bertselfattention", "embrace{}_p_multihead_bertattention",
-              #"embrace{}_p_multihead_bertselfattention_in_p",
-              #"embrace{}withkeyvaluequery_p_multinomial",
-              #"embrace{}withkeyvaluequery_p_attention_clsquery_weights",
-              "{}withatt",
-              "{}withattclsprojection",
-              "{}withprojection",
-              "{}withprojectionatt",
-              #"{}withattprojection",
-              "embrace{}_attention_p_multinomial",
-              "embrace{}_attention_p_attention_clsquery_weights",
-              "embrace{}_projection_p_multinomial",
-              "embrace{}_projection_p_attention_clsquery_weights",
-              "embrace{}concatatt_attention_p_multinomial",
-              "embrace{}concatatt_attention_p_attention_clsquery_weights",
-              "embrace{}concatatt_projection_p_multinomial",
-              "embrace{}concatatt_projection_p_attention_clsquery_weights",
-              "embrace{}withkeyvaluequery_attention_p_multinomial",
-              "embrace{}withkeyvaluequery_attention_p_attention_clsquery_weights",
-              "embrace{}withkeyvaluequery_projection_p_multinomial",
-              "embrace{}withkeyvaluequery_projection_p_attention_clsquery_weights",
-              "embrace{}withkeyvaluequeryconcatatt_attention_p_multinomial",
-              "embrace{}withkeyvaluequeryconcatatt_attention_p_attention_clsquery_weights",
-              "embrace{}withkeyvaluequeryconcatatt_projection_p_multinomial",
-              "embrace{}withkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights",
+              "{}",
+              #"{}withatt",
+              #"{}withattclsprojection",
+              #"{}withprojection",
+              #"{}withprojectionatt",
+              #"embrace{}_attention_p_multinomial",
+              #"embrace{}_attention_p_attention_clsquery_weights",
+              #"embrace{}_projection_p_multinomial",
+              #"embrace{}_projection_p_attention_clsquery_weights",
+              #"embrace{}concatatt_attention_p_multinomial",
+              #"embrace{}concatatt_attention_p_attention_clsquery_weights",
+              #"embrace{}concatatt_projection_p_multinomial",
+              #"embrace{}concatatt_projection_p_attention_clsquery_weights",
+              #"embrace{}withkeyvaluequery_attention_p_multinomial",
+              #"embrace{}withkeyvaluequery_attention_p_attention_clsquery_weights",
+              #"embrace{}withkeyvaluequery_projection_p_multinomial",
+              #"embrace{}withkeyvaluequery_projection_p_attention_clsquery_weights",
+              #"embrace{}withkeyvaluequeryconcatatt_attention_p_multinomial",
+              #"embrace{}withkeyvaluequeryconcatatt_attention_p_attention_clsquery_weights",
+              #"embrace{}withkeyvaluequeryconcatatt_projection_p_multinomial",
+              #"embrace{}withkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights",
 ]
 
 MODEL_BERT = []
@@ -145,7 +124,8 @@ MODEL_NAME = {"bert":                                               " BERT-bs{} 
               "embracerobertawithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights": " ERoBERTaconcatattWithProj-bs{}-p_multiheadatt_bertKeyValQuery_attclsqw ",
               }
 
-for dataname in ["snips"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
+model_data_train_type = "stterror_withComplete"  # Options = [complete, stterror_withComplete]
+for dataname in ["chatbot"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
     if dataname == "snips":
         bs_array = [48]
         epoch_array = [100]
@@ -155,8 +135,8 @@ for dataname in ["snips"]:  #["askubuntu", "chatbot", "webapplications", "snips"
 
     for epoch in epoch_array:
         print("- {} - ep{}".format(dataname.upper(), epoch))
-        for tts in ["gtts", "macsay"]:
-            for stt in ["google", "sphinx", "witai"]:
+        for tts in ["macsay"]:  # ["gtts", "macsay"]:
+            for stt in ["sphinx", "witai"]: # ["google", "sphinx", "witai"]:
                 tts_stt_type = tts + "_" + stt
                 print(tts_stt_type)
 
@@ -171,8 +151,9 @@ for dataname in ["snips"]:  #["askubuntu", "chatbot", "webapplications", "snips"
 
                             # print("{dataname} {model} - ep{epoch} bs{bs}".format(dataname=dataname, model=model, epoch=epoch, bs=bs))
 
-                            root_dir = '{root_name}{model}/{dataname}/complete/{dataname}_ep{epoch}_bs{bs}_'.\
-                                format(root_name=root_name, model=model, dataname=dataname, epoch=epoch, bs=bs)
+                            root_dir = '{root_name}{model}/{dataname}/{model_data_train_type}/{dataname}_ep{epoch}_bs{bs}_'.\
+                                format(root_name=root_name, model=model, dataname=dataname, epoch=epoch, bs=bs,
+                                       model_data_train_type=model_data_train_type)
 
                             f1_micro_str_all = ""
                             for perc in [0.1]:
