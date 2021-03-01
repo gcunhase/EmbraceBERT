@@ -181,11 +181,11 @@ def pre_train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval
                                    'bertwithattprojection', 'bertwithattclsprojection', 'bertplustransformerlayer',
                                    'robertawithatt', 'robertawithattclsprojection', 'robertawithprojection',
                                    'robertawithprojectionatt']:
-                outputs = model(**inputs, apply_dropout=args.apply_dropout, freeze_bert_weights=freeze_bert_weights)
+                outputs = model(**inputs, apply_dropout=args.apply_dropout, freeze_bert_weights=freeze_bert_weights)  # do_visualize_attention_maps=args.do_visualize_attention_maps)
             elif args.model_type in ['embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt',
                                      'embracerobertawithkeyvaluequery', 'embracerobertawithkeyvaluequeryconcatatt']:
                 outputs = model(**inputs, apply_dropout=args.apply_dropout, freeze_bert_weights=freeze_bert_weights,
-                                is_evaluate=True)  # True for BERT K,V,Q
+                                is_evaluate=True)  #, do_visualize_attention_maps=args.do_visualize_attention_maps)  # True for BERT K,V,Q
             else:
                 outputs = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
@@ -354,10 +354,10 @@ def train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval_dat
                                    'bertwithattprojection', 'bertwithattclsprojection', 'bertplustransformerlayer',
                                    'robertawithatt', 'robertawithattclsprojection', 'robertawithprojection',
                                    'robertawithprojectionatt']:
-                outputs = model(**inputs, apply_dropout=args.apply_dropout)
+                outputs = model(**inputs, apply_dropout=args.apply_dropout)  # do_visualize_attention_maps=args.do_visualize_attention_maps)
             elif args.model_type in ['embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt',
                                      'embracerobertawithkeyvaluequery', 'embracerobertawithkeyvaluequeryconcatatt']:
-                outputs = model(**inputs, apply_dropout=args.apply_dropout, is_evaluate=True)  # True for BERT K,V,Q
+                outputs = model(**inputs, apply_dropout=args.apply_dropout, is_evaluate=True)  # do_visualize_attention_maps=args.do_visualize_attention_maps)  # True for BERT K,V,Q
             else:
                 outputs = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
@@ -450,7 +450,7 @@ def train(args, train_dataset, model, tokenizer, min_loss=float("inf"), eval_dat
     return global_step, tr_loss / global_step
 
 
-def evaluate(args, model, tokenizer, prefix=""):
+def evaluate(args, model, tokenizer, prefix="", do_visualize_tsne=False):
     # Loop to handle MNLI double evaluation (matched, mis-matched)
     eval_task_names = ("mnli", "mnli-mm") if args.task_name == "mnli" else (args.task_name,)
     # eval_outputs_dirs = (args.output_dir, args.output_dir + '-MM') if args.task_name == "mnli" else (args.output_dir,)
@@ -463,6 +463,7 @@ def evaluate(args, model, tokenizer, prefix=""):
             eval_outputs_dirs = (args.eval_output_dir,)
 
     results = {}
+    counter = 0
     for eval_task, eval_output_dir in zip(eval_task_names, eval_outputs_dirs):
         eval_dataset = load_and_cache_examples(args, eval_task, tokenizer, evaluate=True)
 
@@ -498,11 +499,28 @@ def evaluate(args, model, tokenizer, prefix=""):
                           'labels':         batch[3]}
                 if args.model_type in ['embracebertwithkeyvaluequery', 'embracebertwithkeyvaluequeryconcatatt',
                                        'embracerobertawithkeyvaluequery', 'embracerobertawithkeyvaluequeryconcatatt']:
-                    outputs = model(**inputs, is_evaluate=True)  # True for BERT K,V,Q
+                    outputs = model(**inputs, is_evaluate=True)  # , do_visualize_attention_maps=args.do_visualize_attention_maps)  # True for BERT K,V,Q
+                elif args.model_type in ['embracebert', 'embracebertconcatatt', 'embraceroberta', 'embracerobertaconcatatt',
+                                         'bert', 'roberta', 'bertwithatt', 'bertwithprojection', 'bertwithprojectionatt',
+                                         'bertwithattprojection', 'bertwithattclsprojection', 'bertplustransformerlayer',
+                                         'robertawithatt', 'robertawithattclsprojection', 'robertawithprojection',
+                                         'robertawithprojectionatt']:
+                    outputs = model(**inputs)  # , do_visualize_attention_maps=args.do_visualize_attention_maps)
                 else:
                     outputs = model(**inputs)
 
                 tmp_eval_loss, logits = outputs[:2]
+                if args.model_type in ['bert', 'embracebertwithkeyvaluequery',
+                                       'embracebertwithkeyvaluequeryconcatatt']:  # or args.model_type == 'bert':
+                    if args.model_type == 'bert':
+                        embrace_output = outputs[2]
+                    else:
+                        embrace_output = outputs[3]
+                    if counter == 0:
+                        embrace_output_arr = embrace_output
+                    else:
+                        embrace_output_arr = torch.cat((embrace_output_arr, embrace_output), dim=0)
+                    counter += 1
 
                 eval_loss += tmp_eval_loss.mean().item()
             nb_eval_steps += 1
@@ -547,6 +565,13 @@ def evaluate(args, model, tokenizer, prefix=""):
         output_eval_file = os.path.join(eval_output_dir, "{}.json".format(args.eval_output_filename))
         with open(output_eval_file, "w") as writer:
             json.dump(results, writer, indent=2)
+
+        # Visualize t-SNE
+        if do_visualize_tsne:
+            from utils_tsne import plot_visualization
+            plot_visualization(embrace_output_arr, out_label_ids, preds, args.model_type)
+
+            print("do_visualize_tsne")
 
     return results
 
@@ -833,6 +858,10 @@ def main():
                         help="Whether to run eval on the dev set.")
     parser.add_argument("--do_calculate_num_params", action='store_true',
                         help="Calculate number of parameters in model.")
+    parser.add_argument("--do_visualize_attention_maps", action='store_true',
+                        help="Plot attention maps after (visualization on our model' s improved performs compared to the baseline).")
+    parser.add_argument("--do_visualize_tsne", action='store_true',
+                        help="Plot t-SNE.")
     parser.add_argument("--eval_type", default="default", type=str,
                         help="Options=[default, incomplete_test]. 'default' refers to when a model is tested with its"
                              " Test Data. 'incomplete_test' refers to when a model is tested with a different test"
@@ -1006,6 +1035,8 @@ def main():
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path, num_labels=num_labels, finetuning_task=args.task_name)
     if args.add_branches == True:  # EmbraceBERT with branches
         config.output_hidden_states = True
+    if args.do_visualize_attention_maps == True:
+        config.output_attentions = True
 
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path, do_lower_case=args.do_lower_case)
     if args.model_type in ['bert']:  # with args
@@ -1100,6 +1131,172 @@ def main():
         # logger.info("Number of parameters: {}".format(n_params))
         summary(model, torch.zeros((8, 128), dtype=torch.long).cuda(), show_input=True, print_summary=True)
 
+    # ================== Visualize attention maps =======================
+    if args.do_visualize_attention_maps:
+        from captum.attr import LayerIntegratedGradients
+        from captum.attr import visualization as viz
+        from utils_captum import construct_input_ref_pair, construct_input_ref_token_type_pair,\
+            construct_input_ref_pos_id_pair, construct_attention_mask, summarize_attributions, \
+            visualize_text_custom, visualize_model_single_output
+
+        # Test1
+        # text = "i want to go marienplatz"  # complete
+        # text = "i want to go marion laps."  # sphinx
+        # text = "i wanted to know mary and plaid."  # witai
+        # true_label = 1
+        # Test2
+        # text = "when is the next bus from garching forschungzentrum"  # complete
+        # text = "when isn't a strong guard c. for prisons room."  # sphinx
+        # text = "when is the next bus from garching forschungszentrum."  # witai
+        # true_label = 0
+        # Test3
+        # text = "how i can get from garching to neuperlach sued"  # complete
+        # text = "so i get from your seat to her like so."  # sphinx
+        # text = "i would like to get from garching to neuperlach sued."  # witai
+        # true_label = 1
+        # Test4
+        # text = "depart in garching, i assume"  # complete
+        # text = "hard to our city i assume."  # sphinx
+        # text = "turn the volume."  # witai
+        # true_label = 0
+        # Test 5
+        # text = "connection from garching to hauptbahnhof?"  # complete
+        # text = "today son from our see to it and all."  # sphinx
+        #text = "connection from garching to hauptbahnhof."  # witai
+        #true_label = 1
+        # Test 6
+        # text = "what's the shortest way from quiddestraße to odeonsplatz?"  # complete
+        # text = "what's the story this way from whispering to use lapse."  # sphinx
+        #text = "what's the shortest way from quiddestraße to odeonsplatz."  # witai
+        #true_label = 1
+        # Test 7
+        # text = "how can i get from hauptbahnhof to odeonsplatz"  # complete
+        # text = "can i get from the unalterable use lapse."  # sphinx
+        # text = "how can i get from hauptbahnhof to odeonsplatz."  # witai
+        # true_label = 1
+        # Test 8
+        # text = "when does the train leaving in garching forschungszentrum"  # complete
+        # text = "when does a train leaving you are safe for present room."  # sphinx
+        #text = "when does the train leaving in garching forschungszentrum."  # witai
+        #true_label = 0
+        # Test 9
+        # text = "next bus from central station"  # complete
+        #text = "there are strong central station."  # sphinx
+        #text = "next bus from central station."  # witai
+        #true_label = 0
+        # Test 10
+        # text = "how can i get from theresienstraße to munich east?"  # complete
+        #text = "how can i get from there is a story to use."  # sphinx
+        #text = "how can i get from the street."  # witai
+        #true_label = 1
+
+        text_dict = {'complete': ["i want to go marienplatz",
+                                  "when is the next bus from garching forschungzentrum",
+                                  "how i can get from garching to neuperlach sued",
+                                  #"depart in garching, i assume",
+                                  "connection from garching to hauptbahnhof?",
+                                  "what's the shortest way from quiddestraße to odeonsplatz?",
+                                  "how can i get from hauptbahnhof to odeonsplatz",
+                                  "when does the train leaving in garching forschungszentrum",
+                                  "next bus from central station",
+                                  "how can i get from theresienstraße to munich east?", ######
+                                  "when is the next bus from garching",
+                                  "how do i get from poccistraße to laim",
+                                  "from hauptbahnhof to garching?",
+                                  "when does the next u-bahn departs at garching?"],
+                     'sphinx': ["i want to go marion laps.",
+                                "when isn't a strong guard c. for prisons room.",
+                                "so i get from your seat to her like so.",
+                                #"hard to our city i assume.",
+                                "today son from our see to it and all.",
+                                "what's the story this way from whispering to use lapse.",
+                                "can i get from the unalterable use lapse.",
+                                "when does a train leaving you are safe for present room.",
+                                "there are strong central station.",
+                                "how can i get from there is a story to use.", ######
+                                "when isn't a bus from our city.",
+                                "do i get from heights history to lay him.",
+                                "from then on to our city.",
+                                "when doesn't do to hearts and our city."],
+                     'witai': ["i wanted to know mary and plaid.",
+                               "when is the next bus from garching forschungszentrum.",
+                               "i would like to get from garching to neuperlach sued.",
+                               #"turn the volume.",
+                               "connection from garching to hauptbahnhof.",
+                               "what's the shortest way from quiddestraße to odeonsplatz.",
+                               "how can i get from hauptbahnhof to odeonsplatz.",
+                               "when does the train leaving in garching forschungszentrum.",
+                               "next bus from central station.",
+                               "how can i get from the street.", #####
+                               "when is the next bus from garching.",
+                               "how do i get from taj history tulane.",
+                               "turn on the third.",
+                               "when does the next oakland airport or city."]}
+        true_label_arr = [1, 0, 1, #0,
+                          1, 1, 1, 0, 0, 1,
+                          0, 1, 1, 0]
+
+        """
+        score_vis_arr = []
+        for text, true_label in zip(text_dict['witai'], true_label_arr):
+            for model_type, out_dir in zip(['embracebertwithkeyvaluequeryconcatatt', 'bert'],
+                                           ['./results_backedup/embracebertwithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights/chatbot/stterror/macsay_witai/chatbot_ep100_bs8_seed5/', './results_backedup/bert/chatbot/stterror/macsay_witai/chatbot_ep100_bs8_seed6/']):
+                args.output_dir = out_dir
+                args.model_type = model_type
+                config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
+                model, tokenizer = load_model_for_eval(args, model_class, tokenizer_class)
+                def predict(inputs):
+                    return model(inputs)[0]
+                def custom_forward(inputs):
+                    # inp = inputs[0, :].unsqueeze(0)
+                    inp = inputs
+                    preds = predict(inp)
+                    if not args.model_type == 'bert':
+                        preds = preds.unsqueeze(0)
+                    #pred_label = torch.argmax(preds[0]).detach().cpu().item()
+                    #pred_prob = torch.softmax(preds, dim=1)[0][pred_label].unsqueeze(-1)
+                    pred_prob = torch.softmax(preds, dim=1)[0][true_label].unsqueeze(-1)
+                    return pred_prob
+
+                score_vis = visualize_model_single_output(args, tokenizer, model, text, true_label, device, custom_forward, predict)
+                score_vis_arr.append(score_vis)
+
+        print('\033[1m', 'Visualization For Score', '\033[0m')
+        visualize_text_custom(score_vis_arr, html_filename='temp_witai.html')  #[score_vis])
+        """
+
+        score_vis_arr = []
+        for text, true_label in zip(text_dict['witai'], true_label_arr):
+            for model_type, out_dir in zip(['embracebertwithkeyvaluequery', 'bert'],
+                                           ['./results_backedup/embracebertwithkeyvaluequery_projection_p_multinomial/chatbot/complete/chatbot_ep100_bs8_seed4/', './results_backedup/bert/chatbot/complete/chatbot_ep100_bs8_seed2/']):
+                                           # Setting 3: ['./results_backedup/embracebertwithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights/chatbot/stterror/macsay_sphinx/chatbot_ep100_bs8_seed3/', './results_backedup/bert/chatbot/stterror/macsay_sphinx/chatbot_ep100_bs8_seed6/']):
+                args.output_dir = out_dir
+                args.model_type = model_type
+                config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
+                model, tokenizer = load_model_for_eval(args, model_class, tokenizer_class)
+                def predict(inputs):
+                    return model(inputs)[0]
+                def custom_forward(inputs):
+                    # inp = inputs[0, :].unsqueeze(0)
+                    inp = inputs
+                    preds = predict(inp)
+                    if not args.model_type == 'bert':
+                        preds = preds.unsqueeze(0)
+                    #pred_label = torch.argmax(preds[0]).detach().cpu().item()
+                    #pred_prob = torch.softmax(preds, dim=1)[0][pred_label].unsqueeze(-1)
+                    pred_prob = torch.softmax(preds, dim=1)[0][true_label].unsqueeze(-1)
+                    return pred_prob
+
+                score_vis = visualize_model_single_output(args, tokenizer, model, text, true_label, device, custom_forward, predict)
+                score_vis_arr.append(score_vis)
+
+        print('\033[1m', 'Visualization For Score', '\033[0m')
+        visualize_text_custom(score_vis_arr, html_filename='temp_setting2_witai_worst.html')  #[score_vis])
+
+
+        print("TODO")
+
+
     # ================== Training Full Model =======================
     if args.do_train:
         train_dataset = load_and_cache_examples(args, args.task_name, tokenizer, evaluate=False)
@@ -1121,13 +1318,13 @@ def main():
         logger.info("EVAL TYPE: {}".format(args.eval_type))
         if args.eval_type == 'default':
             if args.do_train:
-                result = evaluate(args, model, tokenizer, prefix=global_step)
+                result = evaluate(args, model, tokenizer, prefix=global_step, do_visualize_tsne=args.do_visualize_tsne)
                 result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
             else:
-                result = evaluate(args, model, tokenizer)
+                result = evaluate(args, model, tokenizer, do_visualize_tsne=args.do_visualize_tsne)
                 result = dict((k, v) for k, v in result.items())
         else:
-            result = evaluate(args, model, tokenizer)
+            result = evaluate(args, model, tokenizer, do_visualize_tsne=args.do_visualize_tsne)
             result = dict((k, v) for k, v in result.items())
         results.update(result)
 

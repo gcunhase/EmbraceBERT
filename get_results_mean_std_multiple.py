@@ -19,8 +19,8 @@ MODEL_ROOT = [
               "{}",
               #"{}plustransformerlayer",
               #"{}plustransformerlayer_12hiddenlayers",
-              #"{}withatt", "{}withattclsprojection",
-              #"{}withprojection", "{}withprojectionatt",
+              "{}withatt", "{}withattclsprojection",
+              "{}withprojection", "{}withprojectionatt",
               #"embrace{}_attention_p_multinomial",
               #"embrace{}_attention_p_attention_clsquery_weights",
               #"embrace{}_projection_p_multinomial",
@@ -100,7 +100,7 @@ MODEL_NAME = {"bert":                                            " BERT-bs{}    
               }
 
 is_comp_inc = False
-for dataname in ["snips"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
+for dataname in ["chatbot"]:  #["askubuntu", "chatbot", "webapplications", "snips"]:
     if dataname == "snips":
         bs_array = [48]
         epoch_array = [100]

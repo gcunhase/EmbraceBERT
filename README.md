@@ -1,4 +1,4 @@
-Code for the paper titled *"Attentively Embracing Noise for Robust Latent Representation in BERT"* (To appear at COLING 2020, Dec 8-13 2020)
+Code for the paper titled [*"Attentively Embracing Noise for Robust Latent Representation in BERT"*](https://www.aclweb.org/anthology/2020.coling-main.311/) (COLING 2020, Dec 8-13 2020)
 
 ## About
 **EmbraceBERT**: attentive embracement layer for BERT encoded tokens for improved robustness in noisy text classification tasks.
@@ -26,6 +26,16 @@ pip install --upgrade pip
 pip install --default-timeout=1000 torch==1.0.1.post2 -f https://download.pytorch.org/whl/torch_stable.html
 pip install -r requirements.txt
 python -m spacy download en
+```
+
+For weight visualization in BERT with Captum [[code](https://gist.github.com/davidefiocco/47137f6eb7e3351c9bac4580c2ccc9d4)]:
+```
+pip install captum ipython
+```
+
+Visualize C token with t-SNE:
+```
+pip install seaborn pandas
 ```
 
 ## How to Use
@@ -112,15 +122,21 @@ python run_classifier.py --seed 1 --task_name chatbot_intent --model_type $MODEL
 | `eval_results.txt`                | Train/eval information: eval accuracy and loss, global_step and train loss |
 
 ## Acknowledgement
-In case you wish to use this code, please cite [To be update]:
+In case you wish to use this code, please cite:
 ```
-@inproceedings{sergio2020ebert_coling,
-  author    = {Sergio, G. C. and Moirangthem, D. S. and Lee, M.},
-  title     = {Attentively Embracing Noise for Robust Latent Representation in BERT},
-  year      = {2020},
-  booktitle = {The 28th International Conference on Computational Linguistics (COLING 2020)},
-  organization={ACL},
-  DOI = {},
+@inproceedings{cunha-sergio-2020-coling-embracebert,
+    title = "Attentively Embracing Noise for Robust Latent Representation in {BERT}",
+    author = "Cunha Sergio, Gwenaelle  and
+      Moirangthem, Dennis Singh  and
+      Lee, Minho",
+    booktitle = "Proceedings of the 28th International Conference on Computational Linguistics",
+    month = dec,
+    year = "2020",
+    address = "Barcelona, Spain (Online)",
+    publisher = "International Committee on Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/2020.coling-main.311",
+    pages = "3479--3491",
+    abstract = "Modern digital personal assistants interact with users through voice. Therefore, they heavily rely on automatic speech recognition (ASR) in order to convert speech to text and perform further tasks. We introduce EBERT, which stands for EmbraceBERT, with the goal of extracting more robust latent representations for the task of noisy ASR text classification. Conventionally, BERT is fine-tuned for downstream classification tasks using only the [CLS] starter token, with the remaining tokens being discarded. We propose using all encoded transformer tokens and further encode them using a novel attentive embracement layer and multi-head attention layer. This approach uses the otherwise discarded tokens as a source of additional information and the multi-head attention in conjunction with the attentive embracement layer to select important features from clean data during training. This allows for the extraction of a robust latent vector resulting in improved classification performance during testing when presented with noisy inputs. We show the impact of our model on both the Chatbot and Snips corpora for intent classification with ASR error. Results, in terms of F1-score and mean between 10 runs, show that our model significantly outperforms the baseline model.",
 }
 ```
 

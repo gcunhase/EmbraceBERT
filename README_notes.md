@@ -126,3 +126,81 @@ python run_classifier.py --seed 1 --task_name chatbot_intent --model_type robert
 >               EBERT_concatatt - att (113,022,722), att+p_att (114,792,194), proj (111,253,254), proj+p_att (113,022,726)
 >               EBERTkvq (is_evaluate=True manually in EmbraceBERTwithQuery) - att (113,617,154), att+p_att (115,386,626), proj (111,847,685), proj+p_att (113,617,157)
 >               EBERTkvq_concatatt (is_evaluate=True manually in EmbraceBERTwithQuery) - att (115,386,626), att+p_att (117,156,098), proj (113,617,158), proj+p_att (115,386,630)
+
+
+# Visualizing results
+## PCA + t-SNE [[source1](https://www.datacamp.com/community/tutorials/introduction-t-sne?utm_source=adwords_ppc&utm_campaignid=1455363063&utm_adgroupid=65083631748&utm_device=c&utm_keyword=&utm_matchtype=b&utm_network=g&utm_adpostion=&utm_creative=278443377092&utm_targetid=aud-763347114660:dsa-429603003980&utm_loc_interest_ms=&utm_loc_physical_ms=1009879&gclid=Cj0KCQiAh4j-BRCsARIsAGeV12DQJS7ohBmQnG23HHneNF_PY_0g0JQI3pC9z9LWoMy1Rp5LUr2w8V0aAuCzEALw_wcB)]
+```
+####### Setting 1 #########
+# BERT setting1: best seed 5 and 8 at 100.00, worst seed 6 at 97.17
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/complete/chatbot_ep100_bs8_seed6/ --log_dir ./runs/debug_attention_maps
+# EBERTkvqconcat proj mult: best seed 4 at 100.00, worst seed 2,6,7,9,10 at 98.11
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequeryconcatatt --p multinomial --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequeryconcatatt_projection_p_multinomial/chatbot/complete/chatbot_ep100_bs8_seed2/ --log_dir ./runs/debug_attention_maps
+# EBERTkvq proj mult: best seed 4,5 at 100, average seed 8 at 98.11, worst 6,7 at 97.17
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequery --p multinomial --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_processed/nlu_eval/chatbotcorpus/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequery_projection_p_multinomial/chatbot/complete/chatbot_ep100_bs8_seed6/ --log_dir ./runs/debug_attention_maps
+
+####### Setting 2 #########
+# BERT setting1 - sphinx - best seed 8 at 86.79 (from 100 BERT), worst seed 2 at 60.38 (from 99.06 BERT)
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_sphinx/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/complete/chatbot_ep100_bs8_seed2/ --log_dir ./runs/debug_attention_maps
+# BERT setting1 - witai - best seeds 1, 4, 6 at 90.57 (from 98.11 BERT), average seed 8 at 89.62, worst seed 2 81.13 (from 99.06 BERT)
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/complete/chatbot_ep100_bs8_seed2/ --log_dir ./runs/debug_attention_maps
+
+# EBERTkvq proj mult macsay_sphinx: best seed 8 at 84.91 (from 98.11), worst seed 4 67.92 (from 100)
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequery --p multinomial --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_sphinx/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequery_projection_p_multinomial/chatbot/complete/chatbot_ep100_bs8_seed8/ --log_dir ./runs/debug_attention_maps
+# EBERTkvq proj mult macsay_witai: best seed 1 at 95.28 (from 98.11), average seed 8 at 89.62, worst seed 4 at 84.91 (from 100)
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequery --p multinomial --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequery_projection_p_multinomial/chatbot/complete/chatbot_ep100_bs8_seed4/ --log_dir ./runs/debug_attention_maps
+
+####### Setting 3 #########
+# BERT macsay_sphinx: best seed6 at 89.62, worst seed 2 at 83.02
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_sphinx/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/stterror/macsay_sphinx/chatbot_ep100_bs8_seed2/ --log_dir ./runs/debug_attention_maps
+# BERT macsay_witai: best seeds 6, 9 at 95.28, worst seed 4 at 91.51 
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/stterror/macsay_witai/chatbot_ep100_bs8_seed4/ --log_dir ./runs/debug_attention_maps
+
+# EBERTkvqconcat proj att macsay_sphinx: best seeds 3 (1300), 5 (1277), 7 (1266) at 90.57, worst seed 1 at 85.85
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequeryconcatatt --p attention_clsquery_weights --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_sphinx/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights/chatbot/stterror/macsay_sphinx/chatbot_ep100_bs8_seed1/ --log_dir ./runs/debug_attention_maps
+# EBERTkvqconcat proj att macsay_witai: best seeds 5 (1277), 7 (1269), 9 (1292) at 96.23, worst seed 6 at 92.45
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequeryconcatatt --p attention_clsquery_weights --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_tsne --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights/chatbot/stterror/macsay_witai/chatbot_ep100_bs8_seed6/ --log_dir ./runs/debug_attention_maps
+```
+
+## Plot attention maps
+### Manual
+```
+python run_classifier.py
+
+# BERT macsay_sphinx: seeds 6, 10 at 89.62
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_visualize_attention_maps --do_eval --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_sphinx/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/stterror/macsay_sphinx/chatbot_ep100_bs8_seed6/ --log_dir ./runs/debug_attention_maps
+# EBERTkvqconcat proj att macsay_witai: seeds 5 (1277), 7 (1269), 9 (1292) at 96.23
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequeryconcatatt --p attention_clsquery_weights --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_visualize_attention_maps --do_eval --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights/chatbot/stterror/macsay_witai/chatbot_ep100_bs8_seed5/ --log_dir ./runs/debug_attention_maps
+
+####### Setting 2 #########
+# BERT setting1 - sphinx - best seed 8 at 86.79 (from 100 BERT), worst seed 2 at 60.38 (from 99.06 BERT)
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_attention_maps --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_sphinx/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/complete/chatbot_ep100_bs8_seed8/ --log_dir ./runs/debug_attention_maps
+# BERT setting1 - witai - best seeds 1, 4, 6 at 90.57 (from 98.11 BERT), average seed 8 at 89.62, worst seed 2 81.13 (from 99.06 BERT)
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_attention_maps --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/complete/chatbot_ep100_bs8_seed2/ --log_dir ./runs/debug_attention_maps
+
+# EBERTkvq proj mult macsay_sphinx: best seed 8 at 84.91 (from 98.11), worst seed 4 67.92 (from 100)
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequery --p multinomial --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_attention_maps --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_sphinx/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequery_projection_p_multinomial/chatbot/complete/chatbot_ep100_bs8_seed4/ --log_dir ./runs/debug_attention_maps
+# EBERTkvq proj mult macsay_witai: best seed 1 at 95.28 (from 98.11), average seed 8 at 89.62, worst seed 4 at 84.91 (from 100)
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequery --p multinomial --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_eval --do_visualize_attention_maps --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequery_projection_p_multinomial/chatbot/complete/chatbot_ep100_bs8_seed1/ --log_dir ./runs/debug_attention_maps
+```
+
+### Captum
+> [Source](https://github.com/pytorch/captum/issues/150), [Source2](https://github.com/pytorch/captum)
+> [Interp of BertForSeqClass in captum colab](https://colab.research.google.com/drive/1pgAbzUF2SzF0BdFtGpJbZPWUOhFxT2NZ#scrollTo=X-nyyq_tbUDa)
+
+* Attribution score: "The magnitude of the attribution score shows the strength / the level of the importance of a feature for a particular selected class that we want to attribute to (aka target). If positive, it means that the feature is positively contributing to particular class (e.g. pulling towards the class that we are attributing to), if negative, it means that it is negatively contributing to the class that we are trying to attributing to (e.g. pulling away from the target class, it is probable that it is pulling towards another target / class but no guarantees). If zero - means that the feature doesn't contribute to selected target class."
+* Prediction label and Target (attribution) label
+
+```
+python run_classifier.py
+
+# BERT macsay_sphinx: seeds 6, 10 at 89.62
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_visualize_attention_maps --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_sphinx/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/stterror/macsay_sphinx/chatbot_ep100_bs8_seed6/ --log_dir ./runs/debug_attention_maps
+# BERT macsay_witai: seeds 6, 9 at 95.28
+--seed 1 --task_name chatbot_intent --model_type bert --model_name_or_path bert-base-uncased --logging_steps 1 --do_visualize_attention_maps --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/bert/chatbot/stterror/macsay_witai/chatbot_ep100_bs8_seed6/ --log_dir ./runs/debug_attention_maps
+# EBERTkvqconcat proj att macsay_sphinx: seeds 3 (1300), 5 (1277), 7 (1266) at 90.57
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequeryconcatatt --p attention_clsquery_weights --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_visualize_attention_maps --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_sphinx/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights/chatbot/stterror/macsay_sphinx/chatbot_ep100_bs8_seed3/ --log_dir ./runs/debug_attention_maps
+# EBERTkvqconcat proj att macsay_witai: seeds 5 (1277), 7 (1269), 9 (1292) at 96.23
+--seed 1 --task_name chatbot_intent --model_type embracebertwithkeyvaluequeryconcatatt --p attention_clsquery_weights --dimension_reduction_method projection --model_name_or_path bert-base-uncased --logging_steps 1 --do_visualize_attention_maps --do_lower_case --data_dir data/intent_stterror_data/chatbot/macsay_witai/ --max_seq_length 128 --per_gpu_eval_batch_size=1 --per_gpu_train_batch_size=1 --learning_rate 2e-5 --num_train_epochs 3.0 --output_dir ./results_backedup/embracebertwithkeyvaluequeryconcatatt_projection_p_attention_clsquery_weights/chatbot/stterror/macsay_witai/chatbot_ep100_bs8_seed5/ --log_dir ./runs/debug_attention_maps
+```
+

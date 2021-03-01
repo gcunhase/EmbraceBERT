@@ -1,0 +1,8 @@
+sentence	label	missing	target
+turn the volume. 	0		depart in garching, i assume
+connection from garching to hauptbahnhof. 	1		connection from garching to hauptbahnhof?
+what's the shortest way from quiddestraße to odeonsplatz. 	1		what's the shortest way from quiddestraße to odeonsplatz?
+how can i get from hauptbahnhof to odeonsplatz. 	1		how can i get from hauptbahnhof to odeonsplatz
+when does the train leaving in garching forschungszentrum. 	0		when does the train leaving in garching forschungszentrum
+next bus from central station. 	0		next bus from central station
+how can i get from the street. 	1		how can i get from theresienstraße to munich east?

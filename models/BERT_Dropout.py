@@ -76,14 +76,14 @@ class BertForSequenceClassification(BertPreTrainedModel):
             sequence_output = model_output[0]
             pooled_output = self.pooler(sequence_output)
             outputs = (sequence_output, pooled_output)
-        pooled_output = outputs[1]
+        pooled_output = outputs[1]  # CLS
 
         if apply_dropout:
             pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)  # [bs, 2]
         #logits = self.softmax(logits)
 
-        outputs = (logits,) + outputs[2:]  # add hidden states and attention if they are here
+        outputs = (logits,) + outputs[2:] + (pooled_output,)  # add hidden states and attention if they are here
 
         if labels is not None:
             if self.num_labels == 1:

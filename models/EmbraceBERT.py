@@ -9,6 +9,7 @@ from models.CondensedEmbracementLayer import CondensedEmbracementLayer
 from models.bert_utils import BertPreTrainedModel
 from models.AttentionLayer import AttentionLayer
 from models.BranchesLayer import BranchesLayer
+from utils import visualize_attention
 
 import numpy as np
 
@@ -97,6 +98,7 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, labels=None,
                 position_ids=None, head_mask=None, apply_dropout=False, freeze_bert_weights=False):
+                #do_visualize_attention_maps=False):
 
         # Fine-tune with
         if freeze_bert_weights:
@@ -156,6 +158,17 @@ class EmbraceBertForSequenceClassification(BertPreTrainedModel):
         # No need because the embrace layer functions as a dropout mechanism?
         if apply_dropout:
             embrace_output = self.dropout(embrace_output)
+
+        # Visualize attention scores
+        # if do_visualize_attention_maps:
+        #    # BERT
+        #    scores_img = cls_output.cpu().detach().numpy()
+        #    scores_img = scores_img[:, :30]
+        #    visualize_attention(scores_img)
+        #    # EBERT
+        #    scores_img = embrace_output.cpu().detach().numpy()
+        #    scores_img = scores_img[:, :30]
+        #    visualize_attention(scores_img)
 
         # Classify
         logits = self.classifier(embrace_output)

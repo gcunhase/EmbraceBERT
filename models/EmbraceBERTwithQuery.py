@@ -12,6 +12,7 @@ from models.BranchesLayer import BranchesLayer
 
 import numpy as np
 from models.SelfAttentionLayer import BertAttentionBertC
+from utils import visualize_attention
 
 
 # class BertForSequenceClassification(BertPreTrainedModel):
@@ -104,7 +105,7 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
 
     def forward(self, input_ids, input_bertc=None, token_type_ids=None, attention_mask=None, labels=None,
                 position_ids=None, head_mask=None, apply_dropout=False, freeze_bert_weights=False, model_bertc=None,
-                is_evaluate=False):
+                is_evaluate=False):  #, do_visualize_attention_maps=False):
 
         # Fine-tune with
         if freeze_bert_weights:
@@ -190,12 +191,23 @@ class EmbraceBertWithQueryForSequenceClassification(BertPreTrainedModel):
         if apply_dropout:
             embrace_output = self.dropout(embrace_output)
 
+        # Visualize attention scores
+        # if do_visualize_attention_maps:
+        #    # BERT
+        #    scores_img = cls_output.cpu().detach().numpy()
+        #    scores_img = scores_img[:, :]
+        #    visualize_attention(scores_img)
+        #    # EBERT
+        #    scores_img = embrace_output.unsqueeze(0).cpu().detach().numpy()
+        #    scores_img = scores_img[:, :]
+        #    visualize_attention(scores_img)
+
         # Classify
         logits = self.classifier(embrace_output)
 
         # a_bert_output = bert_output[2:]
         # a_embrace_output = embrace_output
-        outputs = (logits,) + bert_output[2:]  # add hidden states and attention if they are here
+        outputs = (logits,) + bert_output[2:] + (embrace_output.unsqueeze(0),)  # add hidden states and attention if they are here
         if labels is not None:
             if self.num_labels == 1:
                 #  We are doing regression
